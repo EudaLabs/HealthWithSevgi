@@ -108,15 +108,13 @@ npm run dev
 
 ## 👥 Team
 
-<!-- Update with actual team members -->
 | Role | Name |
 |------|------|
-| Product Owner | TBD |
-| UX Designer | TBD |
-| Lead Developer | TBD |
-| Scrum Master | TBD |
-| Developer | TBD |
-| QA / Documentation Lead | TBD |
+| Product Owner + Developer | Efe |
+| UX Designer | Burak |
+| Lead Developer + Scrum Master | Batuhan |
+| Developer | Berat |
+| QA / Documentation Lead | Berfin |
 
 ## 📋 Links
 
