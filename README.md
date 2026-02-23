@@ -108,13 +108,13 @@ npm run dev
 
 ## 👥 Team
 
-| Role | Name |
-|------|------|
-| Product Owner + Developer | Efe |
-| UX Designer | Burak |
-| Lead Developer + Scrum Master | Batuhan |
-| Developer | Berat |
-| QA / Documentation Lead | Berfin |
+| Role | Name | Student ID |
+|------|------|------------|
+| Product Owner + Developer | Efe Çelik | 202128016 |
+| UX Designer | Burak Aydoğmuş | 202128028 |
+| Lead Developer + Scrum Master | Batuhan Bayazıt | 202228008 |
+| Developer | Berat Mert Gökkaya | 202228019 |
+| QA / Documentation Lead | Berfin Duru Alkan | 202228005 |
 
 ## 📋 Links
 
