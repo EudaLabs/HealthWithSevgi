@@ -1,0 +1,39 @@
+# ─── Python ────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+venv/
+.venv/
+env/
+.env
+*.env.local
+
+# ─── Node / Vite ───────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# ─── IDE ───────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ─── Testing / Coverage ───────────────────────────
+htmlcov/
+.coverage
+.pytest_cache/
+.mypy_cache/
+
+# ─── OS ────────────────────────────────────────────
+Thumbs.db
+desktop.ini
