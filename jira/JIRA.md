@@ -66,10 +66,10 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 0 — Medical Specialty Selection (SCRUM-17)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-001 | Select medical specialty from pill bar | Must Have | 3 | To Do |
-| US-002 | Confirm before switching specialty to prevent progress loss | Should Have | 2 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-001 | Select medical specialty from pill bar | Must Have | 3 | To Do | Efe |
+| US-002 | Confirm before switching specialty to prevent progress loss | Should Have | 2 | To Do | Efe |
 
 **Acceptance Criteria highlights:**
 - US-001: Given on home screen, When 'Cardiology' clicked, Then domain label updates and Step 1 shows heart failure content.
@@ -79,9 +79,9 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 1 — Clinical Context (SCRUM-18)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-003 | View clinical context for selected specialty | Must Have | 2 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-003 | View clinical context for selected specialty | Must Have | 2 | To Do | Efe |
 
 **Acceptance Criteria highlights:**
 - US-003: Given specialty selected, When on Step 1, Then medical condition, patient population, and target outcome shown in plain clinical language.
@@ -90,12 +90,12 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 2 — Data Exploration (SCRUM-19)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-004 | Upload own CSV patient file | Must Have | 5 | To Do |
-| US-005 | Use built-in example dataset for selected specialty | Must Have | 3 | To Do |
-| US-006 | View column summary with missing value indicators | Must Have | 3 | To Do |
-| US-007 | Map target column using Column Mapper modal | Must Have | 5 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-004 | Upload own CSV patient file | Must Have | 5 | To Do | Efe |
+| US-005 | Use built-in example dataset for selected specialty | Must Have | 3 | To Do | Efe |
+| US-006 | View column summary with missing value indicators | Must Have | 3 | To Do | Efe |
+| US-007 | Map target column using Column Mapper modal | Must Have | 5 | To Do | Efe |
 
 **Acceptance Criteria highlights:**
 - US-004: Given valid CSV dragged, Then filename, size, column count shown with green banner.
@@ -105,12 +105,12 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 3 — Data Preparation (SCRUM-20)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-008 | Configure training and test data split ratio | Must Have | 3 | To Do |
-| US-009 | Select missing value imputation strategy | Must Have | 3 | To Do |
-| US-010 | Select normalisation method for patient measurements | Must Have | 3 | To Do |
-| US-011 | Apply SMOTE to handle class imbalance in training data | Should Have | 5 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-008 | Configure training and test data split ratio | Must Have | 3 | To Do | Berat |
+| US-009 | Select missing value imputation strategy | Must Have | 3 | To Do | Berat |
+| US-010 | Select normalisation method for patient measurements | Must Have | 3 | To Do | Berat |
+| US-011 | Apply SMOTE to handle class imbalance in training data | Should Have | 5 | To Do | Berat |
 
 **Acceptance Criteria highlights:**
 - US-008: Given split slider moved, Then training % + test % always sum to 100%.
@@ -120,12 +120,12 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 4 — Model Selection & Configuration (SCRUM-21)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-012 | Select ML model type for training | Must Have | 3 | To Do |
-| US-013 | Tune model hyperparameters via interactive sliders | Must Have | 5 | To Do |
-| US-014 | Toggle auto-retrain on hyperparameter change | Should Have | 2 | To Do |
-| US-015 | Compare multiple trained models side by side | Should Have | 5 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-012 | Select ML model type for training | Must Have | 3 | To Do | Berat |
+| US-013 | Tune model hyperparameters via interactive sliders | Must Have | 5 | To Do | Berat |
+| US-014 | Toggle auto-retrain on hyperparameter change | Should Have | 2 | To Do | Berat |
+| US-015 | Compare multiple trained models side by side | Should Have | 5 | To Do | Berat |
 
 **Acceptance Criteria highlights:**
 - US-013: Given KNN + Auto-Retrain on, When K slider moved, Then canvas redraws ≤16 ms, metrics update ≤300 ms.
@@ -135,12 +135,12 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 5 — Results & Evaluation (SCRUM-22)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-016 | View six performance metrics after model training | Must Have | 5 | To Do |
-| US-017 | View confusion matrix with plain clinical labelling | Must Have | 3 | To Do |
-| US-018 | View ROC curve for model discrimination ability | Should Have | 3 | To Do |
-| US-019 | Display low sensitivity warning banner automatically | Should Have | 2 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-016 | View six performance metrics after model training | Must Have | 5 | To Do | Efe |
+| US-017 | View confusion matrix with plain clinical labelling | Must Have | 3 | To Do | Efe |
+| US-018 | View ROC curve for model discrimination ability | Should Have | 3 | To Do | Efe |
+| US-019 | Display low sensitivity warning banner automatically | Should Have | 2 | To Do | Efe |
 
 **Acceptance Criteria highlights:**
 - US-016: Given training complete, Then Accuracy, Sensitivity, Specificity, Precision, F1, AUC shown with green/amber/red thresholds.
@@ -150,10 +150,10 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 6 — Explainability (SCRUM-23)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-020 | View feature importance chart with clinical names | Must Have | 5 | To Do |
-| US-021 | View SHAP waterfall explanation for individual patient | Should Have | 8 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-020 | View feature importance chart with clinical names | Must Have | 5 | To Do | Berat |
+| US-021 | View SHAP waterfall explanation for individual patient | Should Have | 8 | To Do | Berat |
 
 **Acceptance Criteria highlights:**
 - US-020: Given model trained, Then features ranked by importance using clinical names, with a sense-check note.
@@ -163,12 +163,12 @@ An interactive, browser-based ML learning tool that guides healthcare profession
 
 ### Epic: Step 7 — Ethics & Bias (SCRUM-24)
 
-| ID | Summary | Priority | Points | Status |
-|----|---------|----------|--------|--------|
-| US-022 | View subgroup fairness performance table with bias alerts | Must Have | 8 | To Do |
-| US-023 | Complete EU AI Act compliance checklist | Must Have | 5 | To Do |
-| US-024 | View training data representation chart vs. hospital population | Could Have | 5 | To Do |
-| US-025 | Download PDF summary certificate after completing all steps | Should Have | 5 | To Do |
+| ID | Summary | Priority | Points | Status | Reporter |
+|----|---------|----------|--------|--------|----------|
+| US-022 | View subgroup fairness performance table with bias alerts | Must Have | 8 | To Do | Efe |
+| US-023 | Complete EU AI Act compliance checklist | Must Have | 5 | To Do | Efe |
+| US-024 | View training data representation chart vs. hospital population | Could Have | 5 | To Do | Berat |
+| US-025 | Download PDF summary certificate after completing all steps | Should Have | 5 | To Do | Berat |
 
 **Acceptance Criteria highlights:**
 - US-022: Given any subgroup Sensitivity > 10 pts below average, Then red bias banner auto-appears.
