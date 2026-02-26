@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram id="c4-level2-container" name="Level 2: Container Diagram">
+    <mxGraphModel dx="1422" dy="862" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="Level 2: Container Diagram - HealthWithSevgi" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="10" width="460" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Person: Healthcare Professional -->
+        <mxCell id="3" value="&lt;b&gt;Healthcare Professional&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Person]&lt;br/&gt;&lt;br/&gt;Interacts with the 7-step ML pipeline via browser" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;rounded=1;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];strokeColor=#073763;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="370" y="60" width="200" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- System Boundary: HealthWithSevgi -->
+        <mxCell id="4" value="HealthWithSevgi [Software System]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#438DD5;dashed=1;dashPattern=8 4;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="50" y="280" width="850" height="450" as="geometry" />
+        </mxCell>
+
+        <!-- Container: React SPA (top-left inside boundary) -->
+        <mxCell id="5" value="&lt;b&gt;React SPA&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Container: React 18, Vite, Tailwind CSS, React Router v6]&lt;br/&gt;&lt;br/&gt;Delivers the 7-step wizard UI with interactive charts, sliders, data tables, and visualizations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3A7BBD;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="230" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Container: FastAPI Backend (center inside boundary) -->
+        <mxCell id="6" value="&lt;b&gt;FastAPI Backend&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Container: Python 3.10+, FastAPI 0.110+, Uvicorn 0.29+]&lt;br/&gt;&lt;br/&gt;REST API providing endpoints for data upload, preprocessing, model training, predictions, explainability, and bias auditing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3A7BBD;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="360" y="320" width="230" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Container: ML Engine (top-right inside boundary) -->
+        <mxCell id="7" value="&lt;b&gt;ML Engine&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Container: scikit-learn 1.4+, SHAP 0.45+, imbalanced-learn 0.12+]&lt;br/&gt;&lt;br/&gt;Trains 6 ML algorithms, computes performance metrics, generates SHAP explanations, and performs subgroup fairness audits" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3A7BBD;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="320" width="230" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Container: Clinical Datasets (bottom-left, cylinder) -->
+        <mxCell id="8" value="&lt;b&gt;Clinical Datasets&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Data Store: 20 CSV Files]&lt;br/&gt;&lt;br/&gt;Pre-loaded patient datasets covering Cardiology, Nephrology, Oncology, Neurology, Diabetes, and 15 more clinical domains" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3A7BBD;align=center;fontSize=11;size=15;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="530" width="230" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Container: Session Storage (bottom-right, cylinder) -->
+        <mxCell id="9" value="&lt;b&gt;Session Storage&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Data Store: Browser localStorage]&lt;br/&gt;&lt;br/&gt;Persists user progress, selected domain, data configuration, and trained model state across page reloads" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3A7BBD;align=center;fontSize=11;size=15;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="530" width="230" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: Healthcare Pro to React SPA -->
+        <mxCell id="10" value="Navigates 7-step&lt;br/&gt;pipeline [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="3" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="260" />
+              <mxPoint x="195" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Relationship: React SPA to FastAPI Backend -->
+        <mxCell id="11" value="Sends data and requests&lt;br/&gt;[JSON/REST over HTTP]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="5" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: React SPA to Session Storage -->
+        <mxCell id="12" value="Reads and writes&lt;br/&gt;user progress&lt;br/&gt;[Web Storage API]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="5" target="9" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="500" />
+              <mxPoint x="560" y="500" />
+              <mxPoint x="560" y="610" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Relationship: FastAPI Backend to ML Engine -->
+        <mxCell id="13" value="Delegates ML operations&lt;br/&gt;[Python function calls]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="6" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: FastAPI Backend to Clinical Datasets -->
+        <mxCell id="14" value="Loads and serves&lt;br/&gt;example datasets&lt;br/&gt;[File I/O]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=15;fontSize=10;" edge="1" source="6" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="500" />
+              <mxPoint x="235" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Relationship: ML Engine to Clinical Datasets -->
+        <mxCell id="15" value="Reads training and&lt;br/&gt;test data&lt;br/&gt;[pandas.read_csv]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=15;fontSize=10;" edge="1" source="7" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="490" />
+              <mxPoint x="400" y="490" />
+              <mxPoint x="400" y="625" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

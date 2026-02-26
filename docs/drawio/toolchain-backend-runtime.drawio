@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram name="Backend Runtime Pipeline" id="backend-runtime-pipeline">
+    <mxGraphModel dx="1500" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Title -->
+        <mxCell id="title1" value="&lt;b&gt;Backend Runtime Pipeline&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="500" y="0" width="280" height="40" as="geometry" />
+        </mxCell>
+        <!-- REQ: HTTP Request -->
+        <mxCell id="REQ" value="&lt;b&gt;HTTP Request&lt;/b&gt;&lt;br&gt;from React SPA" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e3f2fd;strokeColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="0" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- UVICORN -->
+        <mxCell id="UVICORN" value="&lt;b&gt;Uvicorn&lt;/b&gt;&lt;br&gt;ASGI Server :8000" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;" vertex="1" parent="1">
+          <mxGeometry x="160" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <!-- CORS -->
+        <mxCell id="CORS" value="&lt;b&gt;CORS Middleware&lt;/b&gt;&lt;br&gt;Origin Validation" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;" vertex="1" parent="1">
+          <mxGeometry x="310" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- FASTAPI -->
+        <mxCell id="FASTAPI" value="&lt;b&gt;FastAPI Router&lt;/b&gt;&lt;br&gt;Path Matching" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;" vertex="1" parent="1">
+          <mxGeometry x="470" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- PYDANTIC -->
+        <mxCell id="PYDANTIC" value="&lt;b&gt;Pydantic v2&lt;/b&gt;&lt;br&gt;Request Validation" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;" vertex="1" parent="1">
+          <mxGeometry x="630" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- SERVICE -->
+        <mxCell id="SERVICE" value="&lt;b&gt;Service Layer&lt;/b&gt;&lt;br&gt;Business Logic" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff3e0;strokeColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="790" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- SKLEARN -->
+        <mxCell id="SKLEARN" value="&lt;b&gt;scikit-learn&lt;/b&gt;&lt;br&gt;Model Train/Predict" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e0f7fa;strokeColor=#00695c;" vertex="1" parent="1">
+          <mxGeometry x="960" y="20" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- SHAP -->
+        <mxCell id="SHAP" value="&lt;b&gt;SHAP&lt;/b&gt;&lt;br&gt;Explainability" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e0f7fa;strokeColor=#00695c;" vertex="1" parent="1">
+          <mxGeometry x="960" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- PANDAS -->
+        <mxCell id="PANDAS" value="&lt;b&gt;pandas&lt;/b&gt;&lt;br&gt;Data Processing" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e0f7fa;strokeColor=#00695c;" vertex="1" parent="1">
+          <mxGeometry x="960" y="180" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- RESP: JSON Response -->
+        <mxCell id="RESP" value="&lt;b&gt;JSON Response&lt;/b&gt;&lt;br&gt;to React SPA" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e8f5e9;strokeColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- Arrow: REQ to UVICORN -->
+        <mxCell id="edge1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="REQ" target="UVICORN" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: UVICORN to CORS -->
+        <mxCell id="edge2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="UVICORN" target="CORS" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: CORS to FASTAPI -->
+        <mxCell id="edge3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="CORS" target="FASTAPI" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: FASTAPI to PYDANTIC -->
+        <mxCell id="edge4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="FASTAPI" target="PYDANTIC" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: PYDANTIC to SERVICE -->
+        <mxCell id="edge5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="PYDANTIC" target="SERVICE" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: SERVICE to SKLEARN -->
+        <mxCell id="edge6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="SERVICE" target="SKLEARN" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: SERVICE to SHAP -->
+        <mxCell id="edge7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="SERVICE" target="SHAP" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: SERVICE to PANDAS -->
+        <mxCell id="edge8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="SERVICE" target="PANDAS" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: SKLEARN to RESP -->
+        <mxCell id="edge9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="SKLEARN" target="RESP" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: SHAP to RESP -->
+        <mxCell id="edge10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="SHAP" target="RESP" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: PANDAS to RESP -->
+        <mxCell id="edge11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="PANDAS" target="RESP" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

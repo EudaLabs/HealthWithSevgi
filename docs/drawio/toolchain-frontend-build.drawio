@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram name="Frontend Build Pipeline" id="frontend-build-pipeline">
+    <mxGraphModel dx="1400" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Title -->
+        <mxCell id="title1" value="&lt;b&gt;Frontend Build Pipeline&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="400" y="0" width="260" height="40" as="geometry" />
+        </mxCell>
+        <!-- SRC: Source Files -->
+        <mxCell id="SRC" value="&lt;b&gt;Source Files&lt;/b&gt;&lt;br&gt;JSX + CSS + Assets" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff3e0;strokeColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="0" y="100" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- ESLINT -->
+        <mxCell id="ESLINT" value="&lt;b&gt;ESLint&lt;/b&gt;&lt;br&gt;Lint Check" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff9c4;strokeColor=#f9a825;" vertex="1" parent="1">
+          <mxGeometry x="180" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <!-- PRETTIER -->
+        <mxCell id="PRETTIER" value="&lt;b&gt;Prettier&lt;/b&gt;&lt;br&gt;Format Check" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff9c4;strokeColor=#f9a825;" vertex="1" parent="1">
+          <mxGeometry x="340" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <!-- VITE_DEV: Vite Dev Server -->
+        <mxCell id="VITE_DEV" value="&lt;b&gt;Vite Dev Server&lt;/b&gt;&lt;br&gt;HMR at :5173" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e8f5e9;strokeColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="500" y="30" width="150" height="60" as="geometry" />
+        </mxCell>
+        <!-- VITE_BUILD: Vite Build -->
+        <mxCell id="VITE_BUILD" value="&lt;b&gt;Vite Build&lt;/b&gt;&lt;br&gt;Production Bundle" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e8f5e9;strokeColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="500" y="170" width="150" height="60" as="geometry" />
+        </mxCell>
+        <!-- DIST -->
+        <mxCell id="DIST" value="&lt;b&gt;dist/&lt;/b&gt;&lt;br&gt;Static HTML + JS + CSS" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;" vertex="1" parent="1">
+          <mxGeometry x="700" y="170" width="150" height="60" as="geometry" />
+        </mxCell>
+        <!-- BROWSER -->
+        <mxCell id="BROWSER" value="&lt;b&gt;Browser&lt;/b&gt;&lt;br&gt;React SPA" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e3f2fd;strokeColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="900" y="100" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- Arrow: SRC to ESLINT -->
+        <mxCell id="edge1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="SRC" target="ESLINT" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: ESLINT to PRETTIER -->
+        <mxCell id="edge2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="ESLINT" target="PRETTIER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: PRETTIER to VITE_DEV -->
+        <mxCell id="edge3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="PRETTIER" target="VITE_DEV" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: PRETTIER to VITE_BUILD -->
+        <mxCell id="edge4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="PRETTIER" target="VITE_BUILD" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: VITE_DEV to BROWSER (Development) -->
+        <mxCell id="edge5" value="Development" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="VITE_DEV" target="BROWSER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: VITE_BUILD to DIST -->
+        <mxCell id="edge6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="VITE_BUILD" target="DIST" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: DIST to BROWSER (Production) -->
+        <mxCell id="edge7" value="Production" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="DIST" target="BROWSER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

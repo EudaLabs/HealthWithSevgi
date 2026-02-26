@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" modified="2026-02-26" agent="draw.io" type="device">
+  <diagram name="Level 3a: Component Diagram - FastAPI Backend" id="c4-level3a">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="Level 3a: Component Diagram - FastAPI Backend" style="text;html=1;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="300" y="-50" width="600" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- External Containers (gray) -->
+        <!-- React SPA -->
+        <mxCell id="10" value="&lt;b&gt;React SPA&lt;/b&gt;&lt;br/&gt;[Container]&lt;br/&gt;&lt;br/&gt;React 18 - Frontend application" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ML Engine -->
+        <mxCell id="11" value="&lt;b&gt;ML Engine&lt;/b&gt;&lt;br/&gt;[Container]&lt;br/&gt;&lt;br/&gt;scikit-learn + SHAP - ML algorithms and explainability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="0" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Clinical Datasets (cylinder) -->
+        <mxCell id="12" value="&lt;b&gt;Clinical Datasets&lt;/b&gt;&lt;br/&gt;[Container]&lt;br/&gt;&lt;br/&gt;CSV Files - 20 domain datasets" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=12;size=15;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="900" y="700" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Boundary: FastAPI Backend (dashed rectangle) -->
+        <mxCell id="20" value="FastAPI Backend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#333333;dashed=1;dashPattern=8 4;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingTop=5;spacingLeft=10;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="750" height="650" as="geometry" />
+        </mxCell>
+
+        <!-- ======== MIDDLEWARE TIER ======== -->
+        <!-- CORS Middleware -->
+        <mxCell id="30" value="&lt;b&gt;CORS Middleware&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;FastAPI CORSMiddleware - Allows cross-origin requests from React dev server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="20">
+          <mxGeometry x="225" y="40" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ======== ROUTER TIER (5 routers) ======== -->
+        <!-- Data Router -->
+        <mxCell id="40" value="&lt;b&gt;Data Router&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;POST /data/upload, GET /data/example/{domain}, GET /data/columns, POST /data/prepare" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
+          <mxGeometry x="10" y="150" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Train Router -->
+        <mxCell id="41" value="&lt;b&gt;Train Router&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;POST /train/{model_type} - triggers model training" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
+          <mxGeometry x="160" y="150" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Results Router -->
+        <mxCell id="42" value="&lt;b&gt;Results Router&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;GET /results - returns metrics, confusion matrix, ROC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
+          <mxGeometry x="310" y="150" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Explain Router -->
+        <mxCell id="43" value="&lt;b&gt;Explain Router&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;GET /explain/feature-importance, GET /explain/shap/{patient_id}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
+          <mxGeometry x="460" y="150" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Ethics Router -->
+        <mxCell id="44" value="&lt;b&gt;Ethics Router&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;GET /ethics/bias-audit, POST /certificate/download" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
+          <mxGeometry x="610" y="150" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ======== SERVICE TIER (6 services) ======== -->
+        <!-- Preprocessing Service -->
+        <mxCell id="50" value="&lt;b&gt;Preprocessing Service&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;pandas, numpy, imbalanced-learn - Missing value imputation, normalisation, split, SMOTE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=9;" vertex="1" parent="20">
+          <mxGeometry x="5" y="290" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Training Service -->
+        <mxCell id="51" value="&lt;b&gt;Training Service&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;scikit-learn - Fits KNN, SVM, DT, RF, LR, NB models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=9;" vertex="1" parent="20">
+          <mxGeometry x="145" y="290" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Prediction Service -->
+        <mxCell id="52" value="&lt;b&gt;Prediction Service&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;scikit-learn - Runs predictions, computes 6 metrics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=9;" vertex="1" parent="20">
+          <mxGeometry x="285" y="290" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Explainability Service -->
+        <mxCell id="53" value="&lt;b&gt;Explainability Service&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;SHAP - Feature importance, per-patient SHAP waterfall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=9;" vertex="1" parent="20">
+          <mxGeometry x="425" y="290" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Bias Audit Service -->
+        <mxCell id="54" value="&lt;b&gt;Bias Audit Service&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;pandas - Subgroup performance, disparity detection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=9;" vertex="1" parent="20">
+          <mxGeometry x="565" y="290" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Certificate Service -->
+        <mxCell id="55" value="&lt;b&gt;Certificate Service&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;reportlab - PDF summary certificates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=9;" vertex="1" parent="20">
+          <mxGeometry x="565" y="410" width="130" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ======== PYDANTIC SCHEMAS ======== -->
+        <mxCell id="60" value="&lt;b&gt;Pydantic Schemas&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;Pydantic v2 - Type-safe request/response validation models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="20">
+          <mxGeometry x="175" y="560" width="400" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ======== RELATIONSHIPS (edges) ======== -->
+
+        <!-- React SPA to CORS Middleware -->
+        <mxCell id="100" value="HTTP requests [JSON/REST]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;entryX=0;entryY=0.5;strokeColor=#333333;fontSize=10;" edge="1" parent="1" source="10" target="30">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="90" y="135" />
+              <mxPoint x="90" y="175" />
+              <mxPoint x="325" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- CORS to Data Router -->
+        <mxCell id="101" value="Routes /data/*" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CORS to Train Router -->
+        <mxCell id="102" value="Routes /train/*" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CORS to Results Router -->
+        <mxCell id="103" value="Routes /results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CORS to Explain Router -->
+        <mxCell id="104" value="Routes /explain/*" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CORS to Ethics Router -->
+        <mxCell id="105" value="Routes /ethics/*" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DataRouter to PrepService -->
+        <mxCell id="110" value="Delegates data processing" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="40" target="50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DataRouter to Datasets -->
+        <mxCell id="111" value="Loads CSV files [File I/O]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="40" target="12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="60" y="700" />
+              <mxPoint x="60" y="740" />
+              <mxPoint x="990" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- TrainRouter to TrainingService -->
+        <mxCell id="112" value="Delegates model training" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="41" target="51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ResultsRouter to PredictionService -->
+        <mxCell id="113" value="Delegates metric computation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="42" target="52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ExplainRouter to ExplainabilityService -->
+        <mxCell id="114" value="Delegates SHAP analysis" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="43" target="53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EthicsRouter to BiasService -->
+        <mxCell id="115" value="Delegates fairness audit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="44" target="54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EthicsRouter to CertService -->
+        <mxCell id="116" value="Delegates PDF generation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="44" target="55">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- TrainingService to ML Engine -->
+        <mxCell id="120" value="Uses ML algorithms" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="51" target="11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="430" />
+              <mxPoint x="860" y="40" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- PredictionService to ML Engine -->
+        <mxCell id="121" value="Uses trained models" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="52" target="11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="430" />
+              <mxPoint x="870" y="55" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ExplainabilityService to ML Engine -->
+        <mxCell id="122" value="Uses SHAP library" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="53" target="11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="430" />
+              <mxPoint x="880" y="25" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- TrainingService to PrepService (Receives prepared data) -->
+        <mxCell id="130" value="Receives prepared data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="51" target="50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PredictionService to TrainingService -->
+        <mxCell id="131" value="Uses trained model object" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="52" target="51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BiasService to PredictionService -->
+        <mxCell id="132" value="Uses prediction results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="54" target="52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DataRouter to Schemas -->
+        <mxCell id="140" value="Validates with" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#999999;dashed=1;fontSize=9;" edge="1" parent="1" source="40" target="60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- TrainRouter to Schemas -->
+        <mxCell id="141" value="Validates with" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#999999;dashed=1;fontSize=9;" edge="1" parent="1" source="41" target="60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EthicsRouter to Schemas -->
+        <mxCell id="142" value="Validates with" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#999999;dashed=1;fontSize=9;" edge="1" parent="1" source="44" target="60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

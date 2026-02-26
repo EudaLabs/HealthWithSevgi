@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram id="c4-level4b-pydantic-schemas" name="Level 4b: Pydantic Schemas - Data Models">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title1" value="Level 4b: Pydantic Schemas - Data Models (UML Class Diagram)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="-60" width="560" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 1: ColumnInfo                          -->
+        <!-- ============================================ -->
+        <mxCell id="s1" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ColumnInfo&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="s1a" value="+ name: str&lt;br/&gt;+ dtype: str&lt;br/&gt;+ missing_percent: float&lt;br/&gt;+ unique_values: int&lt;br/&gt;+ action_tag: str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s1">
+          <mxGeometry y="40" width="220" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 2: UploadResponse                      -->
+        <!-- ============================================ -->
+        <mxCell id="s2" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;UploadResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="0" y="200" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="s2a" value="+ columns: list[ColumnInfo]&lt;br/&gt;+ rows: int&lt;br/&gt;+ filename: str&lt;br/&gt;+ size_bytes: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s2">
+          <mxGeometry y="40" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 3: PrepareRequest                      -->
+        <!-- ============================================ -->
+        <mxCell id="s3" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;PrepareRequest&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="280" y="0" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="s3a" value="+ train_test_split: float&lt;br/&gt;+ missing_value_strategy: str&lt;br/&gt;+ normalisation: str&lt;br/&gt;+ apply_smote: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s3">
+          <mxGeometry y="40" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 4: PrepareResponse                     -->
+        <!-- ============================================ -->
+        <mxCell id="s4" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;PrepareResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="280" y="200" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s4a" value="+ status: str&lt;br/&gt;+ training_rows: int&lt;br/&gt;+ test_rows: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s4">
+          <mxGeometry y="40" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 5: TrainRequest                        -->
+        <!-- ============================================ -->
+        <mxCell id="s5" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;TrainRequest&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="560" y="0" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s5a" value="+ hyperparameters: dict&lt;br/&gt;+ auto_retrain: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s5">
+          <mxGeometry y="40" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 6: TrainResponse                       -->
+        <!-- ============================================ -->
+        <mxCell id="s6" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;TrainResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="560" y="200" width="250" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="s6a" value="+ model_id: str&lt;br/&gt;+ accuracy: float&lt;br/&gt;+ sensitivity: float&lt;br/&gt;+ specificity: float&lt;br/&gt;+ precision: float&lt;br/&gt;+ f1_score: float&lt;br/&gt;+ auc_roc: float&lt;br/&gt;+ training_time_ms: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s6">
+          <mxGeometry y="40" width="250" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 7: ROCData                             -->
+        <!-- ============================================ -->
+        <mxCell id="s7" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ROCData&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="560" y="450" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s7a" value="+ fpr: list[float]&lt;br/&gt;+ tpr: list[float]&lt;br/&gt;+ thresholds: list[float]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s7">
+          <mxGeometry y="40" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 8: ResultsResponse                     -->
+        <!-- ============================================ -->
+        <mxCell id="s8" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ResultsResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="840" y="200" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s8a" value="+ metrics: TrainResponse&lt;br/&gt;+ confusion_matrix: list[list]&lt;br/&gt;+ roc_curve: ROCData" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s8">
+          <mxGeometry y="40" width="250" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 9: FeatureRank                         -->
+        <!-- ============================================ -->
+        <mxCell id="s9" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;FeatureRank&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="0" y="450" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s9a" value="+ feature: str&lt;br/&gt;+ importance: float&lt;br/&gt;+ rank: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s9">
+          <mxGeometry y="40" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 10: FeatureImportanceResponse          -->
+        <!-- ============================================ -->
+        <mxCell id="s10" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;FeatureImportanceResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="0" y="650" width="250" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="s10a" value="+ features: list[FeatureRank]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s10">
+          <mxGeometry y="40" width="250" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 11: SHAPFeature                        -->
+        <!-- ============================================ -->
+        <mxCell id="s11" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;SHAPFeature&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="280" y="450" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="s11a" value="+ feature: str&lt;br/&gt;+ value: float&lt;br/&gt;+ shap_value: float&lt;br/&gt;+ direction: str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s11">
+          <mxGeometry y="40" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 12: SHAPResponse                       -->
+        <!-- ============================================ -->
+        <mxCell id="s12" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;SHAPResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="280" y="650" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s12a" value="+ base_value: float&lt;br/&gt;+ features: list[SHAPFeature]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s12">
+          <mxGeometry y="40" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 13: BiasSubgroupMetrics                -->
+        <!-- ============================================ -->
+        <mxCell id="s13" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;BiasSubgroupMetrics&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="560" y="650" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s13a" value="+ accuracy: float&lt;br/&gt;+ sensitivity: float&lt;br/&gt;+ specificity: float" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s13">
+          <mxGeometry y="40" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 14: BiasAuditResponse                  -->
+        <!-- ============================================ -->
+        <mxCell id="s14" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;BiasAuditResponse&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="840" y="450" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s14a" value="+ subgroups: dict&lt;br/&gt;+ bias_warnings: list[str]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s14">
+          <mxGeometry y="40" width="250" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 15: CertificateRequest                 -->
+        <!-- ============================================ -->
+        <mxCell id="s15" value="&lt;b&gt;&amp;lt;&amp;lt;BaseModel&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;CertificateRequest&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="840" y="650" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s15a" value="+ model_type: str&lt;br/&gt;+ domain: str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="s15">
+          <mxGeometry y="40" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- COMPOSITION RELATIONSHIPS                    -->
+        <!-- ============================================ -->
+
+        <!-- UploadResponse *.. ColumnInfo: contains -->
+        <mxCell id="r1" value="contains" style="endArrow=open;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=10;startArrow=diamondThin;startFill=1;startSize=14;" edge="1" source="s2" target="s1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ResultsResponse *.. TrainResponse: includes metrics -->
+        <mxCell id="r2" value="includes metrics" style="endArrow=open;endFill=0;endSize=12;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;startArrow=diamondThin;startFill=1;startSize=14;" edge="1" source="s8a" target="s6a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ResultsResponse *.. ROCData: includes curve data -->
+        <mxCell id="r3" value="includes curve data" style="endArrow=open;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;startArrow=diamondThin;startFill=1;startSize=14;" edge="1" source="s8" target="s7a" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="965" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FeatureImportanceResponse *.. FeatureRank: contains -->
+        <mxCell id="r4" value="contains" style="endArrow=open;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=10;startArrow=diamondThin;startFill=1;startSize=14;" edge="1" source="s10" target="s9" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- SHAPResponse *.. SHAPFeature: contains -->
+        <mxCell id="r5" value="contains" style="endArrow=open;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=10;startArrow=diamondThin;startFill=1;startSize=14;" edge="1" source="s12" target="s11" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- BiasAuditResponse *.. BiasSubgroupMetrics: per subgroup -->
+        <mxCell id="r6" value="per subgroup" style="endArrow=open;endFill=0;endSize=12;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;startArrow=diamondThin;startFill=1;startSize=14;" edge="1" source="s14" target="s13a" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- Legend                                        -->
+        <!-- ============================================ -->
+        <mxCell id="leg1" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="0" y="790" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="0" y="820" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2t" value="Request Schemas (client sends)" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="25" y="815" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="0" y="845" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3t" value="Response Schemas (server returns)" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="25" y="840" width="210" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4s" value="" style="endArrow=open;endFill=0;endSize=10;html=1;startArrow=diamondThin;startFill=1;startSize=12;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="878" as="sourcePoint" />
+            <mxPoint x="60" y="878" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg4t" value="Composition (contains)" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="65" y="865" width="160" height="25" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

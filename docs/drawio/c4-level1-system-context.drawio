@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram id="c4-level1-system-context" name="Level 1: System Context">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="Level 1: System Context Diagram - HealthWithSevgi" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="10" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Person: Healthcare Professional -->
+        <mxCell id="3" value="&lt;b&gt;Healthcare Professional&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Person]&lt;br/&gt;&lt;br/&gt;Doctor, nurse, or clinical researcher who needs to understand ML predictions for clinical decisions" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;rounded=1;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];strokeColor=#073763;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="70" width="200" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Person: Student / Instructor -->
+        <mxCell id="4" value="&lt;b&gt;Student / Instructor&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Person]&lt;br/&gt;&lt;br/&gt;SENG 430 course participant using the tool for teaching and learning ML concepts in a healthcare setting" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;rounded=1;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];strokeColor=#073763;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="70" width="200" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- System: HealthWithSevgi (Central) -->
+        <mxCell id="5" value="&lt;b&gt;HealthWithSevgi&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[Software System]&lt;br/&gt;&lt;br/&gt;Interactive browser-based ML visualization tool guiding users through a 7-step pipeline from medical specialty selection to model training to fairness auditing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3A7BBD;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="275" y="310" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- External System: Clinical Dataset Repositories -->
+        <mxCell id="6" value="&lt;b&gt;Clinical Dataset Repositories&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[External System]&lt;br/&gt;&lt;br/&gt;UCI ML Repository, Kaggle, PhysioNet - original sources for 20 pre-bundled clinical CSV datasets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;fontColor=#ffffff;strokeColor=#888888;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="510" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- External System: Web Browser -->
+        <mxCell id="7" value="&lt;b&gt;Web Browser&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;[External System]&lt;br/&gt;&lt;br/&gt;Chrome, Firefox, or Safari - hosts the SPA runtime and provides localStorage for session persistence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;fontColor=#ffffff;strokeColor=#888888;align=center;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="50" y="510" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: Healthcare Pro to HealthWithSevgi -->
+        <mxCell id="8" value="Uses to train, evaluate,&lt;br/&gt;and explain ML models&lt;br/&gt;on patient data [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="3" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: Student to HealthWithSevgi -->
+        <mxCell id="9" value="Uses for learning ML&lt;br/&gt;concepts in clinical&lt;br/&gt;settings [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="4" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: HealthWithSevgi to Web Browser -->
+        <mxCell id="10" value="Delivers single-page&lt;br/&gt;application to&lt;br/&gt;[HTML/JS/CSS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="5" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship: HealthWithSevgi to Dataset Repos -->
+        <mxCell id="11" value="Downloads and bundles&lt;br/&gt;clinical CSV datasets from&lt;br/&gt;[Build-time only]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=0;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="5" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

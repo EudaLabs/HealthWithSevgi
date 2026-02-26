@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram id="c4-level4a-backend-classes" name="Level 4a: Backend Service Classes">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title1" value="Level 4a: Backend Service Classes - UML Class Diagram" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="-60" width="520" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 1: FastAPIApp                          -->
+        <!-- ============================================ -->
+        <mxCell id="c1" value="&lt;b&gt;&amp;lt;&amp;lt;Application&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;FastAPIApp&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="350" y="0" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="c1a" value="+ title: str&lt;br/&gt;+ version: str&lt;br/&gt;+ description: str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c1">
+          <mxGeometry y="40" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c1d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c1">
+          <mxGeometry y="90" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c1m" value="+ add_middleware(CORSMiddleware)&lt;br/&gt;+ include_router(APIRouter)&lt;br/&gt;+ get_root(): dict&lt;br/&gt;+ get_health(): dict" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c1">
+          <mxGeometry y="98" width="220" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 2: DataRouter                          -->
+        <!-- ============================================ -->
+        <mxCell id="c2" value="&lt;b&gt;&amp;lt;&amp;lt;Router&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;DataRouter&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="0" y="200" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="c2d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c2">
+          <mxGeometry y="40" width="250" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c2m" value="+ upload_csv(file: UploadFile): UploadResponse&lt;br/&gt;+ load_example(domain: str): UploadResponse&lt;br/&gt;+ get_columns(): list[ColumnInfo]&lt;br/&gt;+ prepare_data(config: PrepareRequest): PrepareResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c2">
+          <mxGeometry y="48" width="250" height="102" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 3: TrainRouter                         -->
+        <!-- ============================================ -->
+        <mxCell id="c3" value="&lt;b&gt;&amp;lt;&amp;lt;Router&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;TrainRouter&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="280" y="200" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="c3d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c3">
+          <mxGeometry y="40" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c3m" value="+ train_model(model_type: str,&lt;br/&gt;    params: TrainRequest): TrainResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c3">
+          <mxGeometry y="48" width="220" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 4: ResultsRouter                       -->
+        <!-- ============================================ -->
+        <mxCell id="c4" value="&lt;b&gt;&amp;lt;&amp;lt;Router&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ResultsRouter&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="530" y="200" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c4d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c4">
+          <mxGeometry y="40" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c4m" value="+ get_results(): ResultsResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c4">
+          <mxGeometry y="48" width="200" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 5: ExplainRouter                       -->
+        <!-- ============================================ -->
+        <mxCell id="c5" value="&lt;b&gt;&amp;lt;&amp;lt;Router&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ExplainRouter&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="760" y="200" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c5d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c5">
+          <mxGeometry y="40" width="250" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c5m" value="+ feature_importance(): FeatureImportanceResponse&lt;br/&gt;+ shap_waterfall(patient_id: int): SHAPResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c5">
+          <mxGeometry y="48" width="250" height="62" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 6: EthicsRouter                        -->
+        <!-- ============================================ -->
+        <mxCell id="c6" value="&lt;b&gt;&amp;lt;&amp;lt;Router&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;EthicsRouter&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="200" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c6d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c6">
+          <mxGeometry y="40" width="250" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c6m" value="+ bias_audit(): BiasAuditResponse&lt;br/&gt;+ download_certificate(req: CertificateRequest): bytes" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c6">
+          <mxGeometry y="48" width="250" height="62" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 7: PreprocessingService                -->
+        <!-- ============================================ -->
+        <mxCell id="c7" value="&lt;b&gt;&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;PreprocessingService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="0" y="450" width="260" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="c7a" value="- dataframe: DataFrame&lt;br/&gt;- X_train: ndarray&lt;br/&gt;- X_test: ndarray&lt;br/&gt;- y_train: ndarray&lt;br/&gt;- y_test: ndarray" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c7">
+          <mxGeometry y="40" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c7d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c7">
+          <mxGeometry y="120" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c7m" value="+ load_csv(file_bytes: bytes): DataFrame&lt;br/&gt;+ load_example(domain: str): DataFrame&lt;br/&gt;+ get_column_info(): list[ColumnInfo]&lt;br/&gt;+ fill_missing(strategy: str): DataFrame&lt;br/&gt;+ normalise(method: str): DataFrame&lt;br/&gt;+ split_data(ratio: float): tuple&lt;br/&gt;+ apply_smote(): DataFrame" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c7">
+          <mxGeometry y="128" width="260" height="132" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 8: ModelTrainingService                -->
+        <!-- ============================================ -->
+        <mxCell id="c8" value="&lt;b&gt;&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ModelTrainingService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="300" y="450" width="280" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="c8a" value="- model: BaseEstimator&lt;br/&gt;- model_type: str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c8">
+          <mxGeometry y="40" width="280" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c8d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c8">
+          <mxGeometry y="80" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c8m" value="+ train_knn(k: int): BaseEstimator&lt;br/&gt;+ train_svm(kernel: str, C: float): BaseEstimator&lt;br/&gt;+ train_decision_tree(max_depth: int): BaseEstimator&lt;br/&gt;+ train_random_forest(n_estimators: int,&lt;br/&gt;    max_depth: int): BaseEstimator&lt;br/&gt;+ train_logistic_regression(C: float): BaseEstimator&lt;br/&gt;+ train_naive_bayes(): BaseEstimator&lt;br/&gt;+ get_trained_model(): BaseEstimator" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c8">
+          <mxGeometry y="88" width="280" height="192" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 9: PredictionService                   -->
+        <!-- ============================================ -->
+        <mxCell id="c9" value="&lt;b&gt;&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;PredictionService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="620" y="450" width="260" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="c9a" value="- model: BaseEstimator&lt;br/&gt;- X_test: ndarray&lt;br/&gt;- y_test: ndarray&lt;br/&gt;- y_pred: ndarray" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c9">
+          <mxGeometry y="40" width="260" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="c9d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c9">
+          <mxGeometry y="105" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c9m" value="+ predict(X: ndarray): ndarray&lt;br/&gt;+ compute_accuracy(): float&lt;br/&gt;+ compute_sensitivity(): float&lt;br/&gt;+ compute_specificity(): float&lt;br/&gt;+ compute_precision(): float&lt;br/&gt;+ compute_f1(): float&lt;br/&gt;+ compute_auc_roc(): float&lt;br/&gt;+ get_confusion_matrix(): ndarray&lt;br/&gt;+ get_roc_curve(): tuple" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c9">
+          <mxGeometry y="113" width="260" height="177" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 10: ExplainabilityService              -->
+        <!-- ============================================ -->
+        <mxCell id="c10" value="&lt;b&gt;&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ExplainabilityService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="920" y="450" width="260" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="c10a" value="- model: BaseEstimator&lt;br/&gt;- feature_names: list" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c10">
+          <mxGeometry y="40" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c10d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c10">
+          <mxGeometry y="80" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c10m" value="+ compute_feature_importance(): list[FeatureRank]&lt;br/&gt;+ compute_shap_values(patient_idx: int): SHAPResponse" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c10">
+          <mxGeometry y="88" width="260" height="82" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 11: BiasAuditService                   -->
+        <!-- ============================================ -->
+        <mxCell id="c11" value="&lt;b&gt;&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;BiasAuditService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="0" y="750" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="c11a" value="- y_true: ndarray&lt;br/&gt;- y_pred: ndarray&lt;br/&gt;- sensitive_features: DataFrame" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c11">
+          <mxGeometry y="40" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c11d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c11">
+          <mxGeometry y="90" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c11m" value="+ audit_subgroups(): dict&lt;br/&gt;+ detect_disparities(threshold: float): list[str]&lt;br/&gt;+ generate_warnings(): list[str]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c11">
+          <mxGeometry y="98" width="260" height="102" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLASS 12: CertificateService                 -->
+        <!-- ============================================ -->
+        <mxCell id="c12" value="&lt;b&gt;&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&lt;/b&gt;&lt;br/&gt;&lt;b&gt;CertificateService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;startSize=40;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="300" y="750" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c12d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=10;rotatable=0;labelPosition=left;points=[];portConstraint=eastwest;" vertex="1" parent="c12">
+          <mxGeometry y="40" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="c12m" value="+ generate_pdf(model_type: str,&lt;br/&gt;    domain: str, metrics: dict,&lt;br/&gt;    date: str): bytes" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontFamily=Courier New;fontSize=11;" vertex="1" parent="c12">
+          <mxGeometry y="48" width="280" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- RELATIONSHIPS: FastAPIApp to Routers         -->
+        <!-- ============================================ -->
+
+        <!-- FastAPIApp to DataRouter: includes router -->
+        <mxCell id="r1" value="includes router" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c1a" target="c2" parent="1">
+          <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPIApp to TrainRouter: includes router -->
+        <mxCell id="r2" value="includes router" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c1" target="c3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- FastAPIApp to ResultsRouter: includes router -->
+        <mxCell id="r3" value="includes router" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c1a" target="c4" parent="1">
+          <mxGeometry x="-0.2" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPIApp to ExplainRouter: includes router -->
+        <mxCell id="r4" value="includes router" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c1m" target="c5" parent="1">
+          <mxGeometry x="-0.3" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- FastAPIApp to EthicsRouter: includes router -->
+        <mxCell id="r5" value="includes router" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c1d" target="c6" parent="1">
+          <mxGeometry x="-0.5" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- RELATIONSHIPS: Routers to Services           -->
+        <!-- ============================================ -->
+
+        <!-- DataRouter to PreprocessingService: uses -->
+        <mxCell id="r6" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c2" target="c7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- TrainRouter to ModelTrainingService: uses -->
+        <mxCell id="r7" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c3" target="c8" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ResultsRouter to PredictionService: uses -->
+        <mxCell id="r8" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c4" target="c9" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ExplainRouter to ExplainabilityService: uses -->
+        <mxCell id="r9" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c5" target="c10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EthicsRouter to BiasAuditService: uses -->
+        <mxCell id="r10" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c6" target="c11" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="400" />
+              <mxPoint x="130" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- EthicsRouter to CertificateService: uses -->
+        <mxCell id="r11" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c6" target="c12" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1165" y="420" />
+              <mxPoint x="440" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- RELATIONSHIPS: Service dependencies          -->
+        <!-- ============================================ -->
+
+        <!-- ModelTrainingService to PreprocessingService: depends on prepared data -->
+        <mxCell id="r12" value="depends on prepared data" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c8a" target="c7a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PredictionService to ModelTrainingService: depends on trained model -->
+        <mxCell id="r13" value="depends on trained model" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c9a" target="c8a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ExplainabilityService to ModelTrainingService: depends on trained model -->
+        <mxCell id="r14" value="depends on trained model" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c10a" target="c8m" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="510" />
+              <mxPoint x="600" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- BiasAuditService to PredictionService: depends on predictions -->
+        <mxCell id="r15" value="depends on predictions" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;" edge="1" source="c11a" target="c9m" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="820" />
+              <mxPoint x="280" y="900" />
+              <mxPoint x="600" y="900" />
+              <mxPoint x="600" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="leg1" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="450" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="480" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2t" value="Application Entry Point" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="475" width="140" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="505" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3t" value="API Routers" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="500" width="140" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="530" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4t" value="Business Services" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="525" width="140" height="25" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

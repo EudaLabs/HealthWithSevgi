@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram name="Branch and CI/CD Workflow" id="branch-ci-workflow">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Title -->
+        <mxCell id="title1" value="&lt;b&gt;Branch and CI/CD Workflow&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="270" y="-60" width="280" height="40" as="geometry" />
+        </mxCell>
+        <!-- DEV: Developer Local -->
+        <mxCell id="DEV" value="&lt;b&gt;Developer Local&lt;/b&gt;&lt;br&gt;VS Code + Vite + Uvicorn" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff3e0;strokeColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="300" y="0" width="200" height="70" as="geometry" />
+        </mxCell>
+        <!-- FB: Feature Branch -->
+        <mxCell id="FB" value="&lt;b&gt;feature/US-XXX&lt;/b&gt;&lt;br&gt;Feature Branch" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e8f5e9;strokeColor=#2e7d32;" vertex="1" parent="1">
+          <mxGeometry x="300" y="120" width="200" height="60" as="geometry" />
+        </mxCell>
+        <!-- PR: Pull Request -->
+        <mxCell id="PR" value="&lt;b&gt;Pull Request&lt;/b&gt;&lt;br&gt;Linked to Jira Story" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="1">
+          <mxGeometry x="300" y="230" width="200" height="60" as="geometry" />
+        </mxCell>
+        <!-- CI: GitHub Actions CI -->
+        <mxCell id="CI" value="&lt;b&gt;GitHub Actions CI&lt;/b&gt;&lt;br&gt;Lint + Test + Build" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff9c4;strokeColor=#f9a825;" vertex="1" parent="1">
+          <mxGeometry x="300" y="340" width="200" height="60" as="geometry" />
+        </mxCell>
+        <!-- CR: Code Review -->
+        <mxCell id="CR" value="&lt;b&gt;Code Review&lt;/b&gt;&lt;br&gt;1 Approval Required" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e3f2fd;strokeColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="450" width="200" height="60" as="geometry" />
+        </mxCell>
+        <!-- DEVELOP: develop branch -->
+        <mxCell id="DEVELOP" value="&lt;b&gt;develop branch&lt;/b&gt;&lt;br&gt;Integration Branch" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;" vertex="1" parent="1">
+          <mxGeometry x="300" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <!-- MAIN: main branch -->
+        <mxCell id="MAIN" value="&lt;b&gt;main branch&lt;/b&gt;&lt;br&gt;Production-Ready" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e0f2f1;strokeColor=#00695c;" vertex="1" parent="1">
+          <mxGeometry x="300" y="670" width="200" height="60" as="geometry" />
+        </mxCell>
+        <!-- Arrow: DEV to FB -->
+        <mxCell id="edge1" value="git checkout -b feature/US-XXX" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="DEV" target="FB" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: FB to PR -->
+        <mxCell id="edge2" value="git push -u origin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="FB" target="PR" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: PR to CI -->
+        <mxCell id="edge3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="PR" target="CI" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: CI to CR (All checks pass) -->
+        <mxCell id="edge4" value="All checks pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="CI" target="CR" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: CI to DEV (Checks fail, curved left) -->
+        <mxCell id="edge5" value="Checks fail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="CI" target="DEV" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="370" />
+              <mxPoint x="230" y="35" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <!-- Arrow: CR to DEVELOP (Approved) -->
+        <mxCell id="edge6" value="Approved" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="CR" target="DEVELOP" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: CR to DEV (Changes requested, curved right) -->
+        <mxCell id="edge7" value="Changes requested" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="CR" target="DEV" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="480" />
+              <mxPoint x="570" y="35" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <!-- Arrow: DEVELOP to MAIN (Sprint release merge) -->
+        <mxCell id="edge8" value="Sprint release merge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="DEVELOP" target="MAIN" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

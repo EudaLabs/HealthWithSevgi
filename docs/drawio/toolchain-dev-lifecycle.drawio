@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram name="Development Lifecycle Pipeline" id="dev-lifecycle-1">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title2" value="Development Lifecycle Pipeline" style="text;html=1;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="-50" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 1: Plan                                                -->
+        <!-- ============================================================ -->
+        <mxCell id="s1" value="1. Plan" style="swimlane;startSize=30;fillColor=#e3f2fd;strokeColor=#1565c0;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s1t1" value="&lt;b&gt;Jira&lt;/b&gt;&lt;br/&gt;Create User Stories" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s1">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s1t2" value="&lt;b&gt;Jira&lt;/b&gt;&lt;br/&gt;Sprint Planning" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s1">
+          <mxGeometry x="30" y="110" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s1t3" value="&lt;b&gt;Jira&lt;/b&gt;&lt;br/&gt;Estimate Points" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s1">
+          <mxGeometry x="30" y="180" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 2: Design                                              -->
+        <!-- ============================================================ -->
+        <mxCell id="s2" value="2. Design" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#2e7d32;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s2t1" value="&lt;b&gt;Figma&lt;/b&gt;&lt;br/&gt;Create Wireframes" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s2">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s2t2" value="&lt;b&gt;Figma&lt;/b&gt;&lt;br/&gt;Design Review" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s2">
+          <mxGeometry x="30" y="110" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s2t3" value="&lt;b&gt;Figma&lt;/b&gt;&lt;br/&gt;Instructor Approval" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s2">
+          <mxGeometry x="30" y="180" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 3: Develop                                             -->
+        <!-- ============================================================ -->
+        <mxCell id="s3" value="3. Develop" style="swimlane;startSize=30;fillColor=#fff3e0;strokeColor=#e65100;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s3t1" value="&lt;b&gt;Git&lt;/b&gt;&lt;br/&gt;Create Feature Branch" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s3">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s3t2" value="&lt;b&gt;VS Code&lt;/b&gt;&lt;br/&gt;Write Code" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s3">
+          <mxGeometry x="30" y="100" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s3t3" value="&lt;b&gt;Vite / Uvicorn&lt;/b&gt;&lt;br/&gt;Run Dev Servers" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s3">
+          <mxGeometry x="30" y="160" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s3t4" value="&lt;b&gt;ESLint + Prettier&lt;/b&gt;&lt;br/&gt;Auto-Format" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s3">
+          <mxGeometry x="30" y="220" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 4: Test                                                -->
+        <!-- ============================================================ -->
+        <mxCell id="s4" value="4. Test" style="swimlane;startSize=30;fillColor=#fff9c4;strokeColor=#f9a825;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s4t1" value="&lt;b&gt;pytest&lt;/b&gt;&lt;br/&gt;Backend Unit Tests" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s4">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s4t2" value="&lt;b&gt;Vitest&lt;/b&gt;&lt;br/&gt;Frontend Unit Tests" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s4">
+          <mxGeometry x="30" y="100" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s4t3" value="&lt;b&gt;Lighthouse&lt;/b&gt;&lt;br/&gt;Performance Score" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s4">
+          <mxGeometry x="30" y="160" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s4t4" value="&lt;b&gt;axe&lt;/b&gt;&lt;br/&gt;Accessibility Check" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s4">
+          <mxGeometry x="30" y="220" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 5: Review                                              -->
+        <!-- ============================================================ -->
+        <mxCell id="s5" value="5. Review" style="swimlane;startSize=30;fillColor=#fce4ec;strokeColor=#c62828;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s5t1" value="&lt;b&gt;GitHub&lt;/b&gt;&lt;br/&gt;Create Pull Request" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s5">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s5t2" value="&lt;b&gt;GitHub&lt;/b&gt;&lt;br/&gt;Code Review" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s5">
+          <mxGeometry x="30" y="110" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s5t3" value="&lt;b&gt;GitHub Actions&lt;/b&gt;&lt;br/&gt;CI Checks" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s5">
+          <mxGeometry x="30" y="180" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 6: Deploy                                              -->
+        <!-- ============================================================ -->
+        <mxCell id="s6" value="6. Deploy" style="swimlane;startSize=30;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s6t1" value="&lt;b&gt;Docker&lt;/b&gt;&lt;br/&gt;Build Images" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s6">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s6t2" value="&lt;b&gt;docker-compose&lt;/b&gt;&lt;br/&gt;Start Full Stack" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s6">
+          <mxGeometry x="30" y="110" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s6t3" value="&lt;b&gt;Uvicorn&lt;/b&gt;&lt;br/&gt;Serve API" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s6">
+          <mxGeometry x="30" y="180" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- STAGE 7: Retrospect                                          -->
+        <!-- ============================================================ -->
+        <mxCell id="s7" value="7. Retrospect" style="swimlane;startSize=30;fillColor=#e0f7fa;strokeColor=#00695c;fontStyle=1;fontSize=13;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="0" width="170" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="s7t1" value="&lt;b&gt;Miro / FigJam&lt;/b&gt;&lt;br/&gt;Keep-Improve-Try" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s7">
+          <mxGeometry x="30" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s7t2" value="&lt;b&gt;GitHub Wiki&lt;/b&gt;&lt;br/&gt;Meeting Notes" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s7">
+          <mxGeometry x="30" y="110" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s7t3" value="&lt;b&gt;Jira&lt;/b&gt;&lt;br/&gt;Velocity Review" style="rounded=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#666666;fontSize=11;" vertex="1" parent="s7">
+          <mxGeometry x="30" y="180" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- FLOW ARROWS BETWEEN STAGES                                   -->
+        <!-- ============================================================ -->
+
+        <!-- Plan to Design -->
+        <mxCell id="flow1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="s1" target="s2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Design to Develop -->
+        <mxCell id="flow2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="s2" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Develop to Test -->
+        <mxCell id="flow3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="s3" target="s4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Test to Review -->
+        <mxCell id="flow4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="s4" target="s5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Review to Deploy -->
+        <mxCell id="flow5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="s5" target="s6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Deploy to Retrospect -->
+        <mxCell id="flow6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="s6" target="s7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Retrospect back to Plan: Next Sprint (cycle) -->
+        <mxCell id="flow7" value="Next Sprint" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#333333;strokeWidth=2;endArrow=blockThin;endFill=1;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontStyle=1;fontSize=11;" edge="1" source="s7" target="s1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1285" y="320" />
+              <mxPoint x="85" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

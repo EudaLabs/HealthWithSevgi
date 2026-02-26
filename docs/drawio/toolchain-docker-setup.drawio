@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" type="device">
+  <diagram name="Docker Containerisation Setup (Planned)" id="docker-setup">
+    <mxGraphModel dx="1100" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="750" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Title -->
+        <mxCell id="title1" value="&lt;b&gt;Docker Containerisation Setup (Planned)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="230" y="10" width="420" height="40" as="geometry" />
+        </mxCell>
+        <!-- Host Machine (outer container) -->
+        <mxCell id="HOST" value="&lt;b&gt;Host Machine&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#efebe9;strokeColor=#4e342e;verticalAlign=top;align=left;spacingTop=5;spacingLeft=10;container=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="50" width="800" height="500" as="geometry" />
+        </mxCell>
+        <!-- docker-compose.yml (nested inside Host) -->
+        <mxCell id="COMPOSE" value="&lt;b&gt;docker-compose.yml&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f5f5f5;strokeColor=#616161;verticalAlign=top;align=left;spacingTop=5;spacingLeft=10;container=1;" vertex="1" parent="HOST">
+          <mxGeometry x="30" y="40" width="740" height="420" as="geometry" />
+        </mxCell>
+        <!-- Frontend Container -->
+        <mxCell id="FRONTEND_CONTAINER" value="&lt;b&gt;Frontend Container&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#fff3e0;strokeColor=#e65100;verticalAlign=top;align=left;spacingTop=5;spacingLeft=10;container=1;" vertex="1" parent="COMPOSE">
+          <mxGeometry x="20" y="40" width="300" height="250" as="geometry" />
+        </mxCell>
+        <!-- Node.js Runtime -->
+        <mxCell id="NODEJS" value="&lt;b&gt;Node.js Runtime&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#e65100;" vertex="1" parent="FRONTEND_CONTAINER">
+          <mxGeometry x="20" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        <!-- Vite Dev Server :5173 -->
+        <mxCell id="VITE_SERVER" value="&lt;b&gt;Vite Dev Server :5173&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#e65100;" vertex="1" parent="FRONTEND_CONTAINER">
+          <mxGeometry x="20" y="110" width="140" height="50" as="geometry" />
+        </mxCell>
+        <!-- React 18 SPA + Tailwind CSS -->
+        <mxCell id="REACT_SPA" value="&lt;b&gt;React 18 SPA + Tailwind CSS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#e65100;" vertex="1" parent="FRONTEND_CONTAINER">
+          <mxGeometry x="20" y="180" width="180" height="50" as="geometry" />
+        </mxCell>
+        <!-- Backend Container -->
+        <mxCell id="BACKEND_CONTAINER" value="&lt;b&gt;Backend Container&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#f3e5f5;strokeColor=#6a1b9a;verticalAlign=top;align=left;spacingTop=5;spacingLeft=10;container=1;" vertex="1" parent="COMPOSE">
+          <mxGeometry x="400" y="40" width="300" height="250" as="geometry" />
+        </mxCell>
+        <!-- Python 3.10+ Runtime -->
+        <mxCell id="PYTHON_RT" value="&lt;b&gt;Python 3.10+ Runtime&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#6a1b9a;" vertex="1" parent="BACKEND_CONTAINER">
+          <mxGeometry x="20" y="40" width="140" height="50" as="geometry" />
+        </mxCell>
+        <!-- Uvicorn ASGI :8000 -->
+        <mxCell id="UVICORN_DOCKER" value="&lt;b&gt;Uvicorn ASGI :8000&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#6a1b9a;" vertex="1" parent="BACKEND_CONTAINER">
+          <mxGeometry x="20" y="110" width="140" height="50" as="geometry" />
+        </mxCell>
+        <!-- FastAPI App -->
+        <mxCell id="FASTAPI_DOCKER" value="&lt;b&gt;FastAPI App&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#6a1b9a;" vertex="1" parent="BACKEND_CONTAINER">
+          <mxGeometry x="20" y="180" width="120" height="50" as="geometry" />
+        </mxCell>
+        <!-- scikit-learn + SHAP + pandas -->
+        <mxCell id="ML_LIBS" value="&lt;b&gt;scikit-learn + SHAP + pandas&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#6a1b9a;" vertex="1" parent="BACKEND_CONTAINER">
+          <mxGeometry x="170" y="180" width="110" height="50" as="geometry" />
+        </mxCell>
+        <!-- datasets/ 20 CSV files (cylinder shape) -->
+        <mxCell id="DATASETS" value="&lt;b&gt;datasets/&lt;/b&gt;&lt;br&gt;20 CSV files" style="shape=cylinder3;whiteSpace=wrap;fontColor=#000000;fillColor=#ffffff;strokeColor=#6a1b9a;boundedLbl=1;backgroundOutline=1;size=10;" vertex="1" parent="BACKEND_CONTAINER">
+          <mxGeometry x="170" y="100" width="110" height="60" as="geometry" />
+        </mxCell>
+        <!-- Browser (external) -->
+        <mxCell id="BROWSER_EXT" value="&lt;b&gt;Browser&lt;/b&gt;&lt;br&gt;localhost:5173" style="rounded=1;whiteSpace=wrap;fontColor=#000000;fillColor=#e3f2fd;strokeColor=#1565c0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="580" width="160" height="60" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Browser to Vite Dev Server (HTTP) -->
+        <mxCell id="edge1" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="BROWSER_EXT" target="VITE_SERVER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Vite Dev Server to Uvicorn (API proxy) -->
+        <mxCell id="edge2" value="API proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="VITE_SERVER" target="UVICORN_DOCKER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Node.js to Vite Dev Server -->
+        <mxCell id="edge3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="NODEJS" target="VITE_SERVER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Vite Dev Server to React SPA -->
+        <mxCell id="edge4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="VITE_SERVER" target="REACT_SPA" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Python Runtime to Uvicorn -->
+        <mxCell id="edge5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="PYTHON_RT" target="UVICORN_DOCKER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Uvicorn to FastAPI -->
+        <mxCell id="edge6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="UVICORN_DOCKER" target="FASTAPI_DOCKER" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: FastAPI to scikit-learn + SHAP + pandas -->
+        <mxCell id="edge7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="FASTAPI_DOCKER" target="ML_LIBS" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: FastAPI to datasets -->
+        <mxCell id="edge8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="FASTAPI_DOCKER" target="DATASETS" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
