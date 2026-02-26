@@ -1,220 +1,205 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="draw.io" modified="2026-02-26" agent="draw.io" type="device">
   <diagram name="Level 3b: Component Diagram - React SPA Frontend" id="c4-level3b">
-    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+    <mxGraphModel dx="1800" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1300" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
         <!-- Title -->
-        <mxCell id="2" value="Level 3b: Component Diagram - React SPA Frontend" style="text;html=1;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="250" y="-50" width="600" height="40" as="geometry" />
+        <mxCell id="2" value="Level 3b: Component Diagram - React SPA Frontend" style="text;html=1;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="450" y="10" width="700" height="40" as="geometry" />
         </mxCell>
 
-        <!-- External Containers (gray) -->
-        <!-- FastAPI Backend -->
-        <mxCell id="10" value="&lt;b&gt;FastAPI Backend&lt;/b&gt;&lt;br/&gt;[Container]&lt;br/&gt;&lt;br/&gt;Python / FastAPI - REST API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="0" y="850" width="200" height="80" as="geometry" />
+        <!-- ======== EXTERNAL CONTAINERS ======== -->
+        <mxCell id="ext_api" value="&lt;b&gt;FastAPI Backend&lt;/b&gt;&lt;br/&gt;[Container: Python / FastAPI]&lt;br/&gt;&lt;br/&gt;REST API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1180" width="220" height="80" as="geometry" />
         </mxCell>
 
-        <!-- Session Storage (cylinder) -->
-        <mxCell id="11" value="&lt;b&gt;Session Storage&lt;/b&gt;&lt;br/&gt;[Container]&lt;br/&gt;&lt;br/&gt;localStorage - Browser persistence" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=12;size=15;boundedLbl=1;" vertex="1" parent="1">
-          <mxGeometry x="900" y="850" width="200" height="80" as="geometry" />
+        <mxCell id="ext_storage" value="&lt;b&gt;Session Storage&lt;/b&gt;&lt;br/&gt;[Container: localStorage]&lt;br/&gt;&lt;br/&gt;Browser persistence" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#DDDDDD;fontColor=#000000;strokeColor=#888888;fontSize=11;size=15;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1180" width="220" height="80" as="geometry" />
         </mxCell>
 
-        <!-- Boundary: React SPA Frontend (dashed rectangle) -->
-        <mxCell id="20" value="React SPA Frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#333333;dashed=1;dashPattern=8 4;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingTop=5;spacingLeft=10;container=1;collapsible=0;" vertex="1" parent="1">
-          <mxGeometry x="50" y="20" width="1000" height="790" as="geometry" />
+        <!-- ======== MAIN BOUNDARY ======== -->
+        <mxCell id="boundary" value="React SPA Frontend [Container: React 18, Vite, Tailwind CSS, React Router v6]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#438DD5;dashed=1;dashPattern=8 4;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingTop=8;spacingLeft=15;container=1;collapsible=0;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="1720" height="1060" as="geometry" />
         </mxCell>
 
-        <!-- ======== NAVIGATION TIER (top row, 3 items) ======== -->
-        <!-- App Router -->
-        <mxCell id="30" value="&lt;b&gt;App Router&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;React Router v6 - Manages client-side routing across 8 step pages: /step-0 through /step-7" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="30" y="40" width="280" height="80" as="geometry" />
+        <!-- ======== TIER 1: NAVIGATION (top) ======== -->
+        <mxCell id="tier1_label" value="Navigation Layer" style="text;html=1;fontSize=11;fontStyle=3;fontColor=#666666;align=left;" vertex="1" parent="boundary">
+          <mxGeometry x="20" y="35" width="120" height="20" as="geometry" />
         </mxCell>
 
-        <!-- Stepper Navigation -->
-        <mxCell id="31" value="&lt;b&gt;Stepper Navigation&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;React Component - Left sidebar showing numbered steps 0-7 with active, completed, and locked states" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="360" y="40" width="280" height="80" as="geometry" />
+        <mxCell id="nav_stepper" value="&lt;b&gt;Stepper Navigation&lt;/b&gt;&lt;br/&gt;[Component: React]&lt;br/&gt;&lt;br/&gt;Left sidebar showing steps 0-7 with active, completed, and locked states" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="boundary">
+          <mxGeometry x="40" y="60" width="280" height="90" as="geometry" />
         </mxCell>
 
-        <!-- Domain Pill Bar -->
-        <mxCell id="32" value="&lt;b&gt;Domain Pill Bar&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;React Component - Top navigation bar with 20 clickable medical specialty pills" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="690" y="40" width="280" height="80" as="geometry" />
+        <mxCell id="nav_router" value="&lt;b&gt;App Router&lt;/b&gt;&lt;br/&gt;[Component: React Router v6]&lt;br/&gt;&lt;br/&gt;Manages client-side routing across 8 step pages: /step-0 through /step-7" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3476AF;fontSize=11;fontStyle=0;" vertex="1" parent="boundary">
+          <mxGeometry x="720" y="60" width="280" height="90" as="geometry" />
         </mxCell>
 
-        <!-- ======== PAGE TIER (8 step pages, 2 rows of 4) ======== -->
-        <!-- Row 1 -->
-        <!-- Step 0 -->
-        <mxCell id="40" value="&lt;b&gt;Step 0: Specialty Selection&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;Landing page, 20 medical specialty cards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="30" y="170" width="220" height="70" as="geometry" />
+        <mxCell id="nav_pillbar" value="&lt;b&gt;Domain Pill Bar&lt;/b&gt;&lt;br/&gt;[Component: React]&lt;br/&gt;&lt;br/&gt;Top bar with 20 clickable medical specialty pills and domain-switch confirmation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="boundary">
+          <mxGeometry x="1400" y="60" width="280" height="90" as="geometry" />
         </mxCell>
 
-        <!-- Step 1 -->
-        <mxCell id="41" value="&lt;b&gt;Step 1: Clinical Context&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;Clinical problem introduction text" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="270" y="170" width="220" height="70" as="geometry" />
+        <!-- ======== TIER 2: STEP PAGES ======== -->
+        <mxCell id="tier2_label" value="Page Components (Steps 0-7)" style="text;html=1;fontSize=11;fontStyle=3;fontColor=#666666;align=left;" vertex="1" parent="boundary">
+          <mxGeometry x="20" y="195" width="200" height="20" as="geometry" />
         </mxCell>
 
-        <!-- Step 2 -->
-        <mxCell id="42" value="&lt;b&gt;Step 2: Data Exploration&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;CSV upload, dataset selector, column summary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="510" y="170" width="220" height="70" as="geometry" />
+        <!-- Steps group boundary -->
+        <mxCell id="steps_group" value="" style="rounded=1;fillColor=#F0F4FA;strokeColor=#B0C4DE;dashed=0;strokeWidth=1;container=1;collapsible=0;" vertex="1" parent="boundary">
+          <mxGeometry x="30" y="220" width="1660" height="260" as="geometry" />
         </mxCell>
 
-        <!-- Step 3 -->
-        <mxCell id="43" value="&lt;b&gt;Step 3: Data Preparation&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;Train/test split, imputation, normalisation, SMOTE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="750" y="170" width="220" height="70" as="geometry" />
+        <!-- Row 1: Steps 0-3 -->
+        <mxCell id="step0" value="&lt;b&gt;Step 0&lt;/b&gt;&lt;br/&gt;Specialty Selection&lt;br/&gt;&lt;br/&gt;20 medical specialty cards with icons" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="20" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- Row 2 -->
-        <!-- Step 4 -->
-        <mxCell id="44" value="&lt;b&gt;Step 4: Model Selection&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;6-model picker, hyperparameter sliders" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="30" y="280" width="220" height="70" as="geometry" />
+        <mxCell id="step1" value="&lt;b&gt;Step 1&lt;/b&gt;&lt;br/&gt;Clinical Context&lt;br/&gt;&lt;br/&gt;Clinical problem introduction text for selected domain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="230" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- Step 5 -->
-        <mxCell id="45" value="&lt;b&gt;Step 5: Results&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;6 metric cards, confusion matrix, ROC curve" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="270" y="280" width="220" height="70" as="geometry" />
+        <mxCell id="step2" value="&lt;b&gt;Step 2&lt;/b&gt;&lt;br/&gt;Data Exploration&lt;br/&gt;&lt;br/&gt;CSV upload, dataset selector, column summary table" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="440" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- Step 6 -->
-        <mxCell id="46" value="&lt;b&gt;Step 6: Explainability&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;Feature importance bar chart, SHAP waterfall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="510" y="280" width="220" height="70" as="geometry" />
+        <mxCell id="step3" value="&lt;b&gt;Step 3&lt;/b&gt;&lt;br/&gt;Data Preparation&lt;br/&gt;&lt;br/&gt;Split slider, imputation, normalisation, SMOTE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="650" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- Step 7 -->
-        <mxCell id="47" value="&lt;b&gt;Step 7: Ethics and Bias&lt;/b&gt;&lt;br/&gt;[Page Component]&lt;br/&gt;&lt;br/&gt;Fairness table, EU AI Act checklist, PDF cert" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="20">
-          <mxGeometry x="750" y="280" width="220" height="70" as="geometry" />
+        <!-- Row 2: Steps 4-7 -->
+        <mxCell id="step4" value="&lt;b&gt;Step 4&lt;/b&gt;&lt;br/&gt;Model Selection&lt;br/&gt;&lt;br/&gt;6-model picker, hyperparameter sliders, auto-retrain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="860" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- ======== INFRASTRUCTURE TIER (bottom row, 3 items) ======== -->
-        <!-- API Client -->
-        <mxCell id="50" value="&lt;b&gt;API Client&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;Axios or Fetch - Centralised HTTP client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="20">
-          <mxGeometry x="30" y="430" width="280" height="80" as="geometry" />
+        <mxCell id="step5" value="&lt;b&gt;Step 5&lt;/b&gt;&lt;br/&gt;Results&lt;br/&gt;&lt;br/&gt;6 metric cards, confusion matrix, ROC curve" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="1070" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- Custom Hooks -->
-        <mxCell id="51" value="&lt;b&gt;Custom Hooks&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;React Hooks - useDataUpload, useMLModel, useSessionStorage, useMetrics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="20">
-          <mxGeometry x="360" y="430" width="280" height="80" as="geometry" />
+        <mxCell id="step6" value="&lt;b&gt;Step 6&lt;/b&gt;&lt;br/&gt;Explainability&lt;br/&gt;&lt;br/&gt;Feature importance bar chart, SHAP waterfall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="1280" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- Session Manager -->
-        <mxCell id="52" value="&lt;b&gt;Session Manager&lt;/b&gt;&lt;br/&gt;[Component]&lt;br/&gt;&lt;br/&gt;JavaScript module - localStorage JSON serialisation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="20">
-          <mxGeometry x="690" y="430" width="280" height="80" as="geometry" />
+        <mxCell id="step7" value="&lt;b&gt;Step 7&lt;/b&gt;&lt;br/&gt;Ethics and Bias&lt;br/&gt;&lt;br/&gt;Fairness table, EU AI Act checklist, PDF certificate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=10;" vertex="1" parent="steps_group">
+          <mxGeometry x="1450" y="15" width="190" height="100" as="geometry" />
         </mxCell>
 
-        <!-- ======== RELATIONSHIPS (edges) ======== -->
+        <!-- API-connected indicator labels inside steps group -->
+        <mxCell id="api_label" value="Steps 2-7 call API Client for backend operations" style="text;html=1;fontSize=10;fontStyle=2;fontColor=#888888;align=center;" vertex="1" parent="steps_group">
+          <mxGeometry x="440" y="130" width="800" height="20" as="geometry" />
+        </mxCell>
 
-        <!-- Stepper to Router: Navigate between steps -->
-        <mxCell id="100" value="Navigate between steps" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="31" target="30">
+        <!-- Vertical connector lines from steps to bottom of group (visual bus) -->
+        <mxCell id="bus2" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="535" y="115" as="sourcePoint" />
+            <mxPoint x="535" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bus3" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="115" as="sourcePoint" />
+            <mxPoint x="745" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bus4" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="955" y="115" as="sourcePoint" />
+            <mxPoint x="955" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bus5" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="115" as="sourcePoint" />
+            <mxPoint x="1165" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bus6" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375" y="115" as="sourcePoint" />
+            <mxPoint x="1375" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bus7" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=1;dashed=1;dashPattern=4 4;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1545" y="115" as="sourcePoint" />
+            <mxPoint x="1545" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Horizontal bus bar -->
+        <mxCell id="busbar" value="" style="endArrow=none;strokeColor=#3A7BBF;strokeWidth=2;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="535" y="160" as="sourcePoint" />
+            <mxPoint x="1545" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bus bar down to API Client connector point -->
+        <mxCell id="busdown" value="" style="endArrow=block;endFill=1;strokeColor=#3A7BBF;strokeWidth=2;" edge="1" parent="steps_group">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1040" y="160" as="sourcePoint" />
+            <mxPoint x="1040" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ======== TIER 3: INFRASTRUCTURE ======== -->
+        <mxCell id="tier3_label" value="Infrastructure Layer" style="text;html=1;fontSize=11;fontStyle=3;fontColor=#666666;align=left;" vertex="1" parent="boundary">
+          <mxGeometry x="20" y="520" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="infra_api" value="&lt;b&gt;API Client&lt;/b&gt;&lt;br/&gt;[Component: Axios / Fetch]&lt;br/&gt;&lt;br/&gt;Centralised HTTP client wrapping all backend REST calls with base URL config and error handling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="boundary">
+          <mxGeometry x="40" y="550" width="400" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="infra_hooks" value="&lt;b&gt;Custom Hooks&lt;/b&gt;&lt;br/&gt;[Component: React Hooks]&lt;br/&gt;&lt;br/&gt;useDataUpload, useMLModel, useSessionStorage, useMetrics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="boundary">
+          <mxGeometry x="660" y="550" width="400" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="infra_session" value="&lt;b&gt;Session Manager&lt;/b&gt;&lt;br/&gt;[Component: JavaScript module]&lt;br/&gt;&lt;br/&gt;Reads and writes user progress and configuration to browser localStorage with JSON serialisation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;fontColor=#000000;strokeColor=#3A7BBF;fontSize=11;" vertex="1" parent="boundary">
+          <mxGeometry x="1280" y="550" width="400" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ======== RELATIONSHIPS ======== -->
+
+        <!-- Stepper -> Router -->
+        <mxCell id="e1" value="Navigate between steps" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#333333;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="boundary" source="nav_stepper" target="nav_router">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <!-- Pill Bar to Router: Trigger domain change -->
-        <mxCell id="101" value="Trigger domain change" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="32" target="30">
+        <!-- Pill Bar -> Router -->
+        <mxCell id="e2" value="Trigger domain change and page reset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#333333;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="boundary" source="nav_pillbar" target="nav_router">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Router -> Steps Group (single arrow) -->
+        <mxCell id="e3" value="Routes /step-0 through /step-7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#438DD5;strokeWidth=2;fontSize=11;fontStyle=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="boundary" source="nav_router" target="steps_group">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Steps Group -> API Client (single consolidated arrow) -->
+        <mxCell id="e4" value="Upload CSV, send config, train model, fetch results, fetch SHAP, fetch bias audit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#333333;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="boundary" source="steps_group" target="infra_api">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="880" y="30" />
-              <mxPoint x="40" y="30" />
-              <mxPoint x="40" y="80" />
+              <mxPoint x="240" y="500" />
             </Array>
           </mxGeometry>
         </mxCell>
 
-        <!-- Router to Step 0 -->
-        <mxCell id="110" value="Routes /step-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="40">
+        <!-- Hooks -> Session Manager -->
+        <mxCell id="e5" value="Read and write session state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#333333;fontSize=10;" edge="1" parent="boundary" source="infra_hooks" target="infra_session">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <!-- Router to Step 1 -->
-        <mxCell id="111" value="Routes /step-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="41">
+        <!-- API Client -> FastAPI Backend (external) -->
+        <mxCell id="e_ext1" value="REST API calls [JSON over HTTP]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#333333;strokeWidth=2;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="infra_api" target="ext_api">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <!-- Router to Step 2 -->
-        <mxCell id="112" value="Routes /step-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="42">
+        <!-- Session Manager -> Session Storage (external) -->
+        <mxCell id="e_ext2" value="Persist data [Web Storage API]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#333333;strokeWidth=2;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="infra_session" target="ext_storage">
           <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Router to Step 3 -->
-        <mxCell id="113" value="Routes /step-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="43">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Router to Step 4 -->
-        <mxCell id="114" value="Routes /step-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="44">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Router to Step 5 -->
-        <mxCell id="115" value="Routes /step-5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="45">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Router to Step 6 -->
-        <mxCell id="116" value="Routes /step-6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="46">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Router to Step 7 -->
-        <mxCell id="117" value="Routes /step-7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="30" target="47">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Step 2 to API Client: Upload CSV data -->
-        <mxCell id="120" value="Upload CSV data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="42" target="50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Step 3 to API Client: Send preparation params -->
-        <mxCell id="121" value="Send preparation params" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="43" target="50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Step 4 to API Client: Trigger model training -->
-        <mxCell id="122" value="Trigger model training" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="44" target="50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Step 5 to API Client: Fetch results -->
-        <mxCell id="123" value="Fetch results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="45" target="50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Step 6 to API Client: Fetch SHAP explanations -->
-        <mxCell id="124" value="Fetch SHAP explanations" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="46" target="50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Step 7 to API Client: Fetch bias audit and certificate -->
-        <mxCell id="125" value="Fetch bias audit &amp;amp; certificate" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="47" target="50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- API Client to FastAPI Backend -->
-        <mxCell id="130" value="REST API calls [JSON over HTTP]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=10;" edge="1" parent="1" source="50" target="10">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="220" y="570" />
-              <mxPoint x="30" y="570" />
-              <mxPoint x="30" y="890" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Custom Hooks to Session Manager -->
-        <mxCell id="140" value="Read and write session state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=9;" edge="1" parent="1" source="51" target="52">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Session Manager to Session Storage -->
-        <mxCell id="141" value="Persist data [Web Storage API]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#333333;fontSize=10;" edge="1" parent="1" source="52" target="11">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="880" y="570" />
-              <mxPoint x="1070" y="570" />
-              <mxPoint x="1070" y="890" />
-            </Array>
-          </mxGeometry>
         </mxCell>
 
       </root>
