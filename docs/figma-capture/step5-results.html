@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Step 5 — Results &amp; Evaluation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green:   #16a34a;
+  --green-d: #15803d;
+  --green-l: #bbf7d0;
+  --green-bg:#f0fdf4;
+  --navy:    #0D2340;
+  --sky:     #f0fdf4;
+  --mint:    #dcfce7;
+  --paper:   #F7F9FB;
+  --white:   #FFFFFF;
+  --ink:     #0D1B2A;
+  --mid:     #4A6070;
+  --muted:   #7A92A3;
+  --line:    #DDE4EA;
+  --line2:   #C8D4DC;
+  --good:    #16a34a;
+  --good-bg: #f0fdf4;
+  --warn:    #A05C00;
+  --warn-bg: #FEF3E2;
+  --bad:     #B91C1C;
+  --bad-bg:  #FEF0F0;
+  --info:    #16a34a;
+  --info-bg: #f0fdf4;
+  --shadow-sm: 0 1px 4px rgba(13,35,64,.07);
+  --shadow:    0 4px 18px rgba(13,35,64,.09);
+  --r: 14px;
+  --r2: 20px;
+  --sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+  --serif: 'Fraunces', Georgia, serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);font-size:14px;line-height:1.5;width:1440px}
+.wrap{max-width:1360px;margin:0 auto;padding:16px 20px 60px}
+.nav{background:var(--green-d);position:sticky;top:0;z-index:100;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px;box-shadow:0 2px 12px rgba(22,163,74,.25)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#16a34a);display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:16px;color:#fff;flex:0 0 auto}
+.nav-title{font-size:15px;font-weight:600;color:#fff;letter-spacing:.01em}
+.nav-subtitle{font-size:12px;color:rgba(255,255,255,.55);margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);font-size:12px;font-weight:500;color:rgba(255,255,255,.8);cursor:pointer}
+.nav-chip b{color:#fff}
+.nav-chip-dot{width:7px;height:7px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+.nav-btn{padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+
+.domain-bar{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+.domain-pill{padding:8px 16px;border-radius:999px;border:1px solid var(--line2);background:var(--white);font-size:12px;font-weight:500;color:var(--mid);cursor:pointer}
+.domain-pill.active{background:var(--green);border-color:var(--green);color:#fff}
+
+.stepper{margin-top:14px;display:grid;grid-template-columns:repeat(7,1fr);gap:8px;background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:12px;box-shadow:var(--shadow-sm)}
+.step-btn{border-radius:var(--r);border:1px solid var(--line);background:var(--white);padding:10px;cursor:pointer;text-align:left;display:flex;gap:10px;align-items:flex-start}
+.step-num{width:26px;height:26px;border-radius:10px;background:var(--paper);border:1px solid var(--line2);display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--muted);flex:0 0 auto}
+.step-btn.active{border-color:var(--green);background:var(--green-bg)}
+.step-btn.active .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-btn.done .step-num{background:var(--mint);border-color:var(--green);color:var(--green)}
+.step-label b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+.step-label small{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.25}
+
+.screen-header{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:18px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;box-shadow:var(--shadow-sm);margin-top:14px;margin-bottom:12px}
+.screen-header h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--green-d);line-height:1.2}
+.screen-header p{font-size:13px;color:var(--mid);margin-top:6px;max-width:860px;line-height:1.5}
+.step-tag{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--green-bg);border:1px solid var(--green-l);font-size:11px;font-weight:600;color:var(--green);letter-spacing:.04em;margin-bottom:6px}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:0 0 auto}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:16px;box-shadow:var(--shadow-sm)}
+.card + .card{margin-top:12px}
+.card-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.10em;margin-bottom:12px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--white);color:var(--ink);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+
+.banner{border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;margin-top:10px}
+.banner-icon{font-size:16px;flex:0 0 auto;margin-top:1px}
+.banner.warn{background:var(--warn-bg);border:1px solid rgba(160,92,0,.2);color:var(--warn)}
+.banner.good{background:var(--good-bg);border:1px solid rgba(22,163,74,.2);color:var(--good)}
+.banner.bad{background:var(--bad-bg);border:1px solid rgba(185,28,28,.2);color:var(--bad)}
+.banner.info{background:var(--info-bg);border:1px solid rgba(22,163,74,.2);color:var(--info)}
+.banner b{font-weight:600}
+
+.tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.03em}
+.tag.info{background:var(--green-bg);color:var(--green);border:1px solid rgba(22,163,74,.2)}
+
+.screen-footer{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;box-shadow:var(--shadow-sm)}
+.screen-footer small{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* KPI cards */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r);
+  padding:12px;text-align:center;
+}
+.kpi-val{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--navy)}
+.kpi-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.kpi-note{font-size:11px;color:var(--mid);margin-top:5px;line-height:1.35}
+.kpi.good{border-color:rgba(13,122,80,.2);background:var(--good-bg)}
+.kpi.good .kpi-val{color:var(--good)}
+.kpi.warn{border-color:rgba(160,92,0,.2);background:var(--warn-bg)}
+.kpi.warn .kpi-val{color:var(--warn)}
+.kpi.bad{border-color:rgba(185,28,28,.2);background:var(--bad-bg)}
+.kpi.bad .kpi-val{color:var(--bad)}
+
+/* ROC curve */
+.roc-svg{width:100%;height:160px;border-radius:12px;overflow:hidden}
+
+/* Confusion Matrix */
+.cm-grid{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:6px;margin-top:8px}
+.cm-cell{border-radius:10px;padding:14px 10px;text-align:center}
+.cm-corner,.cm-col-hdr,.cm-row-hdr{background:transparent;padding:6px;display:flex;align-items:center;justify-content:center}
+.cm-col-hdr,.cm-row-hdr{font-size:11px;font-weight:600;color:var(--muted)}
+.cm-row-hdr{writing-mode:horizontal-tb;font-size:10px}
+.cm-tp{background:var(--good-bg);border:1px solid rgba(13,122,80,.2)}
+.cm-tn{background:var(--good-bg);border:1px solid rgba(13,122,80,.2)}
+.cm-fp{background:var(--warn-bg);border:1px solid rgba(160,92,0,.2)}
+.cm-fn{background:var(--bad-bg);border:1px solid rgba(185,28,28,.2)}
+.cm-num{font-family:var(--serif);font-size:22px;font-weight:600}
+.cm-lbl{font-size:10px;font-weight:600;margin-top:4px;line-height:1.3}
+.cm-tp .cm-num,.cm-tn .cm-num{color:var(--good)}
+.cm-fp .cm-num{color:var(--warn)}
+.cm-fn .cm-num{color:var(--bad)}
+.cm-tp .cm-lbl,.cm-tn .cm-lbl{color:var(--good)}
+.cm-fp .cm-lbl{color:var(--warn)}
+.cm-fn .cm-lbl{color:var(--bad)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">H</div>
+    <div>
+      <div class="nav-title">HealthWithSevgi · ML Learning Tool</div>
+      <div class="nav-subtitle">For Healthcare Professionals</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-chip"><span class="nav-chip-dot"></span> Domain: <b>Cardiology</b> ▾</div>
+    <button class="nav-btn">↺ Reset</button>
+    <button class="nav-btn" style="background:rgba(255,255,255,.2);">? Help</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<div class="domain-bar">
+  <div class="domain-pill active">Cardiology</div>
+  <div class="domain-pill">Radiology</div>
+  <div class="domain-pill">Nephrology</div>
+  <div class="domain-pill">Oncology-Breast</div>
+  <div class="domain-pill">Neurology-Parkinson's</div>
+  <div class="domain-pill">Endocrinology-Diabetes</div>
+  <div class="domain-pill">Hepatology-Liver</div>
+  <div class="domain-pill">Cardiology-Stroke</div>
+  <div class="domain-pill">Mental Health</div>
+  <div class="domain-pill">Pulmonology-COPD</div>
+  <div class="domain-pill">Haematology-Anaemia</div>
+  <div class="domain-pill">Dermatology</div>
+  <div class="domain-pill">Ophthalmology</div>
+  <div class="domain-pill">Orthopaedics-Spine</div>
+  <div class="domain-pill">ICU/Sepsis</div>
+  <div class="domain-pill">Obstetrics-Fetal</div>
+  <div class="domain-pill">Cardiology-Arrhythmia</div>
+  <div class="domain-pill">Oncology-Cervical</div>
+  <div class="domain-pill">Thyroid/Endocrinology</div>
+  <div class="domain-pill">Pharmacy-Readmission</div>
+</div>
+
+<div class="stepper">
+  <button class="step-btn done">
+    <div class="step-num"><span>1</span></div>
+    <div class="step-label"><b>Clinical Context</b><small>Use case &amp; goals</small></div>
+  </button>
+  <button class="step-btn done">
+    <div class="step-num"><span>2</span></div>
+    <div class="step-label"><b>Data Exploration</b><small>Upload &amp; understand</small></div>
+  </button>
+  <button class="step-btn done">
+    <div class="step-num"><span>3</span></div>
+    <div class="step-label"><b>Data Preparation</b><small>Clean &amp; split data</small></div>
+  </button>
+  <button class="step-btn done">
+    <div class="step-num"><span>4</span></div>
+    <div class="step-label"><b>Model &amp; Parameters</b><small>Select &amp; tune</small></div>
+  </button>
+  <button class="step-btn active">
+    <div class="step-num"><span>5</span></div>
+    <div class="step-label"><b>Results</b><small>Metrics &amp; matrix</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>6</span></div>
+    <div class="step-label"><b>Explainability</b><small>Why this prediction?</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>7</span></div>
+    <div class="step-label"><b>Ethics &amp; Bias</b><small>Fairness check</small></div>
+  </button>
+</div>
+
+<div class="screen-header">
+  <div>
+    <span class="step-tag">STEP 5 OF 7</span>
+    <h2>Results — How Well Does the Model Perform?</h2>
+    <p>Here we evaluate the model's predictions on the test patients it has never seen before. Accuracy alone is not enough — we examine sensitivity (catching real cases) and specificity (avoiding false alarms).</p>
+  </div>
+  <div class="hdr-right">
+    <div style="font-size:11px;color:var(--muted);font-weight:600;">⏱ ~3 minutes</div>
+    <button class="btn primary">Next Step →</button>
+  </div>
+</div>
+
+<div class="cols">
+  <!-- LEFT COLUMN -->
+  <div>
+    <!-- Performance Metrics Card -->
+    <div class="card">
+      <div class="card-title">Performance Metrics — KNN (K=5) on Test Patients</div>
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-val">78%</div><div class="kpi-name">Accuracy</div><div class="kpi-note">Overall correct predictions out of all test patients</div></div>
+        <div class="kpi warn"><div class="kpi-val">62%</div><div class="kpi-name">Sensitivity ★</div><div class="kpi-note">Of patients who WERE readmitted, how many did we catch?</div></div>
+        <div class="kpi good"><div class="kpi-val">85%</div><div class="kpi-name">Specificity</div><div class="kpi-note">Of patients who were NOT readmitted, how many did we correctly call safe?</div></div>
+      </div>
+      <div class="kpis" style="margin-top:10px;">
+        <div class="kpi"><div class="kpi-val">58%</div><div class="kpi-name">Precision</div><div class="kpi-note">Of patients we flagged as high risk, how many actually were?</div></div>
+        <div class="kpi"><div class="kpi-val">60%</div><div class="kpi-name">F1 Score</div><div class="kpi-note">Balance between catching cases and avoiding false alarms</div></div>
+        <div class="kpi good"><div class="kpi-val">0.81</div><div class="kpi-name">AUC-ROC</div><div class="kpi-note">Overall ability to separate readmitted from not-readmitted (0.5=random, 1.0=perfect)</div></div>
+      </div>
+      <div class="banner bad" style="margin-top:12px;">
+        <div class="banner-icon">⚠️</div>
+        <div><b>Low Sensitivity:</b> This model misses 38% of patients who will actually be readmitted. Go back to Step 4 and try a different model or adjust K.</div>
+      </div>
+    </div>
+
+    <!-- ROC Curve Card -->
+    <div class="card">
+      <div class="card-title">ROC Curve — How Well Does the Model Separate the Two Groups?</div>
+      <svg class="roc-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet" style="border:1px solid var(--line);border-radius:12px;background:#f7f9fb">
+        <text x="10" y="14" fill="#7a92a3" font-size="9" font-family="DM Mono">1.0</text>
+        <text x="10" y="152" fill="#7a92a3" font-size="9" font-family="DM Mono">0</text>
+        <text x="270" y="152" fill="#7a92a3" font-size="9" font-family="DM Mono">1.0</text>
+        <line x1="30" y1="10" x2="30" y2="150" stroke="#dde4ea" stroke-width="1"/>
+        <line x1="30" y1="150" x2="290" y2="150" stroke="#dde4ea" stroke-width="1"/>
+        <!-- Diagonal (random) -->
+        <line x1="30" y1="150" x2="290" y2="10" stroke="#dde4ea" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- ROC curve -->
+        <path d="M30,150 C60,120 80,60 120,40 C160,22 200,15 290,10" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+        <text x="100" y="90" fill="#16a34a" font-size="10" font-weight="bold" font-family="DM Sans">AUC = 0.81</text>
+      </svg>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4;">A perfect model would go straight to the top-left corner. Our curve (green) is well above the diagonal line (random guessing), which is good. AUC of 0.81 = good discriminative ability.</div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <div class="card">
+      <div class="card-title">Confusion Matrix — What Did the Model Get Right and Wrong?</div>
+      <div style="font-size:12px;color:var(--mid);margin-bottom:10px;">This 2×2 table shows the model's predictions vs. what actually happened for the 61 test patients.</div>
+      <div class="cm-grid">
+        <div class="cm-corner"></div>
+        <div class="cm-col-hdr">Predicted: NOT Readmitted</div>
+        <div class="cm-col-hdr">Predicted: READMITTED</div>
+        <div class="cm-row-hdr" style="font-size:10px;font-weight:600;color:var(--muted);">Actual: NOT Readmitted</div>
+        <div class="cm-cell cm-tn"><div class="cm-num">36</div><div class="cm-lbl">Correctly called safe</div></div>
+        <div class="cm-cell cm-fp"><div class="cm-num">5</div><div class="cm-lbl">False alarm (extra follow-up)</div></div>
+        <div class="cm-row-hdr" style="font-size:10px;font-weight:600;color:var(--muted);">Actual: READMITTED</div>
+        <div class="cm-cell cm-fn"><div class="cm-num">8</div><div class="cm-lbl">Missed — returned to hospital</div></div>
+        <div class="cm-cell cm-tp"><div class="cm-num">12</div><div class="cm-lbl">Correctly flagged high-risk</div></div>
+      </div>
+      <div class="banner bad" style="margin-top:12px;">
+        <div class="banner-icon">❌</div>
+        <div><b>8 patients were missed (False Negatives).</b> These patients were sent home without extra support but returned to hospital within 30 days. In clinical practice, reducing these is the priority.</div>
+      </div>
+      <div class="banner info" style="margin-top:8px;">
+        <div class="banner-icon">ℹ️</div>
+        <div><b>5 False Positives</b> caused unnecessary follow-up calls. This is a cost, but not a safety risk. Usually preferable to missing real readmissions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen-footer">
+  <small>Step 5 / 7 · Results &amp; Evaluation</small>
+  <div style="display:flex;gap:8px;">
+    <button class="btn">← Previous</button>
+    <button class="btn primary">Next Step →</button>
+  </div>
+</div>
+
+</div>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>

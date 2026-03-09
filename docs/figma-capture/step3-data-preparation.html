@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Step 3 — Data Preparation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green:   #16a34a;
+  --green-d: #15803d;
+  --green-l: #bbf7d0;
+  --green-bg:#f0fdf4;
+  --navy:    #0D2340;
+  --sky:     #f0fdf4;
+  --mint:    #dcfce7;
+  --paper:   #F7F9FB;
+  --white:   #FFFFFF;
+  --ink:     #0D1B2A;
+  --mid:     #4A6070;
+  --muted:   #7A92A3;
+  --line:    #DDE4EA;
+  --line2:   #C8D4DC;
+  --good:    #16a34a;
+  --good-bg: #f0fdf4;
+  --warn:    #A05C00;
+  --warn-bg: #FEF3E2;
+  --bad:     #B91C1C;
+  --bad-bg:  #FEF0F0;
+  --info:    #16a34a;
+  --info-bg: #f0fdf4;
+  --shadow-sm: 0 1px 4px rgba(13,35,64,.07);
+  --shadow:    0 4px 18px rgba(13,35,64,.09);
+  --r: 14px;
+  --r2: 20px;
+  --sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+  --serif: 'Fraunces', Georgia, serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);font-size:14px;line-height:1.5;width:1440px}
+.wrap{max-width:1360px;margin:0 auto;padding:16px 20px 60px}
+.nav{background:var(--green-d);position:sticky;top:0;z-index:100;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px;box-shadow:0 2px 12px rgba(22,163,74,.25)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#16a34a);display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:16px;color:#fff;flex:0 0 auto}
+.nav-title{font-size:15px;font-weight:600;color:#fff;letter-spacing:.01em}
+.nav-subtitle{font-size:12px;color:rgba(255,255,255,.55);margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);font-size:12px;font-weight:500;color:rgba(255,255,255,.8);cursor:pointer}
+.nav-chip b{color:#fff}
+.nav-chip-dot{width:7px;height:7px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+.nav-btn{padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+
+.domain-bar{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+.domain-pill{padding:8px 16px;border-radius:999px;border:1px solid var(--line2);background:var(--white);font-size:12px;font-weight:500;color:var(--mid);cursor:pointer}
+.domain-pill.active{background:var(--green);border-color:var(--green);color:#fff}
+
+.stepper{margin-top:14px;display:grid;grid-template-columns:repeat(7,1fr);gap:8px;background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:12px;box-shadow:var(--shadow-sm)}
+.step-btn{border-radius:var(--r);border:1px solid var(--line);background:var(--white);padding:10px;cursor:pointer;text-align:left;display:flex;gap:10px;align-items:flex-start}
+.step-num{width:26px;height:26px;border-radius:10px;background:var(--paper);border:1px solid var(--line2);display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--muted);flex:0 0 auto}
+.step-btn.active{border-color:var(--green);background:var(--green-bg)}
+.step-btn.active .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-btn.done .step-num{background:var(--mint);border-color:var(--green);color:var(--green)}
+.step-label b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+.step-label small{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.25}
+
+.screen-header{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:18px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;box-shadow:var(--shadow-sm);margin-top:14px;margin-bottom:12px}
+.screen-header h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--green-d);line-height:1.2}
+.screen-header p{font-size:13px;color:var(--mid);margin-top:6px;max-width:860px;line-height:1.5}
+.step-tag{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--green-bg);border:1px solid var(--green-l);font-size:11px;font-weight:600;color:var(--green);letter-spacing:.04em;margin-bottom:6px}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:0 0 auto}
+
+.cols{display:grid;grid-template-columns:360px 1fr;gap:14px;align-items:start}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:16px;box-shadow:var(--shadow-sm)}
+.card + .card{margin-top:12px}
+.card-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.10em;margin-bottom:12px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--white);color:var(--ink);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+
+.banner{border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;margin-top:10px}
+.banner-icon{font-size:16px;flex:0 0 auto;margin-top:1px}
+.banner.warn{background:var(--warn-bg);border:1px solid rgba(160,92,0,.2);color:var(--warn)}
+.banner.good{background:var(--good-bg);border:1px solid rgba(22,163,74,.2);color:var(--good)}
+.banner b{font-weight:600}
+
+.tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.03em}
+.tag.info{background:var(--green-bg);color:var(--green);border:1px solid rgba(22,163,74,.2)}
+
+.screen-footer{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;box-shadow:var(--shadow-sm)}
+.screen-footer small{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* ─── FORM CONTROLS ───────────────────────────────── */
+label.lbl{display:block;font-size:11px;font-weight:600;color:var(--mid);margin:12px 0 5px;letter-spacing:.03em}
+.sel{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--white);color:var(--ink);font-size:13px;font-family:var(--sans);
+  outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A92A3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.sel:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+
+/* ─── SLIDER ──────────────────────────────────────── */
+.slider-wrap{margin-top:4px}
+.slider-row{display:flex;align-items:center;gap:12px;margin-top:4px}
+.slider-row input[type=range]{
+  flex:1;-webkit-appearance:none;height:6px;border-radius:999px;
+  background:var(--line);outline:none;cursor:pointer;
+}
+.slider-row input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:999px;
+  background:var(--green);border:2px solid var(--white);
+  box-shadow:0 2px 6px rgba(22,163,74,.25);cursor:pointer;
+}
+.slider-row input[type=range]::-moz-range-thumb{
+  width:18px;height:18px;border-radius:999px;
+  background:var(--green);border:2px solid var(--white);
+  box-shadow:0 2px 6px rgba(22,163,74,.25);cursor:pointer;
+}
+.slider-val{
+  min-width:42px;text-align:center;font-size:13px;font-weight:600;color:var(--green-d);
+  background:var(--green-bg);border:1px solid var(--green-l);border-radius:8px;padding:4px 8px;
+}
+.slider-hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+.slider-ends{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ─── BUTTONS ─────────────────────────────────────── */
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ─── GRID & BAR CHARTS ──────────────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bars{display:grid;gap:9px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-lbl{width:110px;font-size:12px;color:var(--mid);text-align:right;flex:0 0 auto}
+.bar-track{flex:1;height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#22c55e);transition:.6s ease}
+.bar-fill.green{background:linear-gradient(90deg,var(--green),#22c55e)}
+.bar-fill.warn{background:linear-gradient(90deg,#d97706,#f59e0b)}
+.bar-fill.bad{background:linear-gradient(90deg,var(--bad),#ef4444)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">H</div>
+    <div>
+      <div class="nav-title">HealthWithSevgi · ML Learning Tool</div>
+      <div class="nav-subtitle">For Healthcare Professionals</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-chip"><span class="nav-chip-dot"></span> Domain: <b>Cardiology</b> ▾</div>
+    <button class="nav-btn">↺ Reset</button>
+    <button class="nav-btn" style="background:rgba(255,255,255,.2);">? Help</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<div class="domain-bar">
+  <div class="domain-pill active">Cardiology</div>
+  <div class="domain-pill">Radiology</div>
+  <div class="domain-pill">Nephrology</div>
+  <div class="domain-pill">Oncology-Breast</div>
+  <div class="domain-pill">Neurology-Parkinson's</div>
+  <div class="domain-pill">Endocrinology-Diabetes</div>
+  <div class="domain-pill">Hepatology-Liver</div>
+  <div class="domain-pill">Cardiology-Stroke</div>
+  <div class="domain-pill">Mental Health</div>
+  <div class="domain-pill">Pulmonology-COPD</div>
+  <div class="domain-pill">Haematology-Anaemia</div>
+  <div class="domain-pill">Dermatology</div>
+  <div class="domain-pill">Ophthalmology</div>
+  <div class="domain-pill">Orthopaedics-Spine</div>
+  <div class="domain-pill">ICU/Sepsis</div>
+  <div class="domain-pill">Obstetrics-Fetal</div>
+  <div class="domain-pill">Cardiology-Arrhythmia</div>
+  <div class="domain-pill">Oncology-Cervical</div>
+  <div class="domain-pill">Thyroid/Endocrinology</div>
+  <div class="domain-pill">Pharmacy-Readmission</div>
+</div>
+
+<div class="stepper">
+  <button class="step-btn done">
+    <div class="step-num"><span>1</span></div>
+    <div class="step-label"><b>Clinical Context</b><small>Use case &amp; goals</small></div>
+  </button>
+  <button class="step-btn done">
+    <div class="step-num"><span>2</span></div>
+    <div class="step-label"><b>Data Exploration</b><small>Upload &amp; understand</small></div>
+  </button>
+  <button class="step-btn active">
+    <div class="step-num"><span>3</span></div>
+    <div class="step-label"><b>Data Preparation</b><small>Clean &amp; split data</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>4</span></div>
+    <div class="step-label"><b>Model &amp; Parameters</b><small>Select &amp; tune</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>5</span></div>
+    <div class="step-label"><b>Results</b><small>Metrics &amp; matrix</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>6</span></div>
+    <div class="step-label"><b>Explainability</b><small>Why this prediction?</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>7</span></div>
+    <div class="step-label"><b>Ethics &amp; Bias</b><small>Fairness check</small></div>
+  </button>
+</div>
+
+<div class="screen-header">
+  <div>
+    <span class="step-tag">STEP 3 OF 7</span>
+    <h2>Data Preparation — Cleaning &amp; Organising Your Data</h2>
+    <p>Before a model can learn, the data must be clean, consistent, and split into two groups: one for training (learning) and one for testing (checking accuracy on patients the model has never seen).</p>
+  </div>
+  <div class="hdr-right">
+    <div style="font-size:11px;color:var(--muted);font-weight:600;">⏱ ~5 minutes</div>
+    <button class="btn primary">Next Step →</button>
+  </div>
+</div>
+
+<div class="cols">
+  <div>
+    <div class="card">
+      <div class="card-title">Preparation Settings</div>
+
+      <label class="lbl">Train / Test Split</label>
+      <div class="slider-wrap">
+        <div class="slider-row">
+          <input type="range" min="60" max="90" step="5" value="80" id="splitSlider"/>
+          <div class="slider-val" id="splitVal">80%</div>
+        </div>
+        <div class="slider-ends"><span>60% train</span><span>90% train</span></div>
+      </div>
+      <div class="slider-hint" id="splitHint">Training: 243 patients · Testing: 61 patients</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">The model learns from the training group and is tested on the testing group — patients it has never seen before.</div>
+
+      <label class="lbl">Handling Missing Values</label>
+      <select class="sel">
+        <option selected>Fill with the middle value (median) — recommended</option>
+        <option>Fill with the most common value (mode)</option>
+        <option>Remove patients with missing values (loses data)</option>
+      </select>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Serum Creatinine has 6.8% missing. Filling with the median preserves all 304 patients.</div>
+
+      <label class="lbl">Normalisation (Putting All Values on the Same Scale)</label>
+      <select class="sel">
+        <option selected>Z-score (recommended for most models)</option>
+        <option>Min-Max (0 to 1 scale)</option>
+        <option>None</option>
+      </select>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Age (0–100) and Serum Sodium (130–150 mmol/L) are on different scales. Without normalisation, some models get confused by the size difference.</div>
+
+      <label class="lbl">Handling Class Imbalance (More Non-Readmitted Than Readmitted)</label>
+      <select class="sel">
+        <option selected>SMOTE — Create synthetic similar cases for the minority group</option>
+        <option>Class weights — Give higher importance to readmitted patients</option>
+        <option>None</option>
+      </select>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Because only 33% were readmitted, SMOTE creates extra examples of readmitted patients so the model learns both groups equally well.</div>
+
+      <div class="btn-row">
+        <button class="btn green" style="width:100%;">✓ Apply Preparation Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="card-title">Before &amp; After Normalisation — Ejection Fraction</div>
+      <div class="grid2">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-align:center;margin-bottom:8px;">BEFORE (raw values)</div>
+          <div class="bars">
+            <div class="bar-row"><div class="bar-lbl">Minimum</div><div class="bar-track"><div class="bar-fill bad" style="width:14%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">14%</div></div>
+            <div class="bar-row"><div class="bar-lbl">Average</div><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">38%</div></div>
+            <div class="bar-row"><div class="bar-lbl">Maximum</div><div class="bar-track"><div class="bar-fill green" style="width:80%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">80%</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-align:center;margin-bottom:8px;">AFTER (normalised 0–1)</div>
+          <div class="bars">
+            <div class="bar-row"><div class="bar-lbl">Minimum</div><div class="bar-track"><div class="bar-fill bad" style="width:0%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">0.00</div></div>
+            <div class="bar-row"><div class="bar-lbl">Average</div><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">0.50</div></div>
+            <div class="bar-row"><div class="bar-lbl">Maximum</div><div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">1.00</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Class Balance — Before &amp; After SMOTE</div>
+      <div class="grid2">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-align:center;margin-bottom:8px;">BEFORE</div>
+          <div class="bars">
+            <div class="bar-row"><div class="bar-lbl">Not Readmitted</div><div class="bar-track"><div class="bar-fill" style="width:67%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">67%</div></div>
+            <div class="bar-row"><div class="bar-lbl">Readmitted</div><div class="bar-track"><div class="bar-fill warn" style="width:33%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">33%</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-align:center;margin-bottom:8px;">AFTER SMOTE</div>
+          <div class="bars">
+            <div class="bar-row"><div class="bar-lbl">Not Readmitted</div><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">50%</div></div>
+            <div class="bar-row"><div class="bar-lbl">Readmitted</div><div class="bar-track"><div class="bar-fill green" style="width:50%"></div></div><div class="bar-val" style="font-size:12px;font-weight:600;color:var(--mid);min-width:40px;">50%</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="banner good" style="margin-top:10px;">
+        <div class="banner-icon">✅</div>
+        <div><b>Ready:</b> Data is clean, split, and balanced. Proceed to Step 4 to choose a model.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen-footer">
+  <small>Step 3 / 7 · Data Preparation</small>
+  <div style="display:flex;gap:8px;">
+    <button class="btn">← Previous</button>
+    <button class="btn primary">Next Step →</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+  const slider = document.getElementById('splitSlider');
+  const valBox = document.getElementById('splitVal');
+  const hintBox = document.getElementById('splitHint');
+  const total = 304;
+  slider.addEventListener('input', function() {
+    const pct = parseInt(this.value);
+    valBox.textContent = pct + '%';
+    const train = Math.round(total * pct / 100);
+    const test = total - train;
+    hintBox.textContent = 'Training: ' + train + ' patients · Testing: ' + test + ' patients';
+  });
+</script>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>

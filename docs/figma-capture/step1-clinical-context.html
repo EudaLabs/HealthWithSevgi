@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Step 1 — Clinical Context</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green:   #16a34a;
+  --green-d: #15803d;
+  --green-l: #bbf7d0;
+  --green-bg:#f0fdf4;
+  --navy:    #0D2340;
+  --sky:     #f0fdf4;
+  --mint:    #dcfce7;
+  --paper:   #F7F9FB;
+  --white:   #FFFFFF;
+  --ink:     #0D1B2A;
+  --mid:     #4A6070;
+  --muted:   #7A92A3;
+  --line:    #DDE4EA;
+  --line2:   #C8D4DC;
+  --good:    #16a34a;
+  --good-bg: #f0fdf4;
+  --warn:    #A05C00;
+  --warn-bg: #FEF3E2;
+  --bad:     #B91C1C;
+  --bad-bg:  #FEF0F0;
+  --info:    #16a34a;
+  --info-bg: #f0fdf4;
+  --shadow-sm: 0 1px 4px rgba(13,35,64,.07);
+  --shadow:    0 4px 18px rgba(13,35,64,.09);
+  --r: 14px;
+  --r2: 20px;
+  --sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+  --serif: 'Fraunces', Georgia, serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);font-size:14px;line-height:1.5;width:1440px}
+.wrap{max-width:1360px;margin:0 auto;padding:16px 20px 60px}
+.nav{background:var(--green-d);position:sticky;top:0;z-index:100;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px;box-shadow:0 2px 12px rgba(22,163,74,.25)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#16a34a);display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:16px;color:#fff;flex:0 0 auto}
+.nav-title{font-size:15px;font-weight:600;color:#fff;letter-spacing:.01em}
+.nav-subtitle{font-size:12px;color:rgba(255,255,255,.55);margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-chip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);font-size:12px;font-weight:500;color:rgba(255,255,255,.8);cursor:pointer}
+.nav-chip b{color:#fff}
+.nav-chip-dot{width:7px;height:7px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+.nav-btn{padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+
+.domain-bar{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+.domain-pill{padding:8px 16px;border-radius:999px;border:1px solid var(--line2);background:var(--white);font-size:12px;font-weight:500;color:var(--mid);cursor:pointer}
+.domain-pill.active{background:var(--green);border-color:var(--green);color:#fff}
+
+.stepper{margin-top:14px;display:grid;grid-template-columns:repeat(7,1fr);gap:8px;background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:12px;box-shadow:var(--shadow-sm)}
+.step-btn{border-radius:var(--r);border:1px solid var(--line);background:var(--white);padding:10px;cursor:pointer;text-align:left;display:flex;gap:10px;align-items:flex-start}
+.step-num{width:26px;height:26px;border-radius:10px;background:var(--paper);border:1px solid var(--line2);display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--muted);flex:0 0 auto}
+.step-btn.active{border-color:var(--green);background:var(--green-bg)}
+.step-btn.active .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-btn.done .step-num{background:var(--mint);border-color:var(--green);color:var(--green)}
+.step-label b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+.step-label small{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.25}
+
+.screen-header{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:18px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;box-shadow:var(--shadow-sm);margin-top:14px;margin-bottom:12px}
+.screen-header h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--green-d);line-height:1.2}
+.screen-header p{font-size:13px;color:var(--mid);margin-top:6px;max-width:860px;line-height:1.5}
+.step-tag{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--green-bg);border:1px solid var(--green-l);font-size:11px;font-weight:600;color:var(--green);letter-spacing:.04em;margin-bottom:6px}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:0 0 auto}
+
+.cols{display:grid;grid-template-columns:360px 1fr;gap:14px;align-items:start}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:16px;box-shadow:var(--shadow-sm)}
+.card + .card{margin-top:12px}
+.card-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.10em;margin-bottom:12px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--white);color:var(--ink);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+
+.banner{border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;margin-top:10px}
+.banner-icon{font-size:16px;flex:0 0 auto;margin-top:1px}
+.banner.warn{background:var(--warn-bg);border:1px solid rgba(160,92,0,.2);color:var(--warn)}
+.banner.good{background:var(--good-bg);border:1px solid rgba(22,163,74,.2);color:var(--good)}
+.banner b{font-weight:600}
+
+.tbl-wrap{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--paper);font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+tr:last-child td{border-bottom:none}
+
+.tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.03em}
+.tag.info{background:var(--green-bg);color:var(--green);border:1px solid rgba(22,163,74,.2)}
+
+.screen-footer{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;box-shadow:var(--shadow-sm)}
+.screen-footer small{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">H</div>
+    <div>
+      <div class="nav-title">HealthWithSevgi · ML Learning Tool</div>
+      <div class="nav-subtitle">For Healthcare Professionals</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-chip"><span class="nav-chip-dot"></span> Domain: <b>Cardiology</b> ▾</div>
+    <button class="nav-btn">↺ Reset</button>
+    <button class="nav-btn" style="background:rgba(255,255,255,.2);">? Help</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<div class="domain-bar">
+  <div class="domain-pill active">Cardiology</div>
+  <div class="domain-pill">Radiology</div>
+  <div class="domain-pill">Nephrology</div>
+  <div class="domain-pill">Oncology-Breast</div>
+  <div class="domain-pill">Neurology-Parkinson's</div>
+  <div class="domain-pill">Endocrinology-Diabetes</div>
+  <div class="domain-pill">Hepatology-Liver</div>
+  <div class="domain-pill">Cardiology-Stroke</div>
+  <div class="domain-pill">Mental Health</div>
+  <div class="domain-pill">Pulmonology-COPD</div>
+  <div class="domain-pill">Haematology-Anaemia</div>
+  <div class="domain-pill">Dermatology</div>
+  <div class="domain-pill">Ophthalmology</div>
+  <div class="domain-pill">Orthopaedics-Spine</div>
+  <div class="domain-pill">ICU/Sepsis</div>
+  <div class="domain-pill">Obstetrics-Fetal</div>
+  <div class="domain-pill">Cardiology-Arrhythmia</div>
+  <div class="domain-pill">Oncology-Cervical</div>
+  <div class="domain-pill">Thyroid/Endocrinology</div>
+  <div class="domain-pill">Pharmacy-Readmission</div>
+</div>
+
+<div class="stepper">
+  <button class="step-btn active">
+    <div class="step-num"><span>1</span></div>
+    <div class="step-label"><b>Clinical Context</b><small>Use case &amp; goals</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>2</span></div>
+    <div class="step-label"><b>Data Exploration</b><small>Upload &amp; understand</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>3</span></div>
+    <div class="step-label"><b>Data Preparation</b><small>Clean &amp; split data</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>4</span></div>
+    <div class="step-label"><b>Model &amp; Parameters</b><small>Select &amp; tune</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>5</span></div>
+    <div class="step-label"><b>Results</b><small>Metrics &amp; matrix</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>6</span></div>
+    <div class="step-label"><b>Explainability</b><small>Why this prediction?</small></div>
+  </button>
+  <button class="step-btn">
+    <div class="step-num"><span>7</span></div>
+    <div class="step-label"><b>Ethics &amp; Bias</b><small>Fairness check</small></div>
+  </button>
+</div>
+
+<div class="screen-header">
+  <div>
+    <span class="step-tag">STEP 1 OF 7</span>
+    <h2>Clinical Context &amp; Problem Definition</h2>
+    <p>Before we look at any data, we define the clinical problem. In <b>Cardiology</b>, we want to predict which patients are most likely to be readmitted to hospital within 30 days after a heart failure discharge — so doctors can arrange follow-up care in advance.</p>
+  </div>
+  <div class="hdr-right">
+    <div style="font-size:11px;color:var(--muted);font-weight:600;">⏱ ~3 minutes</div>
+    <button class="btn primary">Next Step →</button>
+  </div>
+</div>
+
+<div class="cols">
+  <div>
+    <div class="card">
+      <div class="card-title">Clinical Scenario</div>
+      <label style="display:block;font-size:11px;font-weight:600;color:var(--mid);margin:12px 0 5px;letter-spacing:.03em">Domain</label>
+      <div style="font-size:15px;font-weight:600;color:var(--green-d);padding:8px 0;">Cardiology</div>
+      <label style="display:block;font-size:11px;font-weight:600;color:var(--mid);margin:12px 0 5px;letter-spacing:.03em">Clinical Question</label>
+      <div style="font-size:13px;color:var(--mid);line-height:1.6;padding:10px 12px;background:var(--green-bg);border-radius:10px;border:1px solid var(--green-l);">
+        Will this patient be readmitted to hospital within 30 days of discharge following a heart failure episode?
+      </div>
+      <label style="display:block;font-size:11px;font-weight:600;color:var(--mid);margin:12px 0 5px;letter-spacing:.03em">Why This Matters</label>
+      <div style="font-size:13px;color:var(--mid);line-height:1.6;">
+        30% of heart failure patients are readmitted within 30 days. Each readmission costs approximately €15,000. Early identification allows nurses to arrange discharge follow-up calls and medication checks.
+      </div>
+      <div class="banner warn">
+        <div class="banner-icon">⚠️</div>
+        <div><b>What ML cannot do:</b> It cannot replace your clinical judgment. It can flag high-risk patients, but you make the final decision.</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="card-title">What Will Be Produced in Each Step</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Step</th><th>What You Will Create</th><th>Plain English Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag info">1</span></td><td>Clinical Brief</td><td>The problem we are solving, and the safety rules</td></tr>
+            <tr><td><span class="tag info">2</span></td><td>Data Profile</td><td>Understanding your patient dataset — who is in it and what is missing</td></tr>
+            <tr><td><span class="tag info">3</span></td><td>Preprocessing Recipe</td><td>Cleaning and preparing data so the model can learn correctly</td></tr>
+            <tr><td><span class="tag info">4</span></td><td>Trained Model</td><td>A computer programme that has learned patterns from past patients</td></tr>
+            <tr><td><span class="tag info">5</span></td><td>Evaluation Report</td><td>How accurately does the model predict readmission?</td></tr>
+            <tr><td><span class="tag info">6</span></td><td>Explanation</td><td>Why did the model flag a specific patient as high risk?</td></tr>
+            <tr><td><span class="tag info">7</span></td><td>Ethics Checklist</td><td>Is the model fair for all patient groups? Who oversees it?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="banner good" style="margin-top:12px;">
+        <div class="banner-icon">✅</div>
+        <div><b>Remember:</b> A human doctor or nurse must always review the model's suggestions. This tool helps you learn — it does not make clinical decisions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen-footer">
+  <small>Step 1 / 7 · Clinical Context</small>
+  <button class="btn primary">Next Step →</button>
+</div>
+
+</div>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>
