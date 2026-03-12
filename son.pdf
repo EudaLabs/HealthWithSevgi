@@ -1,0 +1,235 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/andrewmvd/heart-failure-clinical-data)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 470.2256 621.1139 482.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+5 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/nih-chest-xrays/data)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 452.2256 547.2139 464.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+6 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/336/chronic+kidney+disease)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 434.2256 610.0339 446.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 416.2256 660.8839 428.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+8 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/174/parkinsons)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 398.2256 551.1139 410.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+9 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/uciml/pima-indians-diabetes-database)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 380.2256 625.5739 392.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+10 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/225/ilpd+indian+liver+patient+dataset)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 362.2256 649.5139 374.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+11 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 344.2256 622.2539 356.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+12 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/anthonytherrien/depression-dataset)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 326.2256 614.4839 338.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+13 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://physionet.org/content/copd-ehr/1.0.0/)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 308.2256 528.3439 320.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+14 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/biswaranjanrao/anemia-dataset)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 290.2256 596.6839 302.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+15 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 272.2256 622.2239 284.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+16 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://kaggle.com/datasets/sovitrath/diabetic-retinopathy-224x224-2019-data)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 254.2256 675.0639 266.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+17 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/212/vertebral+column)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 236.2256 579.7339 248.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+18 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://physionet.org/content/challenge-2019/1.0.0/)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 218.2256 557.2539 230.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+19 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/193/cardiotocography)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 200.2256 579.4639 212.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+20 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/5/arrhythmia)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 182.2256 538.8739 194.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+21 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/383/cervical+cancer+risk+factors)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 164.2256 629.7439 176.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+22 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/102/thyroid+disease)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 146.2256 573.0739 158.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+23 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008)
+>> /Border [ 0 0 0 ] /Rect [ 362.6939 128.2256 723.7239 140.2256 ] /Subtype /Link /Type /Annot
+>>
+endobj
+24 0 obj
+<<
+/Annots [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 
+  14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R 22 0 R 23 0 R ] /Contents 28 0 R /MediaBox [ 0 0 841.8898 595.2756 ] /Parent 27 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+25 0 obj
+<<
+/PageMode /UseNone /Pages 27 0 R /Type /Catalog
+>>
+endobj
+26 0 obj
+<<
+/Author (\(anonymous\)) /CreationDate (D:20260302171634+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20260302171634+00'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (\(anonymous\)) /Trapped /False
+>>
+endobj
+27 0 obj
+<<
+/Count 1 /Kids [ 24 0 R ] /Type /Pages
+>>
+endobj
+28 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2504
+>>
+stream
+Gatm>>BAQ1&UsJX^e>i=*Xsb&muN=le7fTNa&^VPF=%*RY_\YjF[4*+rd>S.8<FB.clC"<Hf3]`^AYRs$S76Qpql^uG_=@u's^#4KF(gF+mbXM>(&kAX,F_FYgRW@j>hc_!m_)Z&D4BUX=q@)GM@]-#.>]]LN4n3j@4e6dg>sYjJrEs>@p"\1!S(_QGoA+'k\i(U_PIaKpG/nZ+/d^rXZC4JQ@7C@qZ@Nre.Hu17OZ66M=$)M;*md\hGkT*pdDu[MOZ$J]RMgoHFMB-O<T-7qNT-+Yph8_9gXQ(M;a_60P&p5?fYq*jl><)h)3b3:P`h)ML?]3[:!83Jt=&NjAU$8!.b\Mj$Yn@%7SK;;O8KViPl<WR)W=a140T'TV=/"V,0u"nq,4"a4O3"X\<-!o#NJ,+9/[_2P&Vk/;p/-R;/aJ-:b68r5<oegV.DPtQILdd^`B0QQ.=5UO^!Iqt8(:bO(@p*!:UHG?<%rO=!\6PD4ee/>^ZonIA:\;<S#duU#Oa[<<H0gf=:5E?c!p1?R9"tM1SE5X[b3.9$Ia,JQ+!s`^CRq!HD8oI9i_MbKtCOK7gf8PRoIAB![_/nli]Ou4-P-VPgYAeSo\DF3*8"+H'LY@MrrU-)Vf,6C)@Ug\nn"iJE7'N;QQc)KB*94#LA&J_7+Z4UKA;qNS><-hOomV&^rT`.fc0ECAm.b^BD*`:A._U0iO^=l6oB@/F;cZr_^W&FmUG&^CYFHIT(1*lE&=`:@Lun0H01#?/23g[crZf`&T!,nYVN3:W0o;IT`mHN?oPW;>'pGRq#%*^hd.6(\D)7trd#Qu.+;Jn=?^SsqdbMgsABD!NdW->bM?,ELj5QIS3SQ2"?8@U:iD[8uB='5c'81JBLH@gNM7hQ`eI^I"h<&]O-i+p9nG+1,>G\%%2/ST*P3+J4kWc_=MnJ-HBo5K8cV#u&XN)7#,-HJJI^VLlC:_]KZJtBW[Tfr"&MJ8p#>L*LF@7Xm)n$DCVXLI.k':+jIm7u#JSqlHN9$S\["p&[F)JQpCYPR3Vsp_EQPHWG>#N$\(&L$iQ/5N4'X?SAO4[+(PcS=t<n.\(Hpc:/86@]%a)&dUp!-OPJD3e1D#o4()[&X)&Ce,REE\rI?+JckYl1h5UncRZZ?2b7=Qs+t/Zj?sIYPoT3c^L&_eW``YmXKE?;6A_B1=I7't8j@(=0G2U1&A18PG%ZK5$JGL?U,>b-g-?(aYY..6Q+BXn3*_=@;dL-&Uk1:\;H212`?(SR;c-a8Lioiu(:(/=`>7_TDp@e\&-/)N1lfYS_;O=SYmeE;mYWh5'F/a0="h!fn9]<G5dH.b,-3Cb?V#!@;tGU\9Wb2r<LoBp%kbPR.A1C*am^\'V+e-lGE8YP+p_-]ZR=Qp.mp/o]0JD/=!4D&)M_fr!uriT9I_V2!mY<iVmplhbD_ic%@YgST<h)lq1LX=`WH.Yn3%\P3Ku$4E?3Bj27lCa$,l'RGbZ;]T"2V6>V.h)*\4?;n9MUtk])r.\,jS'"uM_c53*)^f[lT;f1\o(".C2#fj_5mms/$0_mbgH*e#I]rJ"@u6kRfkV3VedZ2mi[#6ibrTI%`V'*]fS4khk:u=pBc_WXd"D_+KVlq+RTs?dEu<5$\u>^)+]S9!r0g$Ne"gBQS',!SgML,j'N2^\3gEFgD=JJ!_tUfo>+G".L+,,]aXW2b?3rUD8e`+0*5EDE\A-t:!=:oXHCN9-f;760J>]=*)`Kbqlc-A6nQ%ndfMYjX9@YM.H*6HI>3g*#<:!II*F'B5DDO.1i%pF3";C*tKsHMM-rUs`?;.>.OXakP.8B&T>(/mUH=5L&o3]P7ZFHqCb71M:eMJbNo9D"SlS=d0=WO<e$^lV(J3J*SdkVf>.]+00Phte;=g:S@iVAU1DS(N"V.<TE"h[.UWMq&.;8>rP]9-UBYE2GN=8D>2^&FUpn@IZ3=63(6QRTW"PJVYi;J6d;D1]'[[g<;/C#"#IT#j*QNhJYVWBrd`1WHAoC7&o6;L66MYU'r9ne,*CVQt'HgWQg8[uKRbC^_Id'p/,E9^qUunO2E;&5t2sPWKt3Yq;$$nW$qM8sXYkC@kQk?5,MQoK'Lhd9b:DdFrJWfj(1F*H'2n%W#TS%?NO(jHAa2X%CK&2g2UJLI)LjX,t#-1thAE4Odrp?N7u:BN]03lN=^Nat8Br26hn,q-oIS^=D(h/L7&r\O]pmMl/lmp5B=i78X2qc46a_iS%()o28R>H0*Dfi;\iGdt>LD\`NM1qgX2'rTl_fYW;W0;D'ct:lF\S^`NF-mO@j/Nbft*o["EMLX"mM)u:a\Fs>oU7'Q#G[Qb>>Z5(KB,4n9Dfnk:]%(Y^mh>i:8Fs:Q!6S:G4*l*l\<[9m6ckFN4-OL)4jK]Hp!uQ(3M;/+?\a2^p!(/A#OZeA++(.J='[ZqL0Ye5>+F!tk?LMkBT18;EiTZ,R;=Af5U&@>\(GQbi62`]7H+,cS*F^r\Wg%^cK,g3%>9`1bU6Ya]J"_f#"'sdTG5~>endstream
+endobj
+xref
+0 29
+0000000000 65535 f 
+0000000073 00000 n 
+0000000114 00000 n 
+0000000221 00000 n 
+0000000333 00000 n 
+0000000550 00000 n 
+0000000750 00000 n 
+0000000964 00000 n 
+0000001189 00000 n 
+0000001391 00000 n 
+0000001607 00000 n 
+0000001833 00000 n 
+0000002051 00000 n 
+0000002266 00000 n 
+0000002464 00000 n 
+0000002674 00000 n 
+0000002888 00000 n 
+0000003117 00000 n 
+0000003326 00000 n 
+0000003530 00000 n 
+0000003739 00000 n 
+0000003940 00000 n 
+0000004161 00000 n 
+0000004369 00000 n 
+0000004607 00000 n 
+0000004962 00000 n 
+0000005032 00000 n 
+0000005316 00000 n 
+0000005377 00000 n 
+trailer
+<<
+/ID 
+[<658c30dda2b43a8e81521460b216d0f7><658c30dda2b43a8e81521460b216d0f7>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 26 0 R
+/Root 25 0 R
+/Size 29
+>>
+startxref
+7973
+%%EOF
