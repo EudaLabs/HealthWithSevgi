@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import logging
+import threading
 import time
 import uuid
+from collections import OrderedDict
 from typing import Any
 
 import numpy as np
@@ -37,6 +39,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from app.models.ml_schemas import (
+    PARAM_SCHEMAS,
     CompareEntry,
     CompareResponse,
     ConfusionMatrixData,
@@ -64,31 +67,50 @@ _PARAM_GRIDS: dict = {
 
 class MLService:
     def __init__(self) -> None:
-        self._session_store: dict[str, dict[str, Any]] = {}
-        self._model_store: dict[str, Any] = {}
+        self._lock = threading.Lock()
+        self._session_store: OrderedDict[str, dict[str, Any]] = OrderedDict()
+        self._model_store: OrderedDict[str, Any] = OrderedDict()
         self._compare_store: dict[str, list[CompareEntry]] = {}
 
     # ------------------------------------------------------------------
     # Session management (called by data service / router)
     # ------------------------------------------------------------------
     def store_session_data(self, session_id: str, data: dict[str, Any]) -> None:
-        self._session_store[session_id] = data
-        # Evict oldest sessions if store exceeds 50 entries
-        if len(self._session_store) > 50:
-            oldest_key = next(iter(self._session_store))
-            del self._session_store[oldest_key]
+        with self._lock:
+            self._session_store[session_id] = data
+            self._session_store.move_to_end(session_id)
+            while len(self._session_store) > 50:
+                self._session_store.popitem(last=False)
         logger.info("ML session stored: %s", session_id)
 
     def get_session(self, session_id: str) -> dict[str, Any] | None:
-        return self._session_store.get(session_id)
+        with self._lock:
+            data = self._session_store.get(session_id)
+            if data is not None:
+                self._session_store.move_to_end(session_id)
+            return data
 
     def get_model(self, model_id: str) -> Any | None:
-        return self._model_store.get(model_id)
+        with self._lock:
+            data = self._model_store.get(model_id)
+            if data is not None:
+                self._model_store.move_to_end(model_id)
+            return data
 
     # ------------------------------------------------------------------
     # Model construction
     # ------------------------------------------------------------------
     def build_model(self, model_type: ModelType, params: dict[str, Any]) -> Any:
+        # Runtime param validation via typed schemas
+        schema = PARAM_SCHEMAS.get(model_type.value)
+        if schema:
+            try:
+                validated = schema(**params)
+                params = validated.model_dump()
+            except Exception as exc:
+                logger.warning("Param validation failed for %s: %s — using defaults", model_type.value, exc)
+                params = schema().model_dump()
+
         if model_type == ModelType.KNN:
             return KNeighborsClassifier(
                 n_neighbors=params.get("n_neighbors", 5),
@@ -181,7 +203,10 @@ class MLService:
         tune: bool = False,
         use_feature_selection: bool = False,
     ) -> TrainResponse:
-        session = self._session_store.get(session_id)
+        with self._lock:
+            session = self._session_store.get(session_id)
+            if session is not None:
+                self._session_store.move_to_end(session_id)
         if session is None:
             raise KeyError(f"Session not found: {session_id}")
 
@@ -278,8 +303,25 @@ class MLService:
 
         model = self.build_model(model_type, best_params)
 
+        # Compute class weights for XGBoost/LightGBM fairness
+        sample_weight = None
+        if model_type in (ModelType.XGBOOST, ModelType.LIGHTGBM):
+            if is_binary:
+                # Set scale_pos_weight on the model
+                neg_count = np.sum(y_train == 0)
+                pos_count = np.sum(y_train == 1)
+                if pos_count > 0 and hasattr(model, 'set_params'):
+                    model.set_params(scale_pos_weight=neg_count / pos_count)
+            else:
+                # Compute sample weights for multi-class
+                from sklearn.utils.class_weight import compute_sample_weight
+                sample_weight = compute_sample_weight('balanced', y_train)
+
         t0 = time.perf_counter()
-        model.fit(X_train, y_train)
+        if sample_weight is not None:
+            model.fit(X_train, y_train, sample_weight=sample_weight)
+        else:
+            model.fit(X_train, y_train)
         training_time_ms = (time.perf_counter() - t0) * 1000
 
         y_pred = model.predict(X_test)
@@ -340,23 +382,22 @@ class MLService:
             metrics.cross_val_scores = []
 
         model_id = str(uuid.uuid4())
-        self._model_store[model_id] = {
-            "model": model,
-            "session_id": session_id,
-            "model_type": model_type,
-            "params": best_params,
-            "feature_names": selected_feature_names,
-            "classes": classes,
-            "X_test": X_test,
-            "y_test": y_test,
-            "X_train": X_train,
-            "scaler": scaler,
-        }
-
-        # Evict oldest models if store exceeds 50 entries
-        if len(self._model_store) > 50:
-            oldest_key = next(iter(self._model_store))
-            del self._model_store[oldest_key]
+        with self._lock:
+            self._model_store[model_id] = {
+                "model": model,
+                "session_id": session_id,
+                "model_type": model_type,
+                "params": best_params,
+                "feature_names": selected_feature_names,
+                "classes": classes,
+                "X_test": X_test,
+                "y_test": y_test,
+                "X_train": X_train,
+                "scaler": scaler,
+            }
+            self._model_store.move_to_end(model_id)
+            while len(self._model_store) > 50:
+                self._model_store.popitem(last=False)
 
         logger.info(
             "Trained %s in %.1f ms — AUC=%.3f acc=%.3f (train_acc=%.3f) cv_mean=%.3f",
@@ -383,7 +424,9 @@ class MLService:
                 p = 1 / (1 + np.exp(-scores))
                 return np.column_stack([1 - p, p])
             return scores
-        return np.zeros((len(X), 2))
+        # Fallback: return zeros with correct number of columns
+        n_classes = len(np.unique(model.classes_)) if hasattr(model, "classes_") else 2
+        return np.zeros((len(X), n_classes))
 
     def _compute_metrics(
         self,
@@ -456,7 +499,7 @@ class MLService:
             if is_binary:
                 return float(roc_auc_score(y_true, y_prob[:, 1]))
             n_classes = len(classes)
-            y_bin = label_binarize(y_true, classes=list(range(n_classes)))
+            y_bin = label_binarize(y_true, classes=sorted(np.unique(y_true)))
             if y_prob.shape[1] >= n_classes:
                 return float(
                     roc_auc_score(y_bin, y_prob, multi_class="ovr", average="macro")
@@ -489,15 +532,28 @@ class MLService:
         try:
             if is_binary:
                 fpr, tpr, thresholds = roc_curve(y_true, y_prob[:, 1])
-                # Downsample to <=200 points
                 idx = np.linspace(0, len(fpr) - 1, min(200, len(fpr)), dtype=int)
                 return [
                     ROCPoint(fpr=round(float(fpr[i]), 4), tpr=round(float(tpr[i]), 4),
                              threshold=round(float(thresholds[min(i, len(thresholds)-1)]), 4))
                     for i in idx
                 ]
-        except Exception:
-            pass
+            else:
+                # Micro-average ROC for multi-class
+                classes = sorted(np.unique(y_true))
+                y_bin = label_binarize(y_true, classes=classes)
+                if y_prob.shape[1] >= len(classes):
+                    fpr_micro, tpr_micro, thresholds = roc_curve(
+                        y_bin.ravel(), y_prob[:, :len(classes)].ravel()
+                    )
+                    idx = np.linspace(0, len(fpr_micro) - 1, min(200, len(fpr_micro)), dtype=int)
+                    return [
+                        ROCPoint(fpr=round(float(fpr_micro[i]), 4), tpr=round(float(tpr_micro[i]), 4),
+                                 threshold=round(float(thresholds[min(i, len(thresholds)-1)]), 4))
+                        for i in idx
+                    ]
+        except Exception as exc:
+            logger.warning("ROC curve computation failed: %s", exc)
         # Diagonal fallback
         pts = np.linspace(0, 1, 20)
         return [ROCPoint(fpr=float(p), tpr=float(p), threshold=float(1-p)) for p in pts]
@@ -516,8 +572,21 @@ class MLService:
                     {"precision": round(float(prec[i]), 4), "recall": round(float(rec[i]), 4)}
                     for i in idx
                 ]
-        except Exception:
-            pass
+            else:
+                # Micro-average PR for multi-class
+                classes = sorted(np.unique(y_true))
+                y_bin = label_binarize(y_true, classes=classes)
+                if y_prob.shape[1] >= len(classes):
+                    prec, rec, _ = precision_recall_curve(
+                        y_bin.ravel(), y_prob[:, :len(classes)].ravel()
+                    )
+                    idx = np.linspace(0, len(prec) - 1, min(200, len(prec)), dtype=int)
+                    return [
+                        {"precision": round(float(prec[i]), 4), "recall": round(float(rec[i]), 4)}
+                        for i in idx
+                    ]
+        except Exception as exc:
+            logger.warning("PR curve computation failed: %s", exc)
         return []
 
     # ------------------------------------------------------------------
@@ -541,34 +610,43 @@ class MLService:
             training_time_ms=entry_data.get("training_time_ms", 0.0),
         )
 
-        if session_id not in self._compare_store:
-            self._compare_store[session_id] = []
+        with self._lock:
+            if session_id not in self._compare_store:
+                self._compare_store[session_id] = []
 
-        # Replace existing entry for same model_id
-        self._compare_store[session_id] = [
-            e for e in self._compare_store[session_id] if e.model_id != model_id
-        ]
-        self._compare_store[session_id].append(entry)
+            # Replace existing entry for same model_id
+            self._compare_store[session_id] = [
+                e for e in self._compare_store[session_id] if e.model_id != model_id
+            ]
+            self._compare_store[session_id].append(entry)
 
-        entries = sorted(
-            self._compare_store[session_id],
-            key=lambda e: e.metrics.auc_roc,
-            reverse=True,
-        )
+            # Cap compare store at 50 sessions
+            if len(self._compare_store) > 50:
+                oldest_key = next(iter(self._compare_store))
+                del self._compare_store[oldest_key]
+
+            entries = sorted(
+                self._compare_store[session_id],
+                key=lambda e: e.metrics.auc_roc,
+                reverse=True,
+            )
         best = entries[0].model_id if entries else model_id
         return CompareResponse(entries=entries, best_model_id=best)
 
     def get_comparison(self, session_id: str) -> CompareResponse:
-        entries = self._compare_store.get(session_id, [])
+        with self._lock:
+            entries = list(self._compare_store.get(session_id, []))
         entries = sorted(entries, key=lambda e: e.metrics.auc_roc, reverse=True)
         best = entries[0].model_id if entries else ""
         return CompareResponse(entries=entries, best_model_id=best)
 
     def clear_comparison(self, session_id: str) -> None:
-        self._compare_store.pop(session_id, None)
+        with self._lock:
+            self._compare_store.pop(session_id, None)
 
     def store_train_response_in_model(self, model_id: str, response: "TrainResponse") -> None:
         """Cache metrics inside model store so comparison can retrieve them."""
-        if model_id in self._model_store:
-            self._model_store[model_id]["metrics"] = response.metrics
-            self._model_store[model_id]["training_time_ms"] = response.training_time_ms
+        with self._lock:
+            if model_id in self._model_store:
+                self._model_store[model_id]["metrics"] = response.metrics
+                self._model_store[model_id]["training_time_ms"] = response.training_time_ms

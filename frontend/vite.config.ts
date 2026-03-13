@@ -8,5 +8,16 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8000'
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-charts': ['recharts'],
+          'vendor-query': ['@tanstack/react-query'],
+        }
+      }
+    }
   }
 })

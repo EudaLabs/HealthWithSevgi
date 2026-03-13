@@ -4,7 +4,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ModelType(str, Enum):
@@ -59,12 +59,35 @@ class LightGBMParams(BaseModel):
     learning_rate: float = Field(0.1, ge=0.01, le=0.5)
 
 
+PARAM_SCHEMAS: dict[str, type[BaseModel]] = {
+    "knn": KNNParams,
+    "svm": SVMParams,
+    "decision_tree": DecisionTreeParams,
+    "random_forest": RandomForestParams,
+    "logistic_regression": LogisticRegressionParams,
+    "naive_bayes": NaiveBayesParams,
+    "xgboost": XGBoostParams,
+    "lightgbm": LightGBMParams,
+}
+
+
 class TrainRequest(BaseModel):
     session_id: str
     model_type: ModelType
     params: dict[str, Any] = Field(default_factory=dict)
     tune: bool = False
     use_feature_selection: bool = False
+
+    @model_validator(mode='after')
+    def validate_params(self) -> 'TrainRequest':
+        schema = PARAM_SCHEMAS.get(self.model_type.value)
+        if schema and self.params:
+            try:
+                validated = schema(**self.params)
+                self.params = validated.model_dump()
+            except Exception:
+                pass  # Allow through with raw params; build_model has its own defaults
+        return self
 
 
 class ConfusionMatrixData(BaseModel):

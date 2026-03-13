@@ -1,17 +1,42 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchSpecialties } from './api/specialties'
 import NavBar from './components/NavBar'
 import WizardProgress from './components/WizardProgress'
-import SpecialtySelector from './components/SpecialtySelector'
 import Step1ClinicalContext from './pages/Step1ClinicalContext'
 import Step2DataExploration from './pages/Step2DataExploration'
 import Step3DataPreparation from './pages/Step3DataPreparation'
 import Step4ModelParameters from './pages/Step4ModelParameters'
-import Step5Results from './pages/Step5Results'
-import Step6Explainability from './pages/Step6Explainability'
+const Step5Results = React.lazy(() => import('./pages/Step5Results'))
+const Step6Explainability = React.lazy(() => import('./pages/Step6Explainability'))
 import Step7Ethics from './pages/Step7Ethics'
 import type { WizardState, Specialty, CompareEntry } from './types'
+
+const STEP_NAMES = [
+  '', 'Clinical Context', 'Data Exploration', 'Data Preparation',
+  'Model & Parameters', 'Results', 'Explainability', 'Ethics & Bias'
+]
+
+function BottomNav({ currentStep, onPrev, onNext }: { currentStep: number; onPrev: () => void; onNext: () => void }) {
+  return (
+    <div className="bottom-nav">
+      <div className="bottom-nav-left">
+        <span className="step-badge">Step {currentStep} / 7</span>
+        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>
+          {STEP_NAMES[currentStep]}
+        </span>
+      </div>
+      <div className="bottom-nav-right">
+        <button className="btn btn-secondary" onClick={onPrev} disabled={currentStep <= 1}>
+          ← Previous
+        </button>
+        <button className="btn btn-primary" onClick={onNext} disabled={currentStep >= 7}>
+          Next Step →
+        </button>
+      </div>
+    </div>
+  )
+}
 
 const createDefaultState = (): WizardState => ({
   specialty: null,
@@ -34,11 +59,18 @@ const createDefaultState = (): WizardState => ({
 export default function App() {
   const [state, setState] = useState<WizardState>(createDefaultState)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const [confirmSwitch, setConfirmSwitch] = useState<Specialty | null>(null)
 
-  const { data: specialties = [] } = useQuery({
+  const { data: specialties = [], isLoading: specialtiesLoading } = useQuery({
     queryKey: ['specialties'],
     queryFn: fetchSpecialties,
   })
+
+  useEffect(() => {
+    if (specialties.length > 0 && !state.specialty) {
+      setState(prev => ({ ...prev, specialty: specialties[0], currentStep: 1 }))
+    }
+  }, [specialties, state.specialty])
 
   const update = useCallback((patch: Partial<WizardState>) => {
     setState((prev) => ({ ...prev, ...patch }))
@@ -66,6 +98,15 @@ export default function App() {
     setState(createDefaultState())
   }, [])
 
+  const handleSpecialtyChangeFromChip = useCallback((s: Specialty) => {
+    if (state.specialty?.id === s.id) return
+    if (state.stepsCompleted.size > 0) {
+      setConfirmSwitch(s)
+    } else {
+      handleSpecialtySelect(s)
+    }
+  }, [state.specialty, state.stepsCompleted, handleSpecialtySelect])
+
   const addComparedModel = useCallback((entry: CompareEntry) => {
     setState((prev) => {
       const existing = prev.comparedModels.filter((e) => e.model_id !== entry.model_id)
@@ -73,33 +114,17 @@ export default function App() {
     })
   }, [])
 
-  if (!state.specialty) {
-    return (
-      <div className="app-layout">
-        <NavBar
-          specialty={null}
-          onReset={handleResetSpecialty}
-          onGlossary={() => setGlossaryOpen(true)}
-          glossaryOpen={glossaryOpen}
-          onGlossaryClose={() => setGlossaryOpen(false)}
-        />
-        <div className="main-content">
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              ML Visualization Tool
-            </h1>
-            <p style={{ color: 'var(--text-secondary)', marginTop: '0.4rem', maxWidth: 600 }}>
-              Explore how artificial intelligence works in clinical settings — no technical
-              background required. Choose a medical specialty to begin.
-            </p>
-          </div>
-          <SpecialtySelector specialties={specialties} onSelect={handleSpecialtySelect} />
-        </div>
-      </div>
-    )
-  }
-
   const renderStep = () => {
+    if (specialtiesLoading || !state.specialty) {
+      return (
+        <div style={{ padding: '2rem' }}>
+          <div style={{ height: '2rem', width: '40%', marginBottom: '1rem', borderRadius: '0.5rem', background: 'var(--bg-secondary)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+          <div style={{ height: '1rem', width: '60%', marginBottom: '0.5rem', borderRadius: '0.5rem', background: 'var(--bg-secondary)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+          <div style={{ height: '1rem', width: '50%', borderRadius: '0.5rem', background: 'var(--bg-secondary)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        </div>
+      )
+    }
+
     switch (state.currentStep) {
       case 1:
         return (
@@ -175,6 +200,8 @@ export default function App() {
     <div className="app-layout">
       <NavBar
         specialty={state.specialty}
+        specialties={specialties}
+        onSpecialtyChange={handleSpecialtyChangeFromChip}
         onReset={handleResetSpecialty}
         onGlossary={() => setGlossaryOpen(true)}
         glossaryOpen={glossaryOpen}
@@ -189,8 +216,37 @@ export default function App() {
         onStepClick={goToStep}
       />
       <div className="main-content">
-        {renderStep()}
+        <React.Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}><div className="skeleton" style={{ width: 200, height: 24, margin: '0 auto' }} /><p className="text-muted text-sm" style={{ marginTop: '0.5rem' }}>Loading…</p></div>}>
+          {renderStep()}
+        </React.Suspense>
       </div>
+      <BottomNav
+        currentStep={state.currentStep}
+        onPrev={() => goToStep(state.currentStep - 1)}
+        onNext={() => {
+          completeStep(state.currentStep)
+          goToStep(state.currentStep + 1)
+        }}
+      />
+      {confirmSwitch && (
+        <div className="modal-overlay" onClick={() => setConfirmSwitch(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
+            <div className="modal-header">
+              <span className="modal-title">Switch Specialty?</span>
+              <button className="btn btn-ghost btn-sm" onClick={() => setConfirmSwitch(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p>Switching to <strong>{confirmSwitch.name}</strong> will reset your progress. Continue?</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setConfirmSwitch(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={() => { handleSpecialtySelect(confirmSwitch); setConfirmSwitch(null) }}>
+                Switch Specialty
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

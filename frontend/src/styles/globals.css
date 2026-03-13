@@ -41,7 +41,7 @@ input, select, textarea { font-family: inherit; }
 
 /* ---- Layout ---- */
 .app-layout { display: flex; flex-direction: column; min-height: 100vh; }
-.main-content { flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; padding: 1.5rem 1rem; }
+.main-content { flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; padding: 1.5rem 1rem; padding-bottom: 80px; }
 
 /* ---- Card ---- */
 .card {
@@ -274,6 +274,35 @@ input, select, textarea { font-family: inherit; }
   border-radius: 100px; border: 1px solid var(--border);
 }
 
+/* ---- Specialty chips row ---- */
+.specialty-chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.specialty-chip {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: white;
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 200ms;
+}
+.specialty-chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.specialty-chip:hover:not(.active) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
 /* ---- Specialty grid ---- */
 .specialty-grid {
   display: grid;
@@ -321,7 +350,7 @@ input, select, textarea { font-family: inherit; }
 .step-page-header h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
 .step-page-header p { color: var(--text-secondary); margin-top: 0.3rem; }
 .model-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.875rem; }
-@media (max-width: 768px) { .model-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .model-cards { grid-template-columns: 1fr; } }
 .model-card {
   background: var(--surface); border: 1.5px solid var(--border);
   border-radius: var(--radius-md); padding: 1.125rem;
@@ -340,6 +369,17 @@ input, select, textarea { font-family: inherit; }
   color: var(--text-secondary);
 }
 .dropzone:hover, .dropzone.active { border-color: var(--primary); background: var(--primary-light); }
+
+/* ---- Projector / large display ---- */
+@media (min-width: 1400px) {
+  :root { font-size: 18px; }
+  .metric-card .metric-value, .font-bold[style*="font-size: 1.5rem"],
+  .font-bold[style*="font-size: 1.8rem"] { font-size: 2.2rem; }
+}
+
+@media (max-width: 900px) {
+  .model-cards { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -363,3 +403,14 @@ input, select, textarea { font-family: inherit; }
   background: var(--warning-light); border: 1px solid rgba(255, 171, 0, 0.3);
   border-radius: 12px; padding: 1.25rem;
 }
+
+/* ---- Bottom Nav ---- */
+.bottom-nav {
+  position: sticky; bottom: 0; z-index: 90;
+  background: var(--surface); border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  padding: 0.75rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bottom-nav-left { display: flex; align-items: center; }
+.bottom-nav-right { display: flex; gap: 0.5rem; }

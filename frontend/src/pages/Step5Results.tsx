@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { ArrowRight, AlertTriangle, CheckCircle, XCircle, Info } from 'lucide-react'
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  ReferenceLine, CartesianGrid, Legend,
+  ReferenceLine, CartesianGrid, Legend, Bar, BarChart,
 } from 'recharts'
 import type { TrainResponse } from '../types'
 
@@ -48,6 +48,10 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
   const cvMean = metrics.cross_val_scores.length
     ? metrics.cross_val_scores.reduce((a, b) => a + b, 0) / metrics.cross_val_scores.length
     : null
+  const cvFoldData = useMemo(
+    () => metrics.cross_val_scores.map((s, i) => ({ fold: `Fold ${i + 1}`, score: s })),
+    [metrics.cross_val_scores]
+  )
   const overfitGap = metrics.train_accuracy - metrics.accuracy
 
   return (
@@ -123,9 +127,24 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
               <span>Gap &gt;10% suggests possible overfitting. Try reducing model complexity.</span>
             </div>
           )}
-          {cvMean !== null && (
-            <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              5-fold Cross-Validation AUC: <strong>{pct(cvMean)}</strong>
+          {metrics.cross_val_scores.length > 0 && (
+            <div style={{ marginTop: '0.75rem' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                Cross-Validation Fold Scores (mean: <strong style={{ color: 'var(--primary)' }}>{cvMean !== null ? pct(cvMean) : 'N/A'}</strong>)
+              </div>
+              <ResponsiveContainer width="100%" height={100}>
+                <BarChart data={cvFoldData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="fold" tick={{ fontSize: 10 }} />
+                  <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} />
+                  <Tooltip formatter={(v: number) => pct(v)} />
+                  {cvMean !== null && <ReferenceLine y={cvMean} stroke="var(--primary)" strokeDasharray="5 5" label={{ value: 'Mean', fontSize: 10 }} />}
+                  <Bar dataKey="score" fill="var(--primary)" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                High variance across folds may indicate unstable model performance.
+              </div>
             </div>
           )}
         </div>
@@ -225,25 +244,56 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
             </div>
           </div>
         ) : (
-          <div className="data-table-wrapper">
-            <table className="data-table">
+          <div style={{ overflowX: 'auto' }}>
+            <table className="data-table" style={{ minWidth: cm.labels.length > 5 ? '600px' : undefined }}>
               <thead>
                 <tr>
-                  <th>True \ Pred</th>
-                  {cm.labels.map(l => <th key={l}>{l}</th>)}
+                  <th style={{ minWidth: 80 }}>True \ Pred</th>
+                  {cm.labels.map(l => (
+                    <th key={l} style={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={l}>{l}</th>
+                  ))}
+                  <th style={{ fontStyle: 'italic', color: 'var(--primary)' }}>Recall</th>
                 </tr>
               </thead>
               <tbody>
-                {cm.matrix.map((row, i) => (
-                  <tr key={i}>
-                    <td className="font-semibold">{cm.labels[i]}</td>
-                    {row.map((v, j) => (
-                      <td key={j} style={{ background: i === j ? 'var(--success-light)' : undefined, fontWeight: i === j ? 700 : undefined }}>
-                        {v}
+                {cm.matrix.map((row, i) => {
+                  const rowTotal = row.reduce((a, b) => a + b, 0)
+                  const recall = rowTotal > 0 ? row[i] / rowTotal : 0
+                  return (
+                    <tr key={i}>
+                      <td className="font-semibold" style={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={cm.labels[i]}>{cm.labels[i]}</td>
+                      {row.map((v, j) => {
+                        const norm = rowTotal > 0 ? v / rowTotal : 0
+                        const isDiag = i === j
+                        const bg = isDiag
+                          ? `rgba(26, 122, 76, ${Math.max(0.1, norm * 0.7)})`
+                          : norm > 0 ? `rgba(222, 53, 11, ${Math.max(0.05, norm * 0.5)})` : undefined
+                        return (
+                          <td key={j} style={{ background: bg, fontWeight: isDiag ? 700 : undefined, textAlign: 'center' }}>
+                            {v}
+                          </td>
+                        )
+                      })}
+                      <td style={{ fontWeight: 600, color: recall >= 0.7 ? 'var(--success)' : recall >= 0.5 ? '#8a5200' : 'var(--danger)' }}>
+                        {(recall * 100).toFixed(1)}%
                       </td>
-                    ))}
-                  </tr>
-                ))}
+                    </tr>
+                  )
+                })}
+                {/* Precision row */}
+                <tr>
+                  <td className="font-semibold" style={{ fontStyle: 'italic', color: 'var(--primary)' }}>Precision</td>
+                  {cm.matrix[0]?.map((_, j) => {
+                    const colTotal = cm.matrix.reduce((sum, row) => sum + row[j], 0)
+                    const precision = colTotal > 0 ? cm.matrix[j]?.[j] / colTotal : 0
+                    return (
+                      <td key={j} style={{ fontWeight: 600, color: precision >= 0.7 ? 'var(--success)' : precision >= 0.5 ? '#8a5200' : 'var(--danger)' }}>
+                        {(precision * 100).toFixed(1)}%
+                      </td>
+                    )
+                  })}
+                  <td />
+                </tr>
               </tbody>
             </table>
           </div>
