@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import APIRouter, HTTPException, Request, status
+from fastapi.responses import Response
 
 from app.models.ml_schemas import (
     CompareResponse,
@@ -21,7 +22,7 @@ def _get_ml_service(request: Request):
 
 
 @router.post("/train", response_model=TrainResponse)
-async def train_model(request: Request, body: TrainRequest) -> TrainResponse:
+def train_model(request: Request, body: TrainRequest) -> TrainResponse:
     ml = _get_ml_service(request)
     session = ml.get_session(body.session_id)
     if session is None:
@@ -45,7 +46,7 @@ async def train_model(request: Request, body: TrainRequest) -> TrainResponse:
 
 
 @router.post("/compare/{model_id}", response_model=CompareResponse)
-async def add_to_comparison(request: Request, model_id: str) -> CompareResponse:
+def add_to_comparison(request: Request, model_id: str) -> CompareResponse:
     ml = _get_ml_service(request)
     model_data = ml.get_model(model_id)
     if model_data is None:
@@ -58,18 +59,19 @@ async def add_to_comparison(request: Request, model_id: str) -> CompareResponse:
 
 
 @router.get("/compare/{session_id}", response_model=CompareResponse)
-async def get_comparison(request: Request, session_id: str) -> CompareResponse:
+def get_comparison(request: Request, session_id: str) -> CompareResponse:
     ml = _get_ml_service(request)
     return ml.get_comparison(session_id)
 
 
-@router.delete("/compare/{session_id}", status_code=204)
-async def clear_comparison(request: Request, session_id: str) -> None:
+@router.delete("/compare/{session_id}", status_code=204, response_model=None)
+def clear_comparison(request: Request, session_id: str):
     _get_ml_service(request).clear_comparison(session_id)
+    return Response(status_code=204)
 
 
 @router.get("/models/{model_id}")
-async def get_model_info(request: Request, model_id: str) -> dict:
+def get_model_info(request: Request, model_id: str) -> dict:
     ml = _get_ml_service(request)
     data = ml.get_model(model_id)
     if data is None:

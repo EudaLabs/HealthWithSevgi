@@ -4,10 +4,21 @@ import type { CompareEntry, ModelType, TrainResponse } from '../types'
 export const trainModel = (
   sessionId: string,
   modelType: ModelType,
-  params: Record<string, unknown>
+  params: Record<string, unknown>,
+  options?: { tune?: boolean; useFeatureSelection?: boolean; signal?: AbortSignal }
 ): Promise<TrainResponse> =>
   api
-    .post<TrainResponse>('/train', { session_id: sessionId, model_type: modelType, params })
+    .post<TrainResponse>(
+      '/train',
+      {
+        session_id: sessionId,
+        model_type: modelType,
+        params,
+        tune: options?.tune,
+        use_feature_selection: options?.useFeatureSelection,
+      },
+      { signal: options?.signal }
+    )
     .then((r) => r.data)
 
 export const addToComparison = (modelId: string): Promise<{ entries: CompareEntry[]; best_model_id: string }> =>

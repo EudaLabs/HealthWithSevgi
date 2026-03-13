@@ -31,6 +31,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, label_binarize
+from imblearn.pipeline import Pipeline as ImbPipeline
+from imblearn.over_sampling import SMOTE
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
@@ -93,7 +95,7 @@ class MLService:
                 metric=params.get("metric", "euclidean"),
                 weights=params.get("weights", "distance"),
                 algorithm="auto",
-                n_jobs=-1,
+                n_jobs=1,
             )
         if model_type == ModelType.SVM:
             return SVC(
@@ -119,7 +121,7 @@ class MLService:
                 n_estimators=params.get("n_estimators", 100),
                 max_depth=params.get("max_depth", 5),
                 class_weight="balanced",
-                n_jobs=-1,
+                n_jobs=1,
                 min_samples_leaf=2,
                 min_samples_split=params.get("min_samples_split", 2),
                 random_state=42,
@@ -145,12 +147,12 @@ class MLService:
                     learning_rate=params.get("learning_rate", 0.1),
                     eval_metric="logloss",
                     random_state=42,
-                    n_jobs=-1,
+                    n_jobs=1,
                     verbosity=0,
                 )
             except ImportError:
                 logger.warning("xgboost not installed, falling back to RandomForest")
-                return RandomForestClassifier(n_estimators=100, max_depth=5, class_weight="balanced", n_jobs=-1, random_state=42)
+                return RandomForestClassifier(n_estimators=100, max_depth=5, class_weight="balanced", n_jobs=1, random_state=42)
         if model_type == ModelType.LIGHTGBM:
             try:
                 from lightgbm import LGBMClassifier
@@ -160,12 +162,12 @@ class MLService:
                     learning_rate=params.get("learning_rate", 0.1),
                     class_weight="balanced",
                     random_state=42,
-                    n_jobs=-1,
+                    n_jobs=1,
                     verbose=-1,
                 )
             except ImportError:
                 logger.warning("lightgbm not installed, falling back to RandomForest")
-                return RandomForestClassifier(n_estimators=100, max_depth=5, class_weight="balanced", n_jobs=-1, random_state=42)
+                return RandomForestClassifier(n_estimators=100, max_depth=5, class_weight="balanced", n_jobs=1, random_state=42)
         raise ValueError(f"Unknown model type: {model_type}")
 
     # ------------------------------------------------------------------
@@ -220,6 +222,10 @@ class MLService:
 
         is_binary = len(classes) == 2
 
+        # Check if SMOTE was applied during data preparation
+        smote_applied = session.get("smote_applied", False)
+        y_train_original = session.get("y_train_original", y_train)
+
         # --- Optional hyperparameter tuning ---
         best_params = dict(params)
         if tune:
@@ -227,9 +233,34 @@ class MLService:
             if param_grid:
                 try:
                     scoring = "roc_auc" if is_binary else "roc_auc_ovr_weighted"
+                    base_model = self.build_model(model_type, params)
+                    # Prefix param grid keys with 'model__' for pipeline
+                    pipe_param_grid = {f"model__{k}": v for k, v in param_grid.items()}
+
+                    # Build tuning pipeline — apply SMOTE + feature selection inside each CV fold
+                    tune_steps: list[tuple[str, Any]] = []
+                    if smote_applied:
+                        min_count = min(np.bincount(y_train_original[y_train_original >= 0])) if len(y_train_original) > 0 else 2
+                        k = max(1, min(5, min_count - 1))
+                        tune_steps.append(("smote", SMOTE(k_neighbors=k, random_state=42)))
+                    # Feature selection before scaling (VarianceThreshold on raw variance)
+                    if use_feature_selection and X_train_raw.shape[1] > 5:
+                        tune_steps.append(("var_thresh", VarianceThreshold(threshold=0.01)))
+                    # Scaler inside pipeline to avoid data leakage
+                    if normalization == "zscore":
+                        tune_steps.append(("scaler", StandardScaler()))
+                    elif normalization == "minmax":
+                        tune_steps.append(("scaler", MinMaxScaler()))
+                    # Feature selection after scaling (SelectKBest with mutual info)
+                    if use_feature_selection and X_train_raw.shape[1] > 5:
+                        tune_k = min(15, X_train_raw.shape[1])
+                        tune_steps.append(("select_k", SelectKBest(mutual_info_classif, k=tune_k)))
+                    tune_steps.append(("model", base_model))
+                    tune_pipe = ImbPipeline(tune_steps)
+
                     rs = RandomizedSearchCV(
-                        self.build_model(model_type, params),
-                        param_grid,
+                        tune_pipe,
+                        pipe_param_grid,
                         n_iter=20,
                         cv=StratifiedKFold(n_splits=3, shuffle=True, random_state=42),
                         scoring=scoring,
@@ -237,8 +268,10 @@ class MLService:
                         random_state=42,
                         error_score=0.0,
                     )
-                    rs.fit(X_train, y_train)
-                    best_params = {**params, **rs.best_params_}
+                    # Use raw training data with pre-SMOTE labels for tuning
+                    rs.fit(X_train_raw, y_train_original)
+                    # Extract best params, stripping 'model__' prefix
+                    best_params = {**params, **{k.replace("model__", ""): v for k, v in rs.best_params_.items()}}
                     logger.info("Hyperparameter tuning best params: %s (AUC=%.3f)", rs.best_params_, rs.best_score_)
                 except Exception as exc:
                     logger.warning("Hyperparameter tuning failed: %s — using defaults", exc)
@@ -258,14 +291,10 @@ class MLService:
         metrics.train_accuracy = train_accuracy
         metrics.overfitting_warning = (train_accuracy - metrics.accuracy) > 0.10
 
-        # --- Leak-free cross-validation using Pipeline on raw data ---
-        # If feature selection changed shape, use transformed data for CV instead
-        if use_feature_selection and X_train.shape[1] != X_train_raw.shape[1]:
-            X_cv_full = np.vstack([X_train, X_test])
-        else:
-            X_cv_full = np.vstack([X_train_raw, X_test_raw])
+        # --- Cross-validation on training data only (no test data leakage) ---
+        X_cv = X_train_raw  # Use raw (pre-scaling) training data only
+        y_cv = y_train_original  # Use pre-SMOTE labels to avoid shape mismatch
 
-        y_full = np.concatenate([y_train, y_test])
         cv_scoring = "roc_auc" if is_binary else "roc_auc_ovr_weighted"
 
         # Build pipeline based on normalization type
@@ -276,20 +305,33 @@ class MLService:
         else:
             pipe_scaler = None
 
+        # Build CV pipeline with SMOTE + feature selection inside folds
+        cv_steps: list[tuple[str, Any]] = []
+        if smote_applied:
+            min_count = min(np.bincount(y_cv[y_cv >= 0])) if len(y_cv) > 0 else 2
+            k = max(1, min(5, min_count - 1))
+            cv_steps.append(("smote", SMOTE(k_neighbors=k, random_state=42)))
+        # Feature selection before scaling (VarianceThreshold on raw variance)
+        if use_feature_selection and X_cv.shape[1] > 5:
+            cv_steps.append(("var_thresh", VarianceThreshold(threshold=0.01)))
         if pipe_scaler is not None:
-            cv_pipe = Pipeline([("scaler", pipe_scaler), ("model", self.build_model(model_type, best_params))])
-        else:
-            cv_pipe = Pipeline([("model", self.build_model(model_type, best_params))])
+            cv_steps.append(("scaler", pipe_scaler))
+        # Feature selection after scaling (SelectKBest with mutual info)
+        if use_feature_selection and X_cv.shape[1] > 5:
+            cv_k = min(15, X_cv.shape[1])
+            cv_steps.append(("select_k", SelectKBest(mutual_info_classif, k=cv_k)))
+        cv_steps.append(("model", self.build_model(model_type, best_params)))
+        cv_pipe = ImbPipeline(cv_steps)
 
         # Use RepeatedStratifiedKFold for small datasets (<500), else StratifiedKFold
-        if len(X_cv_full) < 500:
+        if len(X_cv) < 500:
             cv_splitter: Any = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=42)
         else:
             cv_splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
         try:
             cv_scores = cross_val_score(
-                cv_pipe, X_cv_full, y_full, cv=cv_splitter,
+                cv_pipe, X_cv, y_cv, cv=cv_splitter,
                 scoring=cv_scoring, n_jobs=-1, error_score=0.0,
             )
             metrics.cross_val_scores = cv_scores.tolist()

@@ -35,7 +35,7 @@ def _get_model_data(ml_service, model_id: str) -> dict:
 
 
 @router.get("/explain/global/{model_id}", response_model=GlobalExplainabilityResponse)
-async def global_importance(request: Request, model_id: str) -> GlobalExplainabilityResponse:
+def global_importance(request: Request, model_id: str) -> GlobalExplainabilityResponse:
     ml, explain, *_ = _get_services(request)
     data = _get_model_data(ml, model_id)
     try:
@@ -55,7 +55,7 @@ async def global_importance(request: Request, model_id: str) -> GlobalExplainabi
 
 
 @router.get("/explain/patient/{model_id}/{patient_index}", response_model=SinglePatientExplainResponse)
-async def single_patient_explain(
+def single_patient_explain(
     request: Request, model_id: str, patient_index: int
 ) -> SinglePatientExplainResponse:
     ml, explain, *_ = _get_services(request)
@@ -82,7 +82,7 @@ async def single_patient_explain(
 
 
 @router.get("/ethics/{model_id}", response_model=EthicsResponse)
-async def get_ethics(request: Request, model_id: str) -> EthicsResponse:
+def get_ethics(request: Request, model_id: str) -> EthicsResponse:
     ml, _, ethics, _ = _get_services(request)
     data = _get_model_data(ml, model_id)
     try:
@@ -102,13 +102,13 @@ async def get_ethics(request: Request, model_id: str) -> EthicsResponse:
 
 
 @router.post("/ethics/checklist")
-async def update_checklist(request: Request, body: ChecklistUpdate) -> dict:
+def update_checklist(request: Request, body: ChecklistUpdate) -> dict:
     _, _, ethics, _ = _get_services(request)
     return ethics.update_checklist(body.model_id, body.item_id, body.checked)
 
 
 @router.post("/certificate")
-async def generate_certificate(request: Request, body: CertificateRequest) -> StreamingResponse:
+def generate_certificate(request: Request, body: CertificateRequest) -> StreamingResponse:
     ml, _, ethics, cert_svc = _get_services(request)
     data = _get_model_data(ml, body.model_id)
 

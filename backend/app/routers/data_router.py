@@ -56,12 +56,12 @@ def _load_df(file: UploadFile | None, specialty_id: str, data_service) -> pd.Dat
 # ------------------------------------------------------------------
 
 @router.get("/specialties", response_model=list[SpecialtyInfo])
-async def get_specialties() -> list[SpecialtyInfo]:
+def get_specialties() -> list[SpecialtyInfo]:
     return list_specialties()
 
 
 @router.get("/specialties/{specialty_id}", response_model=SpecialtyInfo)
-async def get_specialty_by_id(specialty_id: str) -> SpecialtyInfo:
+def get_specialty_by_id(specialty_id: str) -> SpecialtyInfo:
     spec = get_specialty(specialty_id)
     if spec is None:
         raise HTTPException(status_code=404, detail=f"Specialty '{specialty_id}' not found")
@@ -73,7 +73,7 @@ async def get_specialty_by_id(specialty_id: str) -> SpecialtyInfo:
 # ------------------------------------------------------------------
 
 @router.post("/explore", response_model=DataExplorationResponse)
-async def explore_data(
+def explore_data(
     request: Request,
     specialty_id: str = Form(...),
     target_col: str = Form(...),
@@ -101,7 +101,7 @@ async def explore_data(
 # ------------------------------------------------------------------
 
 @router.post("/prepare", response_model=PrepResponse)
-async def prepare_data(
+def prepare_data(
     request: Request,
     specialty_id: str = Form(...),
     target_col: str = Form(...),

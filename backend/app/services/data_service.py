@@ -136,7 +136,6 @@ class DataService:
         feature_df = feature_df.select_dtypes(include=[np.number])
         feature_names = list(feature_df.columns)
 
-        # --- Handle missing values ---
         dist_before = {str(k): int((y == v).sum()) for k, v in class_to_int.items()}
 
         if settings.missing_strategy == "drop":
@@ -151,13 +150,31 @@ class DataService:
                 feature_df = feature_df.fillna(_mode.iloc[0])
             else:
                 feature_df = feature_df.fillna(feature_df.median(numeric_only=True))
-
         X = feature_df.values.astype(float)
 
-        # --- Train / test split ---
+        # --- Train / test split (BEFORE imputation to avoid data leakage) ---
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=settings.test_size, random_state=42, stratify=y
         )
+
+        # --- Handle missing values AFTER split (train-only statistics) ---
+        if settings.missing_strategy == "drop":
+            train_mask = ~pd.DataFrame(X_train).isna().any(axis=1).values
+            test_mask = ~pd.DataFrame(X_test).isna().any(axis=1).values
+            X_train = X_train[train_mask]
+            y_train = y_train[train_mask]
+            X_test = X_test[test_mask]
+            y_test = y_test[test_mask]
+        elif settings.missing_strategy == "median":
+            train_df = pd.DataFrame(X_train, columns=feature_names)
+            medians = train_df.median()
+            X_train = train_df.fillna(medians).values
+            X_test = pd.DataFrame(X_test, columns=feature_names).fillna(medians).values
+        else:  # mode
+            train_df = pd.DataFrame(X_train, columns=feature_names)
+            modes = train_df.mode().iloc[0]
+            X_train = train_df.fillna(modes).values
+            X_test = pd.DataFrame(X_test, columns=feature_names).fillna(modes).values
 
         # Capture raw (pre-scaling) arrays for session storage
         X_train_raw = X_train.copy()
@@ -176,6 +193,7 @@ class DataService:
             X_test = scaler.transform(X_test)
 
         # --- SMOTE (training only, supports multi-class) ---
+        y_train_original = y_train.copy()  # preserve pre-SMOTE labels for leak-free CV
         smote_applied = False
         
         # Filter out classes with fewer than 2 samples to prevent SMOTE ValueError
@@ -227,6 +245,8 @@ class DataService:
             "X_train_raw": X_train_raw,
             "X_test_raw": X_test_raw,
             "normalization": settings.normalization,
+            "y_train_original": y_train_original,
+            "smote_applied": smote_applied,
         }
         logger.info(
             "Session %s prepared — train=%d, test=%d, features=%d",

@@ -56,6 +56,8 @@ export type ModelType =
   | 'random_forest'
   | 'logistic_regression'
   | 'naive_bayes'
+  | 'xgboost'
+  | 'lightgbm'
 
 export interface ConfusionMatrixData {
   tn: number
@@ -85,6 +87,8 @@ export interface MetricsResponse {
   train_accuracy: number
   cross_val_scores: number[]
   low_sensitivity_warning: boolean
+  mcc: number
+  overfitting_warning: boolean
 }
 
 export interface TrainResponse {

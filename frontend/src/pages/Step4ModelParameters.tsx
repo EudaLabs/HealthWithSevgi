@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { ArrowRight, Brain, GitBranch, Layers, LineChart, Network, Zap } from 'lucide-react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { ArrowRight, BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
 import type { CompareEntry, ModelType, TrainResponse } from '../types'
@@ -41,6 +41,18 @@ const MODEL_CONFIGS = [
     icon: <Brain size={22} />,
     desc: 'Uses probability theory to estimate how likely each outcome is. Very fast and transparent.',
   },
+  {
+    type: 'xgboost' as ModelType,
+    name: 'XGBoost',
+    icon: <TrendingUp size={22} />,
+    desc: 'Gradient-boosted decision trees — fast, powerful, and widely used in healthcare competitions and research.',
+  },
+  {
+    type: 'lightgbm' as ModelType,
+    name: 'LightGBM',
+    icon: <BarChart3 size={22} />,
+    desc: 'Light gradient boosting — handles large datasets efficiently with lower memory usage.',
+  },
 ]
 
 const DEFAULT_PARAMS: Record<ModelType, Record<string, number | string>> = {
@@ -50,6 +62,8 @@ const DEFAULT_PARAMS: Record<ModelType, Record<string, number | string>> = {
   random_forest: { n_estimators: 100, max_depth: 5 },
   logistic_regression: { C: 1.0, max_iter: 200 },
   naive_bayes: { var_smoothing: 1e-9 },
+  xgboost: { n_estimators: 100, max_depth: 5, learning_rate: 0.1 },
+  lightgbm: { n_estimators: 100, max_depth: -1, learning_rate: 0.1 },
 }
 
 function pct(v: number) { return `${(v * 100).toFixed(1)}%` }
@@ -75,12 +89,28 @@ export default function Step4ModelParameters({
   const [params, setParams] = useState<Record<string, number | string>>(DEFAULT_PARAMS['random_forest'])
   const [autoRetrain, setAutoRetrain] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [autoTrainError, setAutoTrainError] = useState<string | null>(null)
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      if (abortRef.current) abortRef.current.abort()
+    }
+  }, [])
 
   useEffect(() => {
     setParams(DEFAULT_PARAMS[selectedType])
   }, [selectedType])
 
   const handleTrain = async () => {
+    // Cancel any pending auto-retrain
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (abortRef.current) abortRef.current.abort()
+    setAutoTrainError(null)
     setLoading(true)
     try {
       const resp = await trainModel(sessionId, selectedType, params)
@@ -93,16 +123,42 @@ export default function Step4ModelParameters({
     }
   }
 
-  const handleParamChange = async (key: string, value: number | string) => {
+  const fireAutoRetrain = useCallback(async (modelType: ModelType, newParams: Record<string, number | string>) => {
+    // Abort any previous in-flight auto-retrain request
+    if (abortRef.current) abortRef.current.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    setAutoTrainError(null)
+    setLoading(true)
+    try {
+      const resp = await trainModel(sessionId, modelType, newParams, { signal: controller.signal })
+      // Only apply if this controller was not aborted (i.e. it is still the latest)
+      if (!controller.signal.aborted) {
+        onTrainSuccess(resp)
+      }
+    } catch (err: unknown) {
+      // Ignore aborted requests — they are expected during rapid slider changes
+      if (err instanceof Error && err.name === 'CanceledError') return
+      if (err instanceof DOMException && err.name === 'AbortError') return
+      if (!controller.signal.aborted) {
+        setAutoTrainError((err as Error).message || 'Auto-retrain failed')
+      }
+    } finally {
+      if (!controller.signal.aborted) {
+        setLoading(false)
+      }
+    }
+  }, [sessionId, onTrainSuccess])
+
+  const handleParamChange = (key: string, value: number | string) => {
     const newParams = { ...params, [key]: value }
     setParams(newParams)
-    if (autoRetrain && !loading) {
-      setLoading(true)
-      try {
-        const resp = await trainModel(sessionId, selectedType, newParams)
-        onTrainSuccess(resp)
-      } catch (_) { /* silent */ }
-      finally { setLoading(false) }
+    if (autoRetrain) {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => {
+        fireAutoRetrain(selectedType, newParams)
+      }, 500)
     }
   }
 
@@ -171,6 +227,28 @@ export default function Step4ModelParameters({
             <span>Naïve Bayes has minimal tuning requirements. Variance smoothing (1×10⁻⁹) is pre-set to the optimal default.</span>
           </div>
         )
+      case 'xgboost':
+        return (
+          <>
+            <SliderParam label="Number of Trees" min={10} max={500} step={10}
+              value={params.n_estimators as number} onChange={v => handleParamChange('n_estimators', v)} />
+            <SliderParam label="Maximum Depth" min={1} max={20} step={1}
+              value={params.max_depth as number} onChange={v => handleParamChange('max_depth', v)} />
+            <SliderParam label="Learning Rate" min={0.01} max={1} step={0.01} decimals={2}
+              value={params.learning_rate as number} onChange={v => handleParamChange('learning_rate', v)} />
+          </>
+        )
+      case 'lightgbm':
+        return (
+          <>
+            <SliderParam label="Number of Trees" min={10} max={500} step={10}
+              value={params.n_estimators as number} onChange={v => handleParamChange('n_estimators', v)} />
+            <SliderParam label="Maximum Depth (-1 = no limit)" min={-1} max={20} step={1}
+              value={params.max_depth as number} onChange={v => handleParamChange('max_depth', v)} />
+            <SliderParam label="Learning Rate" min={0.01} max={1} step={0.01} decimals={2}
+              value={params.learning_rate as number} onChange={v => handleParamChange('learning_rate', v)} />
+          </>
+        )
     }
   }
 
@@ -188,6 +266,8 @@ export default function Step4ModelParameters({
             key={m.type}
             className={`model-card ${selectedType === m.type ? 'selected' : ''}`}
             onClick={() => setSelectedType(m.type)}
+            disabled={loading}
+            aria-disabled={loading}
           >
             <div style={{ color: 'var(--primary)' }}>{m.icon}</div>
             <div className="model-card-name">{m.name}</div>
@@ -215,11 +295,24 @@ export default function Step4ModelParameters({
         </div>
 
         <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <button className="btn btn-primary" onClick={handleTrain} disabled={loading}>
+          <button className="btn btn-primary" onClick={handleTrain} disabled={loading} aria-busy={loading}>
             {loading ? '⏳ Training…' : '▶ Train Model'}
           </button>
           {loading && <span className="text-sm text-muted">This may take a moment…</span>}
         </div>
+
+        {autoTrainError && (
+          <div className="alert alert-danger" role="alert" style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>Auto-retrain failed: {autoTrainError}</span>
+            <button
+              onClick={() => setAutoTrainError(null)}
+              aria-label="Dismiss error"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Results preview */}
