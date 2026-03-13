@@ -3,13 +3,13 @@ import { Check, Lock } from 'lucide-react'
 import clsx from 'clsx'
 
 const STEPS = [
-  { n: 1, label: 'Clinical Context' },
-  { n: 2, label: 'Data Exploration' },
-  { n: 3, label: 'Data Preparation' },
-  { n: 4, label: 'Model & Parameters' },
-  { n: 5, label: 'Results' },
-  { n: 6, label: 'Explainability' },
-  { n: 7, label: 'Ethics & Bias' },
+  { n: 1, label: 'Clinical Context', sub: 'Domain & objectives' },
+  { n: 2, label: 'Data Exploration', sub: 'Inspect & visualize' },
+  { n: 3, label: 'Data Preparation', sub: 'Clean, encode & split' },
+  { n: 4, label: 'Model & Parameters', sub: 'Choose & configure' },
+  { n: 5, label: 'Results', sub: 'Evaluate & compare' },
+  { n: 6, label: 'Explainability', sub: 'Interpret predictions' },
+  { n: 7, label: 'Ethics & Bias', sub: 'Audit fairness' },
 ]
 
 interface Props {
@@ -61,7 +61,10 @@ export default function WizardProgress({
               <div className="step-number">
                 {locked ? <Lock size={11} /> : completed && !active ? <Check size={12} /> : step.n}
               </div>
-              <span>{step.label}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                <span>{step.label}</span>
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 400 }}>{step.sub}</span>
+              </div>
             </div>
             {idx < STEPS.length - 1 && <div className="step-connector" />}
           </React.Fragment>

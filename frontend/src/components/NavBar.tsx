@@ -27,13 +27,15 @@ const GLOSSARY = [
 
 interface Props {
   specialty: Specialty | null
+  specialties: Specialty[]
+  onSpecialtyChange: (s: Specialty) => void
   onReset: () => void
   onGlossary: () => void
   glossaryOpen: boolean
   onGlossaryClose: () => void
 }
 
-export default function NavBar({ specialty, onReset, onGlossary, glossaryOpen, onGlossaryClose }: Props) {
+export default function NavBar({ specialty, specialties, onSpecialtyChange, onReset, onGlossary, glossaryOpen, onGlossaryClose }: Props) {
   const [search, setSearch] = useState('')
   const filtered = GLOSSARY.filter(
     (g) =>
@@ -47,16 +49,14 @@ export default function NavBar({ specialty, onReset, onGlossary, glossaryOpen, o
         <div className="navbar-brand">
           <Activity size={22} style={{ color: 'var(--primary)' }} />
           <div>
-            <div className="navbar-brand-title">ML Visualization Tool</div>
-            {specialty && (
-              <div className="navbar-brand-sub">{specialty.name}</div>
-            )}
+            <div className="navbar-brand-title">HEALTH-AI · ML Learning Tool</div>
+            <div className="navbar-brand-sub">For Healthcare Professionals</div>
           </div>
         </div>
         <div className="navbar-actions">
-          <span className="privacy-notice">
-            🔒 Your data stays in this session only
-          </span>
+          {specialty && (
+            <span className="badge badge-primary">{specialty.name}</span>
+          )}
           <button className="btn btn-ghost btn-sm" onClick={onGlossary}>
             <HelpCircle size={15} /> Help / Glossary
           </button>
@@ -67,6 +67,20 @@ export default function NavBar({ specialty, onReset, onGlossary, glossaryOpen, o
           )}
         </div>
       </nav>
+
+      {specialties.length > 0 && (
+        <div className="specialty-chips">
+          {specialties.map((s) => (
+            <button
+              key={s.id}
+              className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
+              onClick={() => onSpecialtyChange(s)}
+            >
+              {s.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {glossaryOpen && (
         <div className="modal-overlay" onClick={onGlossaryClose}>
