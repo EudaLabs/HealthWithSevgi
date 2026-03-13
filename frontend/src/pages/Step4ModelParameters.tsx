@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { ArrowRight, BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
@@ -223,7 +223,7 @@ export default function Step4ModelParameters({
       case 'naive_bayes':
         return (
           <div className="alert alert-info">
-            <span>ℹ️</span>
+            <span aria-hidden="true">ℹ️</span>
             <span>Naïve Bayes has minimal tuning requirements. Variance smoothing (1×10⁻⁹) is pre-set to the optimal default.</span>
           </div>
         )
@@ -251,6 +251,11 @@ export default function Step4ModelParameters({
         )
     }
   }
+
+  const sortedModels = useMemo(
+    () => [...comparedModels].sort((a, b) => b.metrics.auc_roc - a.metrics.auc_roc),
+    [comparedModels]
+  )
 
   return (
     <div className="step-page">
@@ -330,20 +335,20 @@ export default function Step4ModelParameters({
                 + Add to Comparison
               </button>
             </div>
-            <div className="grid-3">
+            <div className="grid-3" key={trainResponse?.model_id}>
               {([
                 { label: 'Accuracy', v: trainResponse.metrics.accuracy, g: 0.65, a: 0.55 },
-                { label: 'Sensitivity ⭐', v: trainResponse.metrics.sensitivity, g: 0.70, a: 0.50 },
+                { label: 'Sensitivity', starred: true, v: trainResponse.metrics.sensitivity, g: 0.70, a: 0.50 },
                 { label: 'Specificity', v: trainResponse.metrics.specificity, g: 0.65, a: 0.55 },
                 { label: 'Precision', v: trainResponse.metrics.precision, g: 0.60, a: 0.50 },
                 { label: 'F1 Score', v: trainResponse.metrics.f1_score, g: 0.65, a: 0.55 },
                 { label: 'AUC-ROC', v: trainResponse.metrics.auc_roc, g: 0.75, a: 0.65 },
-              ]).map(({ label, v, g, a }) => {
+              ]).map(({ label, v, g, a, starred }: { label: string; v: number; g: number; a: number; starred?: boolean }) => {
                 const cls = v >= g ? 'metric-green' : v >= a ? 'metric-amber' : 'metric-red'
                 const bgCls = v >= g ? 'metric-bg-green' : v >= a ? 'metric-bg-amber' : 'metric-bg-red'
                 return (
-                  <div key={label} className={`card ${bgCls}`} style={{ padding: '0.875rem', textAlign: 'center' }}>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>{label}</div>
+                  <div key={label} className={`card ${bgCls} metric-card-enter`} style={{ padding: '0.875rem', textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>{label}{starred && <>{" "}<span aria-hidden="true">⭐</span></>}</div>
                     <div className={`font-bold ${cls}`} style={{ fontSize: '1.5rem' }}>{pct(v)}</div>
                   </div>
                 )
@@ -352,7 +357,7 @@ export default function Step4ModelParameters({
 
             {trainResponse.metrics.low_sensitivity_warning && (
               <div className="alert alert-danger mt-3">
-                <span>🚨</span>
+                <span aria-hidden="true">🚨</span>
                 <span>
                   <strong>Low Sensitivity Warning:</strong> This model misses more than half of the patients who actually had the condition.
                   Try a different model or adjust parameters.
@@ -378,9 +383,7 @@ export default function Step4ModelParameters({
                     </tr>
                   </thead>
                   <tbody>
-                    {[...comparedModels]
-                      .sort((a,b) => b.metrics.auc_roc - a.metrics.auc_roc)
-                      .map((e, i) => (
+                    {sortedModels.map((e, i) => (
                         <tr key={e.model_id}>
                           <td>
                             {i === 0 && <span className="badge badge-success" style={{ marginRight: 6 }}>Best</span>}
@@ -414,17 +417,19 @@ export default function Step4ModelParameters({
   )
 }
 
-function SliderParam({ label, min, max, step, value, onChange, decimals = 0 }: {
+const SliderParam = React.memo(function SliderParam({ label, min, max, step, value, onChange, decimals = 0 }: {
   label: string; min: number; max: number; step: number; value: number;
   onChange: (v: number) => void; decimals?: number
 }) {
+  const sliderId = `slider-${label.replace(/\s+/g, '-').toLowerCase()}`
   return (
     <div className="form-group">
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <label className="form-label">{label}</label>
+        <label className="form-label" htmlFor={sliderId}>{label}</label>
         <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{Number(value).toFixed(decimals)}</span>
       </div>
       <input
+        id={sliderId}
         type="range" className="form-range"
         min={min} max={max} step={step} value={value}
         onChange={e => onChange(Number(e.target.value))}
@@ -434,14 +439,14 @@ function SliderParam({ label, min, max, step, value, onChange, decimals = 0 }: {
       </div>
     </div>
   )
-}
+})
 
-function RadioParam({ label, options, value, onChange }: {
+const RadioParam = React.memo(function RadioParam({ label, options, value, onChange }: {
   label: string; options: string[]; value: string; onChange: (v: string) => void
 }) {
   return (
-    <div className="form-group">
-      <label className="form-label">{label}</label>
+    <fieldset className="form-group" style={{ border: 'none', padding: 0, margin: 0 }}>
+      <legend className="form-label">{label}</legend>
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         {options.map(o => (
           <label key={o} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.875rem' }}>
@@ -450,6 +455,6 @@ function RadioParam({ label, options, value, onChange }: {
           </label>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
-}
+})

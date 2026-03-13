@@ -13,7 +13,7 @@ import Step6Explainability from './pages/Step6Explainability'
 import Step7Ethics from './pages/Step7Ethics'
 import type { WizardState, Specialty, CompareEntry } from './types'
 
-const DEFAULT_STATE: WizardState = {
+const createDefaultState = (): WizardState => ({
   specialty: null,
   explorationData: null,
   targetColumn: null,
@@ -29,10 +29,10 @@ const DEFAULT_STATE: WizardState = {
   comparedModels: [],
   stepsCompleted: new Set(),
   currentStep: 1,
-}
+})
 
 export default function App() {
-  const [state, setState] = useState<WizardState>(DEFAULT_STATE)
+  const [state, setState] = useState<WizardState>(createDefaultState)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
 
   const { data: specialties = [] } = useQuery({
@@ -57,17 +57,13 @@ export default function App() {
 
   const handleSpecialtySelect = useCallback(
     (specialty: Specialty) => {
-      setState({
-        ...DEFAULT_STATE,
-        specialty,
-        currentStep: 1,
-      })
+      setState({ ...createDefaultState(), specialty, currentStep: 1 })
     },
     []
   )
 
   const handleResetSpecialty = useCallback(() => {
-    setState(DEFAULT_STATE)
+    setState(createDefaultState())
   }, [])
 
   const addComparedModel = useCallback((entry: CompareEntry) => {

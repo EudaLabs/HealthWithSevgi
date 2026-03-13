@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ArrowRight, AlertTriangle, CheckCircle, XCircle, Info } from 'lucide-react'
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -23,6 +23,8 @@ const METRIC_DEFS = [
     meaning: '0.5 = no better than chance, 1.0 = perfect. Measures overall separability.' },
 ]
 
+const DIAG_DATA = [{ fpr: 0, tpr: 0 }, { fpr: 1, tpr: 1 }]
+
 interface Props {
   trainResponse: TrainResponse
   onNext: () => void
@@ -33,8 +35,15 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
   const cm = metrics.confusion_matrix
   const isBinary = cm.labels.length === 2
 
-  const rocData = metrics.roc_curve.map(p => ({ fpr: p.fpr, tpr: p.tpr }))
-  const diagData = [{ fpr: 0, tpr: 0 }, { fpr: 1, tpr: 1 }]
+  const rocData = useMemo(
+    () => metrics.roc_curve.map(p => ({ fpr: p.fpr, tpr: p.tpr })),
+    [metrics.roc_curve]
+  )
+
+  const prData = useMemo(
+    () => metrics.pr_curve.map(p => ({ recall: p.recall, precision: p.precision })),
+    [metrics.pr_curve]
+  )
 
   const cvMean = metrics.cross_val_scores.length
     ? metrics.cross_val_scores.reduce((a, b) => a + b, 0) / metrics.cross_val_scores.length
@@ -42,7 +51,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
   const overfitGap = metrics.train_accuracy - metrics.accuracy
 
   return (
-    <div className="step-page">
+    <div className="step-page" aria-live="polite">
       <div className="step-page-header">
         <h2>Step 5 — Results</h2>
         <p>How well did the AI perform on patients it had never seen before?</p>
@@ -61,7 +70,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
       )}
 
       {/* 6 metric cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+      <div className="grid-3" key={trainResponse.model_id}>
         {METRIC_DEFS.map(({ key, label, green, amber, starred, meaning }) => {
           const v = metrics[key]
           const isGreen = v >= green
@@ -73,9 +82,9 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
             <div key={key} className={`card ${bgCls}`} style={{ padding: '1rem' }} title={meaning}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, lineHeight: 1.3 }}>
-                  {label}{starred && ' ⭐'}
+                  {label}{starred && <>{" "}<span aria-hidden="true">⭐</span></>}
                 </div>
-                <Icon size={16} className={textCls} />
+                <Icon size={16} className={textCls} aria-label={isGreen ? 'Good' : isAmber ? 'Warning' : 'Poor'} />
               </div>
               <div className={`font-bold ${textCls}`} style={{ fontSize: '1.8rem', marginTop: '0.3rem' }}>
                 {pct(v)}
@@ -127,17 +136,50 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
             AUC = <strong style={{ color: 'var(--primary)' }}>{metrics.auc_roc.toFixed(3)}</strong>
           </div>
+          {rocData.length < 2 ? (
+            <div className="alert alert-info">
+              <Info size={16} />
+              <span>ROC curve not available for this classification type. The chart requires binary probability scores.</span>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="fpr" type="number" domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'FPR', position: 'insideBottomRight', offset: -5, fontSize: 11 }} />
+                <YAxis domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'TPR', angle: -90, position: 'insideLeft', fontSize: 11 }} />
+                <Tooltip formatter={(v: number) => [v.toFixed(3)]} />
+                <Legend verticalAlign="bottom" height={24} />
+                <Line data={DIAG_DATA} dataKey="tpr" stroke="var(--border)" strokeDasharray="5 5" dot={false} name="Random" />
+                <Line data={rocData} dataKey="tpr" stroke="var(--primary)" strokeWidth={2} dot={false} name="Model" />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
+      {/* PR Curve */}
+      <div className="card">
+        <div className="card-title">Precision-Recall Curve</div>
+        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+          Higher area = better at finding true positives without false alarms.
+        </div>
+        {prData.length < 2 ? (
+          <div className="alert alert-info">
+            <Info size={16} />
+            <span>PR curve not available — requires binary probability scores.</span>
+          </div>
+        ) : (
           <ResponsiveContainer width="100%" height={200}>
             <LineChart>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="fpr" type="number" domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'FPR', position: 'insideBottomRight', offset: -5, fontSize: 11 }} />
-              <YAxis domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'TPR', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-              <Tooltip formatter={(v: number) => v.toFixed(3)} />
-              <Line data={diagData} dataKey="tpr" stroke="var(--border)" strokeDasharray="5 5" dot={false} name="Random" />
-              <Line data={rocData} dataKey="tpr" stroke="var(--primary)" strokeWidth={2} dot={false} name="Model" />
+              <XAxis dataKey="recall" type="number" domain={[0, 1]} tick={{ fontSize: 10 }} label={{ value: 'Recall', position: 'insideBottomRight', offset: -5, fontSize: 11 }} />
+              <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} label={{ value: 'Precision', angle: -90, position: 'insideLeft', fontSize: 11 }} />
+              <Tooltip formatter={(v: number) => [v.toFixed(3)]} />
+              <Legend verticalAlign="bottom" height={24} />
+              <Line data={prData} dataKey="precision" stroke="var(--primary)" strokeWidth={2} dot={false} name="PR Curve" />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        )}
       </div>
 
       {/* Confusion Matrix */}
@@ -158,12 +200,12 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
                 <div style={{ width: 120, display: 'flex', alignItems: 'center', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Actually: Safe</div>
                 <div className="cm-cell cm-cell-tn" style={{ flex: 1 }}>
                   <div className="cm-count">{cm.tn}</div>
-                  <div className="cm-label" style={{ color: 'var(--primary)' }}>✅ True Negative</div>
+                  <div className="cm-label" style={{ color: 'var(--primary)' }}><span aria-hidden="true">✅</span> True Negative</div>
                   <div className="cm-desc">Correctly called safe</div>
                 </div>
                 <div className="cm-cell cm-cell-fp" style={{ flex: 1 }}>
                   <div className="cm-count">{cm.fp}</div>
-                  <div className="cm-label" style={{ color: '#7a5200' }}>⚠️ False Positive</div>
+                  <div className="cm-label" style={{ color: '#7a5200' }}><span aria-hidden="true">⚠️</span> False Positive</div>
                   <div className="cm-desc">Unnecessary alarm</div>
                 </div>
               </div>
@@ -171,12 +213,12 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
                 <div style={{ width: 120, display: 'flex', alignItems: 'center', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Actually: At Risk</div>
                 <div className="cm-cell cm-cell-fn" style={{ flex: 1 }}>
                   <div className="cm-count">{cm.fn}</div>
-                  <div className="cm-label" style={{ color: 'var(--danger)' }}>❌ False Negative</div>
+                  <div className="cm-label" style={{ color: 'var(--danger)' }}><span aria-hidden="true">❌</span> False Negative</div>
                   <div className="cm-desc">MISSED — most dangerous</div>
                 </div>
                 <div className="cm-cell cm-cell-tp" style={{ flex: 1 }}>
                   <div className="cm-count">{cm.tp}</div>
-                  <div className="cm-label" style={{ color: 'var(--success)' }}>✅ True Positive</div>
+                  <div className="cm-label" style={{ color: 'var(--success)' }}><span aria-hidden="true">✅</span> True Positive</div>
                   <div className="cm-desc">Correctly flagged</div>
                 </div>
               </div>

@@ -1,9 +1,9 @@
 /* ---- CSS Variables ---- */
 :root {
-  --primary: #1e6b9c;
-  --primary-dark: #155680;
-  --primary-light: #e8f3fa;
-  --success: #00875a;
+  --primary: #1a7a4c;
+  --primary-dark: #145e3a;
+  --primary-light: #e8f5ee;
+  --success: #1a7a4c;
   --success-light: #e3fcef;
   --warning: #ffab00;
   --warning-light: #fffae6;
@@ -14,7 +14,7 @@
   --border: #dde3ec;
   --text-primary: #172b4d;
   --text-secondary: #5e6c84;
-  --text-muted: #8993a4;
+  --text-muted: #6b778c;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
   --radius-sm: 6px;
@@ -47,7 +47,7 @@ input, select, textarea { font-family: inherit; }
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
 }
@@ -117,7 +117,7 @@ input, select, textarea { font-family: inherit; }
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus {
   outline: none; border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(30, 107, 156, 0.12);
+  box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.12);
 }
 .form-range { width: 100%; accent-color: var(--primary); }
 .form-helper { font-size: 0.8rem; color: var(--text-secondary); }
@@ -210,11 +210,24 @@ input, select, textarea { font-family: inherit; }
 
 /* ---- Metric colours ---- */
 .metric-green { color: var(--success); }
-.metric-amber { color: #b36800; }
+.metric-amber { color: #8a5200; }
 .metric-red { color: var(--danger); }
 .metric-bg-green { background: var(--success-light); }
 .metric-bg-amber { background: var(--warning-light); }
 .metric-bg-red { background: var(--danger-light); }
+
+@keyframes metricPulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(30,107,156,0.15); }
+  100% { transform: scale(1); }
+}
+.metric-card-enter {
+  animation: metricPulse 0.4s ease-out;
+}
+.metrics-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
 
 /* ---- Utility ---- */
 .text-center { text-align: center; }
@@ -333,3 +346,20 @@ input, select, textarea { font-family: inherit; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ---- Utility: step badge & info cards ---- */
+.step-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.25rem 0.75rem; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  border: 1.5px solid var(--primary); color: var(--primary); background: var(--primary-light);
+}
+.info-card-green {
+  background: var(--primary-light); border: 1px solid rgba(26, 122, 76, 0.2);
+  border-radius: 12px; padding: 1.25rem;
+}
+.info-card-amber {
+  background: var(--warning-light); border: 1px solid rgba(255, 171, 0, 0.3);
+  border-radius: 12px; padding: 1.25rem;
+}
