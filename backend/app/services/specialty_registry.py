@@ -292,7 +292,7 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
             "ma_detection_0.9", "ma_detection_1.0",
             "exudate_1", "exudate_2", "exudate_3", "exudate_4",
             "exudate_5", "exudate_6", "exudate_7", "exudate_8",
-            "optic_disc_diameter", "am_fm_classification",
+            "macula_od_distance", "optic_disc_diameter", "am_fm_classification",
         ],
         clinical_context=(
             "Diabetic retinopathy is the leading cause of blindness in working-age adults globally, "
@@ -427,24 +427,24 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
     "thyroid": SpecialtyInfo(
         id="thyroid",
         name="Thyroid / Endocrinology",
-        description="Classify thyroid function as hypothyroid, hyperthyroid, or normal.",
+        description="Classify thyroid function as hypothyroid, hyperthyroid, or normal from biochemical assay results.",
         target_variable="class",
         target_type="multiclass",
-        data_source="UCI Thyroid Disease Dataset — archive.ics.uci.edu/dataset/102/thyroid+disease",
-        what_ai_predicts="Thyroid function classification (hypothyroid / hyperthyroid / normal)",
+        data_source="UCI New Thyroid Dataset — archive.ics.uci.edu/dataset/102/thyroid+disease",
+        what_ai_predicts="Thyroid function classification (hyperthyroid / normal / hypothyroid)",
         feature_names=[
-            "age", "sex", "on_thyroxine", "on_antithyroid_medication",
-            "sick", "pregnant", "thyroid_surgery", "TSH", "T3", "TT4", "T4U", "FTI",
+            "T3_resin_uptake", "total_serum_thyroxine", "T3", "TSH", "max_abs_diff_TSH",
         ],
         clinical_context=(
-            "Thyroid dysfunction — encompassing hypothyroidism, hyperthyroidism, and "
-            "autoimmune thyroid disease — affects approximately 5% of the global population. "
-            "Laboratory assessment of TSH, free T4, and free T3 provides definitive "
-            "biochemical diagnosis, while clinical features guide interpretation. "
-            "The UCI Thyroid Dataset contains thyroid function test results from "
-            "over 7,000 patients. This model classifies thyroid status into three "
-            "categories — hypothyroid, hyperthyroid, and normal — using 12 laboratory "
-            "and clinical variables, supporting primary care screening and referral decisions."
+            "Thyroid dysfunction affects approximately 5% of the global population. "
+            "Hyperthyroidism (excess hormone) and hypothyroidism (deficiency) are diagnosed "
+            "primarily through laboratory thyroid function tests. "
+            "The T3 resin uptake reflects thyroid hormone binding capacity, "
+            "total serum thyroxine (T4) measures overall hormone production, "
+            "and TSH (thyroid-stimulating hormone) is the most sensitive marker of thyroid status. "
+            "This model uses 5 biochemical assay values from the UCI New Thyroid dataset "
+            "to classify patients into three categories — hyperthyroid, normal, or hypothyroid — "
+            "supporting primary care screening and endocrinology referral decisions."
         ),
     ),
     "pharmacy_readmission": SpecialtyInfo(

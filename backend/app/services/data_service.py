@@ -782,7 +782,7 @@ class DataService:
                     "ma_detection_0.9", "ma_detection_1.0",
                     "exudate_1", "exudate_2", "exudate_3", "exudate_4",
                     "exudate_5", "exudate_6", "exudate_7", "exudate_8",
-                    "optic_disc_diameter", "am_fm_classification",
+                    "macula_od_distance", "optic_disc_diameter", "am_fm_classification",
                 ]
                 if len(feature_cols) == len(named_features):
                     rename_map = {old: new for old, new in zip(feature_cols, named_features)}
