@@ -146,7 +146,11 @@ class DataService:
         elif settings.missing_strategy == "median":
             feature_df = feature_df.fillna(feature_df.median(numeric_only=True))
         else:  # mode
-            feature_df = feature_df.fillna(feature_df.mode().iloc[0])
+            _mode = feature_df.mode()
+            if not _mode.empty:
+                feature_df = feature_df.fillna(_mode.iloc[0])
+            else:
+                feature_df = feature_df.fillna(feature_df.median(numeric_only=True))
 
         X = feature_df.values.astype(float)
 
@@ -322,7 +326,18 @@ class DataService:
         df = data.frame.copy()
         df["diagnosis"] = data.target.map({1: "B", 0: "M"})
         df = df.drop(columns=["target"])
-        return df
+        # Normalise column names: replace spaces with underscores
+        df.columns = [c.replace(" ", "_") for c in df.columns]
+        # Select the 14 registered features (mean + worst geometry/texture only)
+        keep = [
+            "mean_radius", "mean_texture", "mean_perimeter", "mean_area",
+            "mean_smoothness", "mean_compactness", "mean_concavity",
+            "mean_concave_points", "mean_symmetry", "worst_radius",
+            "worst_texture", "worst_perimeter", "worst_area", "worst_smoothness",
+            "diagnosis",
+        ]
+        available = [c for c in keep if c in df.columns]
+        return df[available]
 
     def _diabetes(self) -> pd.DataFrame:
         pima_cols = [
@@ -442,6 +457,24 @@ class DataService:
         if df is not None:
             if "name" in df.columns:
                 df = df.drop(columns=["name"])
+            # Real CSV uses colon/paren notation (e.g. "MDVP:Fo(Hz)") — rename to underscore format
+            col_rename = {
+                "MDVP:Fo(Hz)": "MDVP_Fo_Hz",
+                "MDVP:Fhi(Hz)": "MDVP_Fhi_Hz",
+                "MDVP:Flo(Hz)": "MDVP_Flo_Hz",
+                "MDVP:Jitter(%)": "MDVP_Jitter_pct",
+                "MDVP:Jitter(Abs)": "MDVP_Jitter_Abs",
+                "MDVP:RAP": "MDVP_RAP",
+                "MDVP:PPQ": "MDVP_PPQ",
+                "Jitter:DDP": "Jitter_DDP",
+                "MDVP:Shimmer": "MDVP_Shimmer",
+                "MDVP:Shimmer(dB)": "MDVP_Shimmer_dB",
+                "Shimmer:APQ3": "Shimmer_APQ3",
+                "Shimmer:APQ5": "Shimmer_APQ5",
+                "MDVP:APQ": "MDVP_APQ",
+                "Shimmer:DDA": "Shimmer_DDA",
+            }
+            df = df.rename(columns={k: v for k, v in col_rename.items() if k in df.columns})
             if "status" in df.columns:
                 return df
 
@@ -453,7 +486,10 @@ class DataService:
         flo = rng.uniform(65.5, 239.2, n).round(3)
         jitter_pct = rng.uniform(0.001, 0.033, n).round(5)
         jitter_abs = rng.uniform(0.000007, 0.000260, n).round(6)
+        mdvp_rap = rng.uniform(0.0007, 0.020, n).round(6)
+        mdvp_ppq = rng.uniform(0.0009, 0.020, n).round(6)
         shimmer = rng.uniform(0.009, 0.119, n).round(3)
+        shimmer_db = rng.uniform(0.085, 1.302, n).round(3)
         nhr = rng.uniform(0.001, 0.315, n).round(4)
         hnr = rng.uniform(8.44, 33.05, n).round(2)
         rpde = rng.uniform(0.256, 0.685, n).round(6)
@@ -471,7 +507,9 @@ class DataService:
         return pd.DataFrame({
             "MDVP_Fo_Hz": fo, "MDVP_Fhi_Hz": fhi, "MDVP_Flo_Hz": flo,
             "MDVP_Jitter_pct": jitter_pct, "MDVP_Jitter_Abs": jitter_abs,
-            "MDVP_Shimmer": shimmer, "NHR": nhr, "HNR": hnr,
+            "MDVP_RAP": mdvp_rap, "MDVP_PPQ": mdvp_ppq,
+            "MDVP_Shimmer": shimmer, "MDVP_Shimmer_dB": shimmer_db,
+            "NHR": nhr, "HNR": hnr,
             "RPDE": rpde, "DFA": dfa, "spread1": spread1, "spread2": spread2,
             "D2": d2, "PPE": ppe, "status": status,
         })
@@ -583,34 +621,175 @@ class DataService:
         })
 
     def _mental_health(self) -> pd.DataFrame:
+        # Try loading real dataset (Kaggle: anthonytherrien/depression-dataset)
+        # Accepts either filename: depression_data.csv or mental_health_depression.csv
+        for candidate in ("depression_data.csv", "mental_health_depression.csv"):
+            csv_cache = _CACHE_DIR / candidate
+            if csv_cache.exists():
+                try:
+                    df = pd.read_csv(csv_cache)
+                    # Drop PII
+                    df = df.drop(columns=[c for c in ["Name", "name"] if c in df.columns])
+
+                    # Encode categorical features
+                    ordinal_maps = {
+                        "Dietary Habits": {"Healthy": 2, "Moderate": 1, "Unhealthy": 0},
+                        "Sleep Patterns": {"Good": 2, "Fair": 1, "Poor": 0},
+                        "Alcohol Consumption": {"Low": 0, "Moderate": 1, "High": 2},
+                        "Physical Activity Level": {"Active": 2, "Moderate": 1, "Sedentary": 0},
+                        "Smoking Status": {"Non-smoker": 0, "Former": 1, "Current": 2},
+                        "Employment Status": {"Employed": 1, "Unemployed": 0},
+                    }
+                    for col, mapping in ordinal_maps.items():
+                        if col in df.columns:
+                            df[col] = df[col].map(mapping).fillna(1).astype(int)
+
+                    yes_no_cols = [
+                        "History of Substance Abuse", "Family History of Depression",
+                        "Chronic Medical Conditions",
+                    ]
+                    for col in yes_no_cols:
+                        if col in df.columns and df[col].dtype == object:
+                            df[col] = (df[col].str.lower() == "yes").astype(int)
+
+                    # Target: "History of Mental Illness" → severity_class
+                    if "History of Mental Illness" in df.columns:
+                        df["severity_class"] = df["History of Mental Illness"].map(
+                            {"Yes": "has_condition", "No": "no_condition"}
+                        )
+                        df = df.drop(columns=["History of Mental Illness"])
+                    elif "Depression" in df.columns:
+                        df["severity_class"] = df["Depression"].map({1: "has_condition", 0: "no_condition"})
+                        df = df.drop(columns=["Depression"])
+
+                    col_rename = {
+                        "Age": "age",
+                        "Number of Children": "number_of_children",
+                        "Income": "income",
+                        "Dietary Habits": "dietary_habits",
+                        "Sleep Patterns": "sleep_patterns",
+                        "Alcohol Consumption": "alcohol_consumption",
+                        "Physical Activity Level": "physical_activity_level",
+                        "Smoking Status": "smoking_status",
+                        "Employment Status": "employment_status",
+                        "History of Substance Abuse": "history_substance_abuse",
+                        "Family History of Depression": "family_history_depression",
+                        "Chronic Medical Conditions": "chronic_medical_conditions",
+                        "Marital Status": "marital_status",
+                        "Education Level": "education_level",
+                    }
+                    df = df.rename(columns={k: v for k, v in col_rename.items() if k in df.columns})
+
+                    # Encode remaining string columns
+                    for col in df.columns:
+                        if col != "severity_class" and df[col].dtype == object:
+                            df[col] = pd.Categorical(df[col]).codes
+
+                    df = df.dropna(subset=["severity_class"])
+                    if len(df) >= 100 and "severity_class" in df.columns:
+                        # Sample to keep response times fast
+                        if len(df) > 5000:
+                            df = df.sample(5000, random_state=42).reset_index(drop=True)
+                        logger.info("Loaded real mental health dataset (%d rows) from %s", len(df), candidate)
+                        return df
+                except Exception as exc:
+                    logger.warning("Mental health CSV load failed (%s): %s — using synthetic data", candidate, exc)
+
+        logger.warning(
+            "Real mental health dataset not found in data_cache/. "
+            "Download from kaggle.com/datasets/anthonytherrien/depression-dataset "
+            "and save as depression_data.csv in data_cache/"
+        )
+
+        # Synthetic fallback — must match registry: 12 features + binary target
         rng = self._rng()
         n = 500
-        age = rng.integers(18, 65, n)
-        gender = rng.integers(0, 2, n)
-        work_pressure = rng.integers(1, 6, n)
-        job_satisfaction = rng.integers(1, 6, n)
-        sleep_duration = rng.uniform(3.0, 9.0, n).round(1)
-        dietary_habits = rng.integers(1, 4, n)
-        suicidal_thoughts = rng.integers(0, 2, n)
-        work_hours = rng.integers(20, 80, n)
-        financial_stress = rng.integers(1, 6, n)
-        family_history = rng.integers(0, 2, n)
-        score = (
-            work_pressure * 2 + financial_stress * 2
-            - sleep_duration * 1.5 + suicidal_thoughts * 5
-            + family_history * 2 - job_satisfaction
+        age = rng.integers(18, 75, n)
+        number_of_children = rng.integers(0, 5, n)
+        income = rng.integers(10000, 120000, n)
+        dietary_habits = rng.integers(0, 3, n)       # 0=Poor,1=Moderate,2=Healthy
+        sleep_patterns = rng.integers(0, 3, n)        # 0=Poor,1=Fair,2=Good
+        alcohol_consumption = rng.integers(0, 3, n)   # 0=None,1=Low,2=Moderate,3=High
+        physical_activity_level = rng.integers(0, 3, n)
+        smoking_status = rng.integers(0, 2, n)
+        employment_status = rng.integers(0, 3, n)
+        history_substance_abuse = rng.integers(0, 2, n)
+        family_history_depression = rng.integers(0, 2, n)
+        chronic_medical_conditions = rng.integers(0, 2, n)
+        log_odds = (
+            -1.5 + 0.02 * (age - 40)
+            + 0.3 * history_substance_abuse
+            + 0.4 * family_history_depression
+            + 0.3 * chronic_medical_conditions
+            - 0.2 * sleep_patterns
+            - 0.1 * physical_activity_level
+            + 0.2 * alcohol_consumption
         )
-        severity = np.digitize(score, bins=[10, 15, 20])  # 0=minimal,1=mild,2=moderate,3=severe
-        severity_class = np.array(["minimal", "mild", "moderate", "severe"])[severity]
+        prob = 1 / (1 + np.exp(-log_odds))
+        severity_class = np.where(rng.uniform(0, 1, n) < prob, "has_condition", "no_condition")
         return pd.DataFrame({
-            "age": age, "gender": gender, "work_pressure": work_pressure,
-            "job_satisfaction": job_satisfaction, "sleep_duration": sleep_duration,
-            "dietary_habits": dietary_habits, "suicidal_thoughts": suicidal_thoughts,
-            "work_hours": work_hours, "financial_stress": financial_stress,
-            "family_history_mental_illness": family_history, "severity_class": severity_class,
+            "age": age, "number_of_children": number_of_children,
+            "income": income, "dietary_habits": dietary_habits,
+            "sleep_patterns": sleep_patterns, "alcohol_consumption": alcohol_consumption,
+            "physical_activity_level": physical_activity_level,
+            "smoking_status": smoking_status, "employment_status": employment_status,
+            "history_substance_abuse": history_substance_abuse,
+            "family_history_depression": family_history_depression,
+            "chronic_medical_conditions": chronic_medical_conditions,
+            "severity_class": severity_class,
         })
 
     def _copd(self) -> pd.DataFrame:
+        # Try loading real dataset (PhysioNet: physionet.org/content/copd-ehr/1.0.0/)
+        # Place as: backend/data_cache/pulmonology_copd.csv
+        csv_cache = _CACHE_DIR / "pulmonology_copd.csv"
+        if csv_cache.exists():
+            try:
+                df = pd.read_csv(csv_cache)
+                col_rename = {
+                    "AGE": "age", "Age": "age",
+                    "SEX": "sex", "Sex": "sex", "GENDER": "sex", "Gender": "sex",
+                    "SMOKING_PACK_YEARS": "smoking_pack_years", "PackYears": "smoking_pack_years",
+                    "FEV1": "fev1_litres", "FEV1_LITRES": "fev1_litres",
+                    "FVC": "fvc_litres", "FVC_LITRES": "fvc_litres",
+                    "FEV1_FVC": "fev1_fvc_ratio", "FEV1FVC": "fev1_fvc_ratio",
+                    "PRIOR_EXAC": "prior_exacerbations_year", "ExacerbationRate": "prior_exacerbations_year",
+                    "BMI": "bmi",
+                    "MRC": "mrc_dyspnea_scale", "MRCScore": "mrc_dyspnea_scale",
+                    "SGRQ": "sgrq_score", "SGRQTotal": "sgrq_score",
+                    "GOLD_STAGE": "copd_gold_stage", "GOLDStage": "copd_gold_stage",
+                    "EXACERBATION": "exacerbation", "Exacerbation": "exacerbation",
+                    "EXAC": "exacerbation",
+                }
+                df = df.rename(columns={k: v for k, v in col_rename.items() if k in df.columns})
+                if "sex" in df.columns and df["sex"].dtype == object:
+                    df["sex"] = (df["sex"].str.lower().isin(["m", "male", "1"])).astype(int)
+                for col in df.columns:
+                    if col != "exacerbation":
+                        df[col] = pd.to_numeric(df[col], errors="coerce")
+                if "exacerbation" in df.columns and df["exacerbation"].dtype == object:
+                    df["exacerbation"] = pd.to_numeric(df["exacerbation"], errors="coerce")
+                df = df.dropna(subset=["exacerbation"])
+                keep = [
+                    "age", "sex", "smoking_pack_years", "fev1_litres", "fvc_litres",
+                    "fev1_fvc_ratio", "prior_exacerbations_year", "bmi",
+                    "mrc_dyspnea_scale", "sgrq_score", "copd_gold_stage", "exacerbation",
+                ]
+                available = [c for c in keep if c in df.columns]
+                df = df[available]
+                if len(df) >= 100 and "exacerbation" in df.columns:
+                    logger.info("Loaded real COPD dataset (%d rows)", len(df))
+                    return df
+            except Exception as exc:
+                logger.warning("COPD CSV load failed: %s — using synthetic data", exc)
+        else:
+            logger.warning(
+                "Real COPD dataset not found at %s. "
+                "Download from physionet.org/content/copd-ehr/1.0.0/ "
+                "and save as pulmonology_copd.csv in data_cache/",
+                csv_cache,
+            )
+
         rng = self._rng()
         n = 400
         age = rng.integers(40, 85, n)
@@ -716,29 +895,17 @@ class DataService:
             except Exception as exc:
                 logger.warning("HAM10000 metadata processing failed: %s", exc)
 
-        # Fallback to synthetic
+        # Fallback to synthetic — matches real HAM10000 metadata structure (3 features)
         rng = self._rng()
         n = 400
         age = rng.integers(0, 85, n)
         sex = rng.integers(0, 2, n)
         localization = rng.integers(0, 15, n)
-        diam = rng.uniform(1.0, 20.0, n).round(1)
-        asymmetry = rng.uniform(0.0, 1.0, n).round(2)
-        border = rng.uniform(0.0, 1.0, n).round(2)
-        colour = rng.uniform(0.0, 1.0, n).round(2)
-        structures = rng.integers(0, 5, n)
-        pattern = rng.integers(0, 8, n)
-        log_odds = (
-            -2 + 3 * asymmetry + 2 * border + 1.5 * colour
-            + 0.02 * age - 0.1 * diam
-        )
+        log_odds = -2 + 0.02 * age + 0.3 * localization / 15
         prob = 1 / (1 + np.exp(-log_odds))
         dx_type = np.where(rng.uniform(0, 1, n) < prob, "malignant", "benign")
         return pd.DataFrame({
             "age": age, "sex": sex, "localization": localization,
-            "lesion_diameter_mm": diam, "asymmetry_score": asymmetry,
-            "border_irregularity": border, "colour_variation": colour,
-            "differential_structures": structures, "dermoscopy_pattern": pattern,
             "dx_type": dx_type,
         })
 
@@ -878,6 +1045,42 @@ class DataService:
         })
 
     def _sepsis(self) -> pd.DataFrame:
+        # Try loading real dataset (PhysioNet Sepsis Challenge 2019)
+        # Place as: backend/data_cache/icu_sepsis.csv
+        # The PhysioNet challenge-2019 data is in PSV (pipe-separated) files per patient.
+        # Merge them into a single CSV and save as icu_sepsis.csv in data_cache/.
+        csv_cache = _CACHE_DIR / "icu_sepsis.csv"
+        if csv_cache.exists():
+            try:
+                df = pd.read_csv(csv_cache)
+                # PhysioNet PSV files use pipe separator; if not yet CSV, try pipe sep
+                if len(df.columns) == 1:
+                    df = pd.read_csv(csv_cache, sep="|")
+                keep = [
+                    "HR", "O2Sat", "Temp", "SBP", "MAP", "Resp",
+                    "BaseExcess", "pH", "PaCO2", "Lactate", "Creatinine",
+                    "Bilirubin_total", "WBC", "Platelets", "Age", "Gender", "SepsisLabel",
+                ]
+                available = [c for c in keep if c in df.columns]
+                df = df[available].dropna(subset=["SepsisLabel"])
+                df["SepsisLabel"] = pd.to_numeric(df["SepsisLabel"], errors="coerce").astype("Int64")
+                df = df.dropna(subset=["SepsisLabel"])
+                if len(df) >= 100 and "SepsisLabel" in df.columns:
+                    # Sample to keep response times fast
+                    if len(df) > 5000:
+                        df = df.sample(5000, random_state=42).reset_index(drop=True)
+                    logger.info("Loaded real ICU sepsis dataset (%d rows)", len(df))
+                    return df
+            except Exception as exc:
+                logger.warning("ICU sepsis CSV load failed: %s — using synthetic data", exc)
+        else:
+            logger.warning(
+                "Real ICU/Sepsis dataset not found at %s. "
+                "Download from physionet.org/content/challenge-2019/1.0.0/, "
+                "merge PSV files into one CSV, and save as icu_sepsis.csv in data_cache/",
+                csv_cache,
+            )
+
         rng = self._rng()
         n = 500
         hr = rng.integers(40, 180, n)
@@ -1121,34 +1324,40 @@ class DataService:
             except Exception as exc:
                 logger.warning("Thyroid dataset processing failed: %s", exc)
 
-        # Fallback to synthetic
+        # Fallback to synthetic — must match 5 real UCI New Thyroid features
         rng = self._rng()
         n = 700
-        age = rng.integers(1, 90, n)
-        sex = rng.integers(0, 2, n)
-        on_thyroxine = rng.integers(0, 2, n)
-        on_antithyroid = rng.integers(0, 2, n)
-        sick = rng.integers(0, 2, n)
-        pregnant = rng.integers(0, 2, n)
-        thyroid_surgery = rng.integers(0, 2, n)
-        tsh = rng.uniform(0.005, 530.0, n).round(3)
-        t3 = rng.uniform(0.05, 10.6, n).round(2)
-        tt4 = rng.uniform(2.0, 430.0, n).round(1)
-        t4u = rng.uniform(0.17, 2.33, n).round(2)
-        fti = rng.uniform(2.0, 395.0, n).round(1)
-        cls = []
-        for i in range(n):
-            if tsh[i] > 10:
-                cls.append("hypothyroid")
-            elif tsh[i] < 0.3:
-                cls.append("hyperthyroid")
-            else:
-                cls.append("normal")
+        # Normal ranges: T3_resin_uptake 14-59, total_serum_thyroxine 1-50,
+        # T3 0.1-6.0, TSH 0.3-10+, max_abs_diff_TSH 0-30
+        cls = rng.choice(["hyperthyroid", "normal", "hypothyroid"], n, p=[0.30, 0.55, 0.15])
+        t3_resin = np.where(cls == "hyperthyroid",
+                            rng.integers(55, 75, n),
+                            np.where(cls == "hypothyroid",
+                                     rng.integers(10, 25, n),
+                                     rng.integers(30, 55, n)))
+        total_thyroxine = np.where(cls == "hyperthyroid",
+                                   rng.uniform(10.0, 50.0, n).round(1),
+                                   np.where(cls == "hypothyroid",
+                                            rng.uniform(1.0, 8.0, n).round(1),
+                                            rng.uniform(5.0, 12.0, n).round(1)))
+        t3 = np.where(cls == "hyperthyroid",
+                      rng.uniform(2.5, 6.0, n).round(2),
+                      np.where(cls == "hypothyroid",
+                               rng.uniform(0.1, 1.0, n).round(2),
+                               rng.uniform(0.6, 2.5, n).round(2)))
+        tsh = np.where(cls == "hypothyroid",
+                       rng.uniform(8.0, 50.0, n).round(3),
+                       np.where(cls == "hyperthyroid",
+                                rng.uniform(0.01, 0.29, n).round(3),
+                                rng.uniform(0.3, 5.5, n).round(3)))
+        max_diff_tsh = np.abs(tsh - rng.uniform(0.3, 5.5, n)).round(3)
         return pd.DataFrame({
-            "age": age, "sex": sex, "on_thyroxine": on_thyroxine,
-            "on_antithyroid_medication": on_antithyroid,
-            "sick": sick, "pregnant": pregnant, "thyroid_surgery": thyroid_surgery,
-            "TSH": tsh, "T3": t3, "TT4": tt4, "T4U": t4u, "FTI": fti, "class": cls,
+            "T3_resin_uptake": t3_resin,
+            "total_serum_thyroxine": total_thyroxine,
+            "T3": t3,
+            "TSH": tsh,
+            "max_abs_diff_TSH": max_diff_tsh,
+            "class": cls,
         })
 
     def _readmission(self) -> pd.DataFrame:
@@ -1251,9 +1460,11 @@ class DataService:
         })
 
     def _pneumonia(self) -> pd.DataFrame:
+        # NIH Chest X-Ray metadata — requires manual download from Kaggle (kaggle.com/datasets/nih-chest-xrays/data)
+        # Save Data_Entry_2017.csv as: backend/data_cache/radiology_pneumonia.csv
         df = self._fetch_cached(
             "radiology_pneumonia",
-            "https://raw.githubusercontent.com/zunairaasif/NIH-Chest-X-Ray-Disease-Classification/main/Data_Entry_2017.csv",
+            "https://raw.githubusercontent.com/aedemirsen/nih_chest_xray_classification/main/Data_Entry_2017_v2020.csv",
         )
         if df is not None and "Finding Labels" in df.columns:
             try:
@@ -1279,34 +1490,19 @@ class DataService:
             except Exception as exc:
                 logger.warning("NIH Chest X-Ray processing failed: %s", exc)
 
-        # Fallback to synthetic
+        # Fallback to synthetic — matches real NIH CSV structure (4 metadata features)
         rng = self._rng()
         n = 400
         age = rng.integers(1, 90, n)
         sex = rng.integers(0, 2, n)
         view_position = rng.integers(0, 2, n)
         follow_up = rng.integers(0, 5, n)
-        consolidation = rng.uniform(0.0, 1.0, n).round(3)
-        infiltration = rng.uniform(0.0, 1.0, n).round(3)
-        effusion = rng.uniform(0.0, 1.0, n).round(3)
-        atelectasis = rng.uniform(0.0, 1.0, n).round(3)
-        nodule = rng.uniform(0.0, 1.0, n).round(3)
-        mass = rng.uniform(0.0, 1.0, n).round(3)
-        pneumothorax = rng.uniform(0.0, 1.0, n).round(3)
-        cardiomegaly = rng.uniform(0.0, 1.0, n).round(3)
-        log_odds = (
-            -2 + 5 * consolidation + 3 * infiltration + 2 * effusion
-            + 0.01 * age
-        )
+        log_odds = -2 + 0.02 * age + 0.3 * (1 - view_position)
         prob = 1 / (1 + np.exp(-log_odds))
         finding = np.where(rng.uniform(0, 1, n) < prob, "Pneumonia", "No Finding")
         return pd.DataFrame({
             "age": age, "sex": sex, "view_position": view_position,
-            "follow_up_number": follow_up, "consolidation": consolidation,
-            "infiltration": infiltration, "effusion": effusion,
-            "atelectasis": atelectasis, "nodule": nodule, "mass": mass,
-            "pneumothorax": pneumothorax, "cardiomegaly": cardiomegaly,
-            "Finding_Label": finding,
+            "follow_up_number": follow_up, "Finding_Label": finding,
         })
 
     def _generic_fallback(self) -> pd.DataFrame:

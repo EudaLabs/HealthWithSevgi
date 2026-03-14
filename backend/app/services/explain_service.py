@@ -63,11 +63,22 @@ CLINICAL_NAME_MAP: dict[str, str] = {
     "MDVP_Flo_Hz": "Min Vocal Fundamental Frequency (Hz)",
     "MDVP_Jitter_pct": "Vocal Jitter (%)",
     "MDVP_Jitter_Abs": "Absolute Vocal Jitter",
+    "MDVP_RAP": "Relative Average Perturbation",
+    "MDVP_PPQ": "Five-Point Period Perturbation Quotient",
+    "Jitter_DDP": "Average Absolute Difference of Differences (Jitter)",
     "MDVP_Shimmer": "Vocal Shimmer",
+    "MDVP_Shimmer_dB": "Vocal Shimmer (dB)",
+    "Shimmer_APQ3": "Three-Point Amplitude Perturbation Quotient",
+    "Shimmer_APQ5": "Five-Point Amplitude Perturbation Quotient",
+    "MDVP_APQ": "MDVP Amplitude Perturbation Quotient",
+    "Shimmer_DDA": "Average Absolute Differences of Consecutive Shimmer",
     "NHR": "Noise-to-Harmonics Ratio",
     "HNR": "Harmonics-to-Noise Ratio",
     "RPDE": "Recurrence Period Density Entropy",
     "DFA": "Detrended Fluctuation Analysis",
+    "spread1": "Nonlinear Frequency Variation (spread1)",
+    "spread2": "Nonlinear Frequency Variation (spread2)",
+    "D2": "D2 Nonlinear Dynamical Complexity",
     "PPE": "Pitch Period Entropy",
     # Liver
     "total_bilirubin": "Total Bilirubin (mg/dL)",
@@ -133,6 +144,110 @@ CLINICAL_NAME_MAP: dict[str, str] = {
     "TT4": "Total Thyroxine / T4 (μg/dL)",
     "T4U": "Thyroxine Utilisation Rate",
     "FTI": "Free Thyroxine Index",
+    "T3_resin_uptake": "T3 Resin Uptake (%)",
+    "total_serum_thyroxine": "Total Serum Thyroxine (μg/dL)",
+    "max_abs_diff_TSH": "Max Absolute Difference in TSH",
+    # Anaemia / haematology
+    "mch": "Mean Corpuscular Haemoglobin (pg)",
+    "mchc": "Mean Corpuscular Haemoglobin Concentration (g/dL)",
+    "mcv": "Mean Corpuscular Volume (fL)",
+    "rdw": "Red Cell Distribution Width (%)",
+    "wbc": "White Blood Cell Count (×10³/μL)",
+    "neutrophils": "Neutrophil Count (×10³/μL)",
+    "lymphocytes": "Lymphocyte Count (×10³/μL)",
+    # COPD / pulmonology
+    "smoking_pack_years": "Smoking Pack-Years",
+    "fev1_litres": "FEV1 — Forced Expiratory Volume in 1s (L)",
+    "fvc_litres": "FVC — Forced Vital Capacity (L)",
+    "fev1_fvc_ratio": "FEV1/FVC Ratio",
+    "prior_exacerbations_year": "Prior COPD Exacerbations (per year)",
+    "mrc_dyspnea_scale": "MRC Dyspnea Scale Score",
+    "sgrq_score": "SGRQ Quality-of-Life Score",
+    "copd_gold_stage": "COPD GOLD Stage",
+    # Arrhythmia / ECG
+    "QRS_duration": "QRS Duration (ms)",
+    "PR_interval": "PR Interval (ms)",
+    "QT_interval": "QT Interval (ms)",
+    "T_interval": "T Wave Interval (ms)",
+    "P_interval": "P Wave Interval (ms)",
+    "QRS_axis": "QRS Axis (°)",
+    "T_axis": "T Wave Axis (°)",
+    "P_axis": "P Wave Axis (°)",
+    "heart_rate": "Heart Rate (bpm)",
+    # Radiology
+    "view_position": "X-Ray View Position",
+    "follow_up_number": "Follow-up Visit Number",
+    "Finding_Label": "Radiological Finding",
+    # Fetal health / CTG
+    "light_decelerations": "Light Decelerations (per second)",
+    "mean_value_short_term_variability": "Mean Short-Term Variability (ms)",
+    "pct_time_abnormal_long_term_variability": "% Time with Abnormal Long-Term Variability",
+    "mean_value_long_term_variability": "Mean Long-Term Variability (ms)",
+    "histogram_mode": "CTG Histogram Mode",
+    # Ophthalmology / diabetic retinopathy
+    "quality_assessment": "Image Quality Assessment",
+    "pre_screening": "Pre-Screening Result",
+    "ma_detection_0.5": "Microaneurysm Detection (threshold 0.5)",
+    "ma_detection_0.6": "Microaneurysm Detection (threshold 0.6)",
+    "ma_detection_0.7": "Microaneurysm Detection (threshold 0.7)",
+    "ma_detection_0.8": "Microaneurysm Detection (threshold 0.8)",
+    "ma_detection_0.9": "Microaneurysm Detection (threshold 0.9)",
+    "ma_detection_1.0": "Microaneurysm Detection (threshold 1.0)",
+    "exudate_1": "Exudate Feature 1",
+    "exudate_2": "Exudate Feature 2",
+    "exudate_3": "Exudate Feature 3",
+    "exudate_4": "Exudate Feature 4",
+    "exudate_5": "Exudate Feature 5",
+    "exudate_6": "Exudate Feature 6",
+    "exudate_7": "Exudate Feature 7",
+    "exudate_8": "Exudate Feature 8",
+    "macula_od_distance": "Macula to Optic Disc Distance",
+    "optic_disc_diameter": "Optic Disc Diameter",
+    "am_fm_classification": "AM-FM Classification",
+    # Dermatology
+    "localization": "Lesion Localization",
+    # Cervical cancer
+    "number_of_sexual_partners": "Number of Sexual Partners",
+    "first_sexual_intercourse_age": "Age at First Sexual Intercourse",
+    "num_of_pregnancies": "Number of Pregnancies",
+    "smokes_years": "Years of Smoking",
+    "hormonal_contraceptives_years": "Years Using Hormonal Contraceptives",
+    "iud_years": "Years Using IUD",
+    "stds_number": "Number of STDs Diagnosed",
+    "stds_condylomatosis": "STDs: Condylomatosis",
+    "stds_cervical_condylomatosis": "STDs: Cervical Condylomatosis",
+    "stds_hpv": "STDs: HPV",
+    # Pharmacy / readmission
+    "time_in_hospital": "Hospital Length of Stay (days)",
+    "num_lab_procedures": "Number of Lab Procedures",
+    "num_procedures": "Number of Procedures",
+    "num_medications": "Number of Medications",
+    "number_outpatient": "Number of Outpatient Visits",
+    "number_emergency": "Number of Emergency Visits",
+    "number_inpatient": "Number of Inpatient Visits",
+    "number_diagnoses": "Number of Diagnoses",
+    "max_glu_serum": "Max Glucose Serum Level",
+    "A1Cresult": "HbA1c Test Result",
+    "metformin": "Metformin Dosage",
+    "change": "Change in Medication",
+    # Sepsis / ICU
+    "BaseExcess": "Base Excess (mEq/L)",
+    "PaCO2": "Partial Pressure of CO2 (mmHg)",
+    "Age": "Patient Age (years)",
+    "Gender": "Patient Gender",
+    # Mental health
+    "number_of_children": "Number of Children",
+    "income": "Annual Income",
+    "dietary_habits": "Dietary Habits Score",
+    "sleep_patterns": "Sleep Quality Score",
+    "alcohol_consumption": "Alcohol Consumption Level",
+    "physical_activity_level": "Physical Activity Level",
+    "employment_status": "Employment Status",
+    "history_substance_abuse": "History of Substance Abuse",
+    "family_history_depression": "Family History of Depression",
+    "chronic_medical_conditions": "Chronic Medical Conditions",
+    "marital_status": "Marital Status",
+    "education_level": "Education Level",
 }
 
 TOP_FEATURE_NOTES: dict[str, str] = {
@@ -173,9 +288,9 @@ def _plain_language(feature: str, value: float, pctile: float) -> str:
 
 class ExplainService:
     def _get_explainer(self, model: Any, X_train: np.ndarray, model_type: str) -> Any:
-        import shap
         mt = model_type.lower()
         try:
+            import shap
             # Tree-based models (including XGBoost and LightGBM)
             if mt in ("random_forest", "decision_tree", "xgboost", "lightgbm"):
                 return shap.TreeExplainer(model), "shap_tree"
@@ -300,10 +415,21 @@ class ExplainService:
         model_type: str,
         classes: list[str],
         y_test: np.ndarray,
+        scaler: Any = None,
     ) -> SinglePatientExplainResponse:
         explainer, method = self._get_explainer(model, X_train, model_type)
 
         x_patient = X_test[patient_idx : patient_idx + 1]
+
+        # Inverse-transform to get clinical (unscaled) values for display
+        if scaler is not None:
+            try:
+                x_patient_raw = scaler.inverse_transform(x_patient)[0]
+            except Exception as exc:
+                logger.warning("Inverse-transform failed in single_patient: %s — using scaled values", exc)
+                x_patient_raw = x_patient[0]
+        else:
+            x_patient_raw = x_patient[0]
 
         if explainer is not None:
             sv = self._shap_values_binary(explainer, method, x_patient, model)
@@ -339,15 +465,15 @@ class ExplainService:
         for i in sorted_idx[:15]:
             fname = feature_names[i] if i < len(feature_names) else f"feature_{i}"
             sv_val = float(shap_vals[i])
-            fval = float(x_patient[0, i])
+            fval_raw = float(x_patient_raw[i]) if i < len(x_patient_raw) else float(x_patient[0, i])
             pct = float(pctiles[i]) if i < len(pctiles) else 0.5
             waterfall.append(SHAPWaterfallPoint(
                 feature_name=fname,
                 clinical_name=_clinical_name(fname),
-                feature_value=round(fval, 3),
+                feature_value=round(fval_raw, 3),
                 shap_value=round(sv_val, 5),
                 direction="increases_risk" if sv_val > 0 else "decreases_risk",
-                plain_language=_plain_language(fname, fval, pct),
+                plain_language=_plain_language(fname, fval_raw, pct),
             ))
 
         # Clinical summary

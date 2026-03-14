@@ -49,10 +49,10 @@ logger = logging.getLogger(__name__)
 _SENSITIVITY_WARNING_THRESHOLD = 0.5
 
 _PARAM_GRIDS: dict = {
-    "knn": {"n_neighbors": [3, 5, 7, 11, 15], "metric": ["euclidean", "manhattan"], "weights": ["uniform", "distance"]},
-    "svm": {"C": [0.1, 1, 10, 50], "kernel": ["rbf", "linear"], "gamma": ["scale", "auto"]},
+    "knn": {"n_neighbors": list(range(1, 26)), "metric": ["euclidean", "manhattan"], "weights": ["uniform", "distance"]},
+    "svm": {"C": [0.1, 1, 10, 50], "kernel": ["rbf", "linear", "poly", "sigmoid"], "gamma": ["scale", "auto"]},
     "random_forest": {"n_estimators": [50, 100, 200], "max_depth": [3, 5, 10, None], "min_samples_split": [2, 5, 10]},
-    "decision_tree": {"max_depth": [3, 5, 8, 10], "criterion": ["gini", "entropy"], "min_samples_split": [2, 5, 10]},
+    "decision_tree": {"max_depth": [3, 5, 8, 10, 15, 20], "criterion": ["gini", "entropy"], "min_samples_split": [2, 5, 10]},
     "logistic_regression": {"C": [0.01, 0.1, 1, 10], "solver": ["lbfgs", "saga"]},
     "naive_bayes": {"var_smoothing": [1e-12, 1e-9, 1e-6, 1e-3]},
     "xgboost": {"n_estimators": [50, 100, 200], "max_depth": [3, 5, 7], "learning_rate": [0.05, 0.1, 0.2]},
@@ -99,6 +99,7 @@ class MLService:
             return SVC(
                 kernel=params.get("kernel", "rbf"),
                 C=params.get("C", 1.0),
+                gamma=params.get("gamma", "scale"),
                 probability=True,
                 cache_size=1000,
                 class_weight="balanced",

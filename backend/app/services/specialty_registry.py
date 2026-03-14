@@ -36,8 +36,6 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         what_ai_predicts="Normal vs. Pneumonia from chest X-ray clinical metadata",
         feature_names=[
             "age", "sex", "view_position", "follow_up_number",
-            "consolidation", "infiltration", "effusion", "atelectasis",
-            "nodule", "mass", "pneumothorax", "cardiomegaly",
         ],
         clinical_context=(
             "Community-acquired pneumonia is a leading cause of hospitalisation, particularly in "
@@ -191,15 +189,16 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
     "mental_health": SpecialtyInfo(
         id="mental_health",
         name="Mental Health",
-        description="Classify depression severity from lifestyle, occupational, and PHQ-based factors.",
+        description="Predict history of mental illness from lifestyle, demographic, and behavioural factors.",
         target_variable="severity_class",
-        target_type="multiclass",
-        data_source="Depression Dataset — kaggle.com/datasets/anthonytherien/depression-dataset",
-        what_ai_predicts="Depression severity class (minimal / mild / moderate / severe)",
+        target_type="binary",
+        data_source="Depression Dataset — kaggle.com/datasets/anthonytherrien/depression-dataset",
+        what_ai_predicts="History of mental illness (has_condition / no_condition) from lifestyle and demographic data",
         feature_names=[
-            "age", "gender", "work_pressure", "job_satisfaction",
-            "sleep_duration", "dietary_habits", "suicidal_thoughts",
-            "work_hours", "financial_stress", "family_history_mental_illness",
+            "age", "number_of_children", "income", "dietary_habits", "sleep_patterns",
+            "alcohol_consumption", "physical_activity_level", "smoking_status",
+            "employment_status", "history_substance_abuse",
+            "family_history_depression", "chronic_medical_conditions",
         ],
         clinical_context=(
             "Depression is the leading cause of disability worldwide, affecting over 280 million "

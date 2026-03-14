@@ -74,6 +74,7 @@ async def single_patient_explain(
             model_type=str(data["model_type"]),
             classes=data["classes"],
             y_test=data["y_test"],
+            scaler=data.get("scaler"),
         )
     except Exception as exc:
         logger.exception("Single-patient explanation failed")

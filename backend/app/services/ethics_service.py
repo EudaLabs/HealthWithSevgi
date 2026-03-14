@@ -198,21 +198,20 @@ class EthicsService:
             # Age subgroups
             if age_col is not None:
                 raw_ages = X_test[:, age_col].copy()
-                # Proper inverse transform if scaler is available
                 if scaler is not None:
                     try:
-                        dummy = np.zeros((len(raw_ages), X_test.shape[1]))
-                        dummy[:, age_col] = raw_ages
-                        unscaled = scaler.inverse_transform(dummy)
-                        raw_ages = unscaled[:, age_col]
-                    except Exception:
-                        # Fallback heuristic for z-score scaled data
-                        if raw_ages.mean() < 5:
-                            raw_ages = raw_ages * 20 + 50
-                else:
-                    # Heuristic: z-score normalized age has mean ≈ 0
-                    if raw_ages.mean() < 5:
-                        raw_ages = raw_ages * 20 + 50
+                        # Use scaler statistics directly — avoids zeroing other columns
+                        if hasattr(scaler, "mean_") and scaler.mean_ is not None:
+                            # StandardScaler: x_orig = x_scaled * std + mean
+                            raw_ages = raw_ages * scaler.scale_[age_col] + scaler.mean_[age_col]
+                        elif hasattr(scaler, "data_min_") and scaler.data_min_ is not None:
+                            # MinMaxScaler: x_orig = x_scaled * (max - min) + min
+                            raw_ages = (
+                                raw_ages * (scaler.data_max_[age_col] - scaler.data_min_[age_col])
+                                + scaler.data_min_[age_col]
+                            )
+                    except Exception as exc:
+                        logger.warning("Age inverse-transform failed: %s — using scaled values for grouping", exc)
 
                 age_groups = np.digitize(raw_ages, bins=[60, 75])
                 age_group_defs = [(0, "age_group", "18–60"), (1, "age_group", "61–75"), (2, "age_group", "76+")]
