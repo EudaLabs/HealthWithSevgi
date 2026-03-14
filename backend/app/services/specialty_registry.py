@@ -263,12 +263,10 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         description="Classify skin lesions as benign or malignant from HAM10000 dermoscopy metadata.",
         target_variable="dx_type",
         target_type="binary",
-        data_source="HAM10000 Metadata — kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000",
-        what_ai_predicts="Benign vs. malignant skin lesion from dermoscopy metadata features",
+        data_source="HAM10000 Metadata — Harvard Dataverse doi:10.7910/DVN/DBW86T",
+        what_ai_predicts="Benign vs. malignant skin lesion from dermoscopy metadata",
         feature_names=[
-            "age", "sex", "localization", "lesion_diameter_mm",
-            "asymmetry_score", "border_irregularity", "colour_variation",
-            "differential_structures", "dermoscopy_pattern",
+            "age", "sex", "localization",
         ],
         clinical_context=(
             "Melanoma and other skin cancers are among the most rapidly increasing malignancies "
@@ -283,15 +281,18 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
     "ophthalmology": SpecialtyInfo(
         id="ophthalmology",
         name="Ophthalmology",
-        description="Grade diabetic retinopathy severity from clinical findings and retinal features.",
+        description="Detect diabetic retinopathy from retinal image analysis features.",
         target_variable="severity_grade",
-        target_type="multiclass",
-        data_source="Diabetic Retinopathy Dataset — kaggle.com/datasets/sovitrath/diabetic-retinopathy-224x224-2019-data",
-        what_ai_predicts="Diabetic retinopathy severity grade (0=No DR → 3=Proliferative)",
+        target_type="binary",
+        data_source="Diabetic Retinopathy Debrecen Dataset — archive.ics.uci.edu/dataset/329/diabetic+retinopathy+debrecen+data+set",
+        what_ai_predicts="Presence of diabetic retinopathy signs from retinal analysis (0=No DR, 1=DR present)",
         feature_names=[
-            "age", "sex", "hba1c", "diabetes_duration_years", "iop",
-            "best_corrected_visual_acuity", "microaneurysms_count",
-            "hard_exudates_area", "haemorrhages_count", "neovascularisation",
+            "quality_assessment", "pre_screening", "ma_detection_0.5",
+            "ma_detection_0.6", "ma_detection_0.7", "ma_detection_0.8",
+            "ma_detection_0.9", "ma_detection_1.0",
+            "exudate_1", "exudate_2", "exudate_3", "exudate_4",
+            "exudate_5", "exudate_6", "exudate_7", "exudate_8",
+            "optic_disc_diameter", "am_fm_classification",
         ],
         clinical_context=(
             "Diabetic retinopathy is the leading cause of blindness in working-age adults globally, "

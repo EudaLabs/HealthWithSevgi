@@ -40,3 +40,6 @@ desktop.ini
 
 # ─── Temp ────────────────────────────────────────
 temp/
+
+# ─── Data cache (auto-downloaded at runtime) ──────
+backend/data_cache/

@@ -5,6 +5,7 @@ import io
 import logging
 import pathlib
 import uuid
+import zipfile
 from typing import Any
 
 import numpy as np
@@ -330,7 +331,7 @@ class DataService:
         ]
         df = self._fetch_cached(
             "endocrinology_diabetes",
-            "https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/pima-indians-diabetes.data",
+            "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv",
             read_kwargs={"header": None, "names": pima_cols},
         )
         if df is not None and "Outcome" in df.columns:
@@ -361,6 +362,48 @@ class DataService:
         })
 
     def _ckd(self) -> pd.DataFrame:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        csv_cache = _CACHE_DIR / "nephrology_ckd.csv"
+        if not csv_cache.exists():
+            try:
+                from ucimlrepo import fetch_ucirepo
+                data = fetch_ucirepo(id=336)
+                X = data.data.features.copy()
+                y = data.data.targets.copy()
+                rename_map = {
+                    "bp": "blood_pressure", "sg": "specific_gravity",
+                    "al": "albumin", "su": "sugar",
+                    "rbc": "red_blood_cells", "pc": "pus_cell",
+                    "bgr": "blood_glucose_random", "bu": "blood_urea",
+                    "sc": "serum_creatinine", "sod": "sodium",
+                    "pot": "potassium", "hemo": "haemoglobin",
+                    "pcv": "packed_cell_volume", "wc": "white_blood_cell_count",
+                    "rc": "red_blood_cell_count",
+                    "htn": "hypertension", "dm": "diabetes_mellitus",
+                    "cad": "coronary_artery_disease",
+                    "appet": "appetite", "pe": "pedal_oedema", "ane": "anemia",
+                }
+                X = X.rename(columns={k: v for k, v in rename_map.items() if k in X.columns})
+                X["classification"] = y["class"].str.strip()
+                X = X[X["classification"].isin(["ckd", "notckd"])].copy()
+                # Convert numeric columns
+                for col in X.columns:
+                    if col != "classification":
+                        X[col] = pd.to_numeric(X[col], errors="coerce")
+                X.to_csv(csv_cache, index=False)
+                logger.info("Cached CKD dataset (%d rows)", len(X))
+            except Exception as exc:
+                logger.warning("Failed to fetch CKD via ucimlrepo: %s", exc)
+
+        if csv_cache.exists():
+            try:
+                df = pd.read_csv(csv_cache)
+                if "classification" in df.columns and len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("CKD CSV cache read failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 400
         age = rng.integers(2, 90, n)
@@ -483,6 +526,36 @@ class DataService:
         })
 
     def _stroke(self) -> pd.DataFrame:
+        df = self._fetch_cached(
+            "cardiology_stroke",
+            "https://raw.githubusercontent.com/YBIFoundation/Dataset/main/Healthcare%20Stroke%20Prediction.csv",
+        )
+        if df is not None and "stroke" in df.columns:
+            try:
+                if "id" in df.columns:
+                    df = df.drop(columns=["id"])
+                cat_encodings: dict[str, dict] = {
+                    "gender": {"Male": 1, "Female": 0, "Other": 0},
+                    "ever_married": {"Yes": 1, "No": 0},
+                    "work_type": {"children": 0, "Govt_job": 1, "Never_worked": 2, "Private": 3, "Self-employed": 4},
+                    "smoking_status": {"never smoked": 0, "Unknown": 1, "formerly smoked": 2, "smokes": 3},
+                }
+                for col, mapping in cat_encodings.items():
+                    if col in df.columns and df[col].dtype == object:
+                        df[col] = df[col].map(mapping).fillna(0).astype(int)
+                if "Residence_type" in df.columns:
+                    df = df.rename(columns={"Residence_type": "residence_type"})
+                if "residence_type" in df.columns and df["residence_type"].dtype == object:
+                    df["residence_type"] = (df["residence_type"] == "Urban").astype(int)
+                df["bmi"] = pd.to_numeric(df["bmi"], errors="coerce")
+                df["stroke"] = pd.to_numeric(df["stroke"], errors="coerce")
+                df = df.dropna(subset=["stroke"])
+                if len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("Stroke dataset processing failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 5110
         gender = rng.choice([0, 1], n)
@@ -566,6 +639,26 @@ class DataService:
         })
 
     def _anaemia(self) -> pd.DataFrame:
+        df = self._fetch_cached(
+            "haematology_anaemia",
+            "https://raw.githubusercontent.com/YBIFoundation/Dataset/main/Anemia.csv",
+        )
+        if df is not None:
+            try:
+                rename_map = {
+                    "Gender": "gender", "Hemoglobin": "haemoglobin",
+                    "MCH": "mch", "MCHC": "mchc", "MCV": "mcv",
+                    "Result": "anemia_type",
+                }
+                df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+                if "gender" in df.columns and df["gender"].dtype == object:
+                    df["gender"] = (df["gender"] == "Male").astype(int)
+                if "anemia_type" in df.columns and len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("Anaemia dataset processing failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 400
         gender = rng.integers(0, 2, n)
@@ -597,6 +690,33 @@ class DataService:
         })
 
     def _dermatology(self) -> pd.DataFrame:
+        df = self._fetch_cached(
+            "dermatology",
+            "https://dataverse.harvard.edu/api/access/datafile/4338392",
+            read_kwargs={"sep": "\t", "quotechar": '"'},
+        )
+        if df is not None and "dx" in df.columns:
+            try:
+                # Map diagnosis to benign/malignant for dx_type
+                malignant = {"mel", "bcc", "akiec"}
+                df["dx_type"] = df["dx"].apply(
+                    lambda x: "malignant" if str(x).strip() in malignant else "benign"
+                )
+                if "sex" in df.columns and df["sex"].dtype == object:
+                    df["sex"] = (df["sex"] == "male").astype(int)
+                if "localization" in df.columns and df["localization"].dtype == object:
+                    locs = df["localization"].unique()
+                    loc_map = {v: i for i, v in enumerate(sorted(locs))}
+                    df["localization"] = df["localization"].map(loc_map).fillna(0).astype(int)
+                df["age"] = pd.to_numeric(df["age"], errors="coerce")
+                keep = ["age", "sex", "localization", "dx_type"]
+                df = df[[c for c in keep if c in df.columns]].dropna(subset=["dx_type"])
+                if len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("HAM10000 metadata processing failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 400
         age = rng.integers(0, 85, n)
@@ -623,6 +743,57 @@ class DataService:
         })
 
     def _ophthalmology(self) -> pd.DataFrame:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        arff_cache = _CACHE_DIR / "ophthalmology.arff"
+        if not arff_cache.exists():
+            try:
+                import urllib.request
+                zip_url = "https://archive.ics.uci.edu/static/public/329/diabetic+retinopathy+debrecen+data+set.zip"
+                resp = requests.get(zip_url, timeout=30, headers={"User-Agent": "HealthWithSevgi/1.0"})
+                resp.raise_for_status()
+                with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+                    arff_names = [n for n in zf.namelist() if n.endswith(".arff")]
+                    if arff_names:
+                        arff_cache.write_bytes(zf.read(arff_names[0]))
+                        logger.info("Extracted Debrecen DR ARFF (%d bytes)", arff_cache.stat().st_size)
+            except Exception as exc:
+                logger.warning("Failed to download Debrecen DR ARFF: %s", exc)
+
+        if arff_cache.exists():
+            try:
+                from scipy.io import arff as scipy_arff
+                data, meta = scipy_arff.loadarff(str(arff_cache))
+                df = pd.DataFrame(data)
+                for col in df.columns:
+                    if df[col].dtype == object:
+                        df[col] = df[col].str.decode("utf-8").str.strip()
+                for col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors="coerce")
+                # Last column is Class (0=No DR, 1=DR) — rename to severity_grade
+                cols = list(df.columns)
+                feature_cols = cols[:-1]
+                target_col = cols[-1]
+                df = df.rename(columns={target_col: "severity_grade"})
+                df["severity_grade"] = df["severity_grade"].astype(int)
+                # Use named subset of features for clinical context
+                named_features = [
+                    "quality_assessment", "pre_screening", "ma_detection_0.5",
+                    "ma_detection_0.6", "ma_detection_0.7", "ma_detection_0.8",
+                    "ma_detection_0.9", "ma_detection_1.0",
+                    "exudate_1", "exudate_2", "exudate_3", "exudate_4",
+                    "exudate_5", "exudate_6", "exudate_7", "exudate_8",
+                    "optic_disc_diameter", "am_fm_classification",
+                ]
+                if len(feature_cols) == len(named_features):
+                    rename_map = {old: new for old, new in zip(feature_cols, named_features)}
+                    df = df.rename(columns=rename_map)
+                df = df.dropna(subset=["severity_grade"])
+                if len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("Debrecen DR ARFF parse failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 400
         age = rng.integers(18, 80, n)
@@ -655,13 +826,16 @@ class DataService:
             try:
                 import requests as _req
                 resp = _req.get(
-                    "https://archive.ics.uci.edu/ml/machine-learning-databases/00212/column_2C_weka.arff",
-                    timeout=20,
+                    "https://archive.ics.uci.edu/static/public/212/vertebral+column.zip",
+                    timeout=30,
                     headers={"User-Agent": "HealthWithSevgi/1.0"},
                 )
                 resp.raise_for_status()
-                arff_cache.write_bytes(resp.content)
-                logger.info("Downloaded vertebral column ARFF (%d bytes)", len(resp.content))
+                with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+                    arff_names = [n for n in zf.namelist() if n.endswith("_weka.arff")]
+                    if arff_names:
+                        arff_cache.write_bytes(zf.read(arff_names[0]))
+                        logger.info("Extracted vertebral column ARFF (%d bytes)", arff_cache.stat().st_size)
             except Exception as exc:
                 logger.warning("Failed to download vertebral column ARFF: %s", exc)
 
@@ -734,6 +908,42 @@ class DataService:
         })
 
     def _fetal_health(self) -> pd.DataFrame:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        csv_cache = _CACHE_DIR / "obstetrics_fetal.csv"
+        if not csv_cache.exists():
+            try:
+                from ucimlrepo import fetch_ucirepo
+                data = fetch_ucirepo(id=193)
+                X = data.data.features.copy()
+                y = data.data.targets.copy()
+                col_map = {
+                    "LB": "baseline_value", "AC": "accelerations", "FM": "fetal_movement",
+                    "UC": "uterine_contractions", "DL": "light_decelerations",
+                    "DS": "severe_decelerations", "DP": "prolongued_decelerations",
+                    "ASTV": "abnormal_short_term_variability",
+                    "MSTV": "mean_value_short_term_variability",
+                    "ALTV": "pct_time_abnormal_long_term_variability",
+                    "MLTV": "mean_value_long_term_variability",
+                    "Mode": "histogram_mode",
+                }
+                X = X.rename(columns={k: v for k, v in col_map.items() if k in X.columns})
+                X["fetal_health"] = y["NSP"].astype(int)
+                keep = list(col_map.values()) + ["fetal_health"]
+                X = X[[c for c in keep if c in X.columns]].dropna(subset=["fetal_health"])
+                X.to_csv(csv_cache, index=False)
+                logger.info("Cached fetal health CTG dataset (%d rows)", len(X))
+            except Exception as exc:
+                logger.warning("Failed to fetch CTG via ucimlrepo: %s", exc)
+
+        if csv_cache.exists():
+            try:
+                df = pd.read_csv(csv_cache)
+                if "fetal_health" in df.columns and len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("CTG CSV cache read failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 2126
         baseline = rng.integers(106, 160, n)
@@ -765,6 +975,36 @@ class DataService:
         })
 
     def _arrhythmia(self) -> pd.DataFrame:
+        all_cols = [f"feature_{i}" for i in range(279)] + ["arrhythmia_class"]
+        df = self._fetch_cached(
+            "cardiology_arrhythmia",
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/arrhythmia/arrhythmia.data",
+            read_kwargs={"header": None, "names": all_cols, "na_values": "?"},
+        )
+        if df is not None and "arrhythmia_class" in df.columns:
+            try:
+                # Binarize: class 1 = normal, all others = arrhythmia
+                df["arrhythmia"] = df["arrhythmia_class"].apply(
+                    lambda x: 0 if x == 1 else 1
+                )
+                # Keep first 13 ECG feature columns + target
+                ecg_names = [
+                    "age", "sex", "height", "weight", "QRS_duration",
+                    "PR_interval", "QT_interval", "T_interval", "P_interval",
+                    "QRS_axis", "T_axis", "P_axis", "heart_rate",
+                ]
+                rename_map = {f"feature_{i}": name for i, name in enumerate(ecg_names)}
+                df = df.rename(columns=rename_map)
+                keep = ecg_names + ["arrhythmia"]
+                df = df[[c for c in keep if c in df.columns]].dropna(subset=["arrhythmia"])
+                for col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors="coerce")
+                if len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("Arrhythmia dataset processing failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 452
         age = rng.integers(18, 80, n)
@@ -864,6 +1104,24 @@ class DataService:
         })
 
     def _thyroid(self) -> pd.DataFrame:
+        col_names = ["class_raw", "T3_resin_uptake", "total_serum_thyroxine", "T3", "TSH", "max_abs_diff_TSH"]
+        df = self._fetch_cached(
+            "thyroid",
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/thyroid-disease/new-thyroid.data",
+            read_kwargs={"header": None, "names": col_names, "sep": ","},
+        )
+        if df is not None and "class_raw" in df.columns:
+            try:
+                class_map = {1: "hyperthyroid", 2: "normal", 3: "hypothyroid"}
+                df["class"] = df["class_raw"].map(class_map)
+                df = df.drop(columns=["class_raw"])
+                df = df.dropna(subset=["class"])
+                if len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("Thyroid dataset processing failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 700
         age = rng.integers(1, 90, n)
@@ -894,6 +1152,68 @@ class DataService:
         })
 
     def _readmission(self) -> pd.DataFrame:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        csv_cache = _CACHE_DIR / "pharmacy_readmission.csv"
+        if not csv_cache.exists():
+            try:
+                resp = requests.get(
+                    "https://archive.ics.uci.edu/ml/machine-learning-databases/00296/dataset_diabetes.zip",
+                    timeout=60,
+                    headers={"User-Agent": "HealthWithSevgi/1.0"},
+                )
+                resp.raise_for_status()
+                with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+                    csv_names = [n for n in zf.namelist() if "diabetic_data" in n and n.endswith(".csv")]
+                    if not csv_names:
+                        csv_names = [n for n in zf.namelist() if n.endswith(".csv")]
+                    if csv_names:
+                        raw = pd.read_csv(zf.open(csv_names[0]), low_memory=False)
+                        keep_cols = [
+                            "age", "gender", "time_in_hospital", "num_lab_procedures",
+                            "num_procedures", "num_medications", "number_outpatient",
+                            "number_emergency", "number_inpatient", "number_diagnoses",
+                            "max_glu_serum", "A1Cresult", "metformin", "insulin",
+                            "change", "readmitted",
+                        ]
+                        available = [c for c in keep_cols if c in raw.columns]
+                        raw = raw[available].copy()
+                        # Encode age bracket e.g. "[70-80)" → midpoint
+                        if "age" in raw.columns and raw["age"].dtype == object:
+                            age_map = {
+                                "[0-10)": 0, "[10-20)": 1, "[20-30)": 2, "[30-40)": 3,
+                                "[40-50)": 4, "[50-60)": 5, "[60-70)": 6, "[70-80)": 7,
+                                "[80-90)": 8, "[90-100)": 9,
+                            }
+                            raw["age"] = raw["age"].map(age_map).fillna(5).astype(int)
+                        if "gender" in raw.columns and raw["gender"].dtype == object:
+                            raw["gender"] = (raw["gender"] == "Male").astype(int)
+                        # Encode drug columns (No/Steady/Up/Down → 0/1/2/3)
+                        med_map = {"No": 0, "Steady": 1, "Up": 2, "Down": 3}
+                        for col in ["metformin", "insulin", "change"]:
+                            if col in raw.columns and raw[col].dtype == object:
+                                raw[col] = raw[col].map(med_map).fillna(0).astype(int)
+                        for col in ["max_glu_serum", "A1Cresult"]:
+                            if col in raw.columns and raw[col].dtype == object:
+                                glu_map = {"None": 0, "Norm": 1, ">200": 2, ">300": 3, ">7": 1, ">8": 2}
+                                raw[col] = raw[col].map(glu_map).fillna(0).astype(int)
+                        raw = raw.dropna(subset=["readmitted"])
+                        # Sample to 5000 rows to keep response times fast
+                        if len(raw) > 5000:
+                            raw = raw.sample(5000, random_state=42).reset_index(drop=True)
+                        raw.to_csv(csv_cache, index=False)
+                        logger.info("Cached readmission dataset (%d rows)", len(raw))
+            except Exception as exc:
+                logger.warning("Failed to download/parse readmission ZIP: %s", exc)
+
+        if csv_cache.exists():
+            try:
+                df = pd.read_csv(csv_cache)
+                if "readmitted" in df.columns and len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("Readmission CSV cache read failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 500
         age = rng.integers(0, 10, n)  # age bracket 0-9
@@ -931,6 +1251,35 @@ class DataService:
         })
 
     def _pneumonia(self) -> pd.DataFrame:
+        df = self._fetch_cached(
+            "radiology_pneumonia",
+            "https://raw.githubusercontent.com/zunairaasif/NIH-Chest-X-Ray-Disease-Classification/main/Data_Entry_2017.csv",
+        )
+        if df is not None and "Finding Labels" in df.columns:
+            try:
+                # Filter to binary: Pneumonia vs No Finding
+                df = df[df["Finding Labels"].isin(["Pneumonia", "No Finding"])].copy()
+                df = df.rename(columns={
+                    "Patient Age": "age",
+                    "Patient Gender": "sex",
+                    "View Position": "view_position",
+                    "Follow-up #": "follow_up_number",
+                    "Finding Labels": "Finding_Label",
+                })
+                if "sex" in df.columns and df["sex"].dtype == object:
+                    df["sex"] = (df["sex"] == "M").astype(int)
+                if "view_position" in df.columns and df["view_position"].dtype == object:
+                    df["view_position"] = (df["view_position"] == "PA").astype(int)
+                keep = ["age", "sex", "view_position", "follow_up_number", "Finding_Label"]
+                df = df[[c for c in keep if c in df.columns]].dropna(subset=["Finding_Label"])
+                df["age"] = pd.to_numeric(df["age"], errors="coerce")
+                df = df.dropna(subset=["age"])
+                if len(df) >= 100:
+                    return df
+            except Exception as exc:
+                logger.warning("NIH Chest X-Ray processing failed: %s", exc)
+
+        # Fallback to synthetic
         rng = self._rng()
         n = 400
         age = rng.integers(1, 90, n)

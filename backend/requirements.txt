@@ -12,3 +12,6 @@ xgboost>=2.0.0              # Gradient boosting (high performance)
 lightgbm>=4.3.0             # Fast gradient boosting
 requests>=2.31.0            # Real dataset downloads with caching
 scipy>=1.12.0               # ARFF file parsing (vertebral column dataset)
+openpyxl>=3.1.0             # Excel .xlsx reading (fetal health CTG dataset)
+xlrd>=2.0.0                 # Excel .xls reading (legacy UCI datasets)
+ucimlrepo>=0.0.3            # UCI ML Repository API (CKD, CTG, and other datasets)
