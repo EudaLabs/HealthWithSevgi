@@ -277,30 +277,38 @@ input, select, textarea { font-family: inherit; }
 /* ---- Specialty chips row ---- */
 .specialty-chips {
   display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.5rem 1.5rem;
-  background: var(--surface);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(to bottom, var(--surface), transparent);
   border-bottom: 1px solid var(--border);
 }
 .specialty-chip {
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  border: 1px solid var(--border);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
   background: white;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 200ms;
+  transition: all 200ms ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 .specialty-chip.active {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(26,122,76,0.25);
+  transform: scale(1.05);
 }
 .specialty-chip:hover:not(.active) {
   border-color: var(--primary);
   background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 /* ---- Specialty grid ---- */
