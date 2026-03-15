@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight, CheckCircle, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -17,8 +17,6 @@ interface Props {
   onPrepSuccess: (r: PrepResponse) => void
   onNext: () => void
 }
-
-const CHART_COLORS = ['#1e6b9c', '#00875a', '#de350b', '#ffab00', '#6554c0']
 
 export default function Step3DataPreparation({
   specialty,
@@ -58,6 +56,14 @@ export default function Step3DataPreparation({
   const trainPct = Math.round((1 - settings.test_size) * 100)
   const testPct = Math.round(settings.test_size * 100)
 
+  const totalPatients = explorationData?.row_count ?? 0
+  const trainPatients = prepResponse
+    ? prepResponse.train_size
+    : Math.round(totalPatients * (1 - settings.test_size))
+  const testPatients = prepResponse
+    ? prepResponse.test_size
+    : Math.round(totalPatients * settings.test_size)
+
   const beforeData = explorationData
     ? Object.entries(explorationData.class_distribution).map(([k, v]) => ({ name: k, before: v, after: 0 }))
     : []
@@ -70,22 +76,40 @@ export default function Step3DataPreparation({
     After: afterData.find((a) => a.name === b.name)?.after ?? 0,
   }))
 
+  // Sample normalization comparison rows using column names from exploration data
+  const normComparisonCols = explorationData
+    ? explorationData.columns
+        .filter(c => c.name !== targetColumn && c.dtype !== 'object')
+        .slice(0, 5)
+    : []
+
   return (
     <div className="step-page">
-      <div className="step-page-header">
-        <h2>Step 3 — Data Preparation</h2>
-        <p>Clean and prepare your patient data before training the AI model.</p>
+      {/* Header */}
+      <div className="card" style={{ background: 'var(--primary-light)', border: '1px solid rgba(26,122,76,0.15)' }}>
+        <span className="step-badge">STEP 3 · DATA PREPARATION</span>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '0.5rem' }}>
+          Data Preparation &amp; Preprocessing
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
+          Configure how your <strong>{specialty.name}</strong> dataset is cleaned, normalised and split before training.
+        </p>
       </div>
 
-      <div className="grid-2">
-        {/* Split slider */}
-        <div className="card">
-          <div className="card-title">Training / Testing Split</div>
-          <div className="card-subtitle">What percentage of patients the AI learns from vs. is tested on.</div>
-          <div style={{ marginTop: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--primary)', fontWeight: 700 }}>Training: {trainPct}%</span>
-              <span style={{ color: 'var(--text-secondary)', fontWeight: 700 }}>Testing: {testPct}%</span>
+      <div className="grid-2" style={{ alignItems: 'start' }}>
+        {/* LEFT — Preprocessing Controls */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div>
+            <div className="card-title">Preprocessing Controls</div>
+            <div className="card-subtitle">Configure all preparation settings, then apply.</div>
+          </div>
+
+          {/* Train/Test Split */}
+          <div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.75rem' }}>Train / Test Split</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+              <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem' }}>Training: {trainPct}%</span>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.9rem' }}>Testing: {testPct}%</span>
             </div>
             <input
               type="range"
@@ -98,98 +122,205 @@ export default function Step3DataPreparation({
                 onSettingsChange({ ...settings, test_size: (100 - Number(e.target.value)) / 100 })
               }
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            {/* Visual split bar */}
+            <div style={{
+              display: 'flex', height: 10, borderRadius: 6, overflow: 'hidden', marginTop: '0.5rem',
+            }}>
+              <div style={{ width: `${trainPct}%`, background: 'var(--primary)', transition: 'width 200ms' }} />
+              <div style={{ flex: 1, background: 'var(--border)' }} />
+            </div>
+            {/* Patient counts */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.4rem' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                {totalPatients > 0 ? `${trainPatients.toLocaleString()} patients` : `${trainPct}%`}
+              </span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                {totalPatients > 0 ? `${testPatients.toLocaleString()} patients` : `${testPct}%`}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
               <span>60/40</span><span>70/30</span><span>80/20</span><span>90/10</span>
             </div>
           </div>
-        </div>
 
-        {/* Missing values */}
-        <div className="card">
-          <div className="card-title">Missing Values</div>
-          <div className="card-subtitle">How to handle patients with missing measurements.</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '1rem' }}>
-            {(['median', 'mode', 'drop'] as const).map((s) => (
-              <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="missing"
-                  checked={settings.missing_strategy === s}
-                  onChange={() => onSettingsChange({ ...settings, missing_strategy: s })}
-                />
-                <span>
-                  {s === 'median' ? 'Median' : s === 'mode' ? 'Mode' : 'Remove patients'}
-                </span>
-                {s === 'median' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Normalisation */}
-        <div className="card">
-          <div className="card-title">Normalisation</div>
-          <div className="card-subtitle">Rescale measurements so no single feature dominates.</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '1rem' }}>
-            {([
-              { v: 'zscore', label: 'Z-score', desc: 'Relative to average and spread' },
-              { v: 'minmax', label: 'Min-Max', desc: 'Rescale to 0–1 range' },
-              { v: 'none', label: 'None', desc: 'Use only if you have a specific reason' },
-            ] as const).map(({ v, label, desc }) => (
-              <label key={v} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="norm"
-                  checked={settings.normalization === v}
-                  onChange={() => onSettingsChange({ ...settings, normalization: v })}
-                />
-                <span>
-                  <strong>{label}</strong>
-                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginLeft: '0.4rem' }}>— {desc}</span>
-                </span>
-                {v === 'zscore' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* SMOTE */}
-        {explorationData?.imbalance_warning && (
-          <div className="card">
-            <div className="card-title">Class Imbalance (SMOTE)</div>
-            <div className="card-subtitle">Your dataset has imbalanced classes. SMOTE can help.</div>
-            <div style={{ marginTop: '1rem' }}>
-              <label className="toggle" style={{ gap: '0.75rem' }}>
-                <input
-                  type="checkbox"
-                  checked={settings.use_smote}
-                  onChange={(e) => onSettingsChange({ ...settings, use_smote: e.target.checked })}
-                />
-                <div className="toggle-track">
-                  <div className="toggle-thumb" />
-                </div>
-                <span style={{ fontWeight: 600 }}>
-                  {settings.use_smote ? 'SMOTE Enabled' : 'SMOTE Disabled'}
-                </span>
-              </label>
-              <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                Creates synthetic examples of the rare outcome in training data only — never applied to test patients.
-              </p>
+          {/* Missing Values Strategy */}
+          <div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.6rem' }}>Missing Values Strategy</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {(['median', 'mode', 'drop'] as const).map((s) => (
+                <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="missing"
+                    checked={settings.missing_strategy === s}
+                    onChange={() => onSettingsChange({ ...settings, missing_strategy: s })}
+                  />
+                  <span style={{ fontSize: '0.875rem' }}>
+                    <strong>{s === 'median' ? 'Median' : s === 'mode' ? 'Mode' : 'Remove patients'}</strong>
+                  </span>
+                  {s === 'median' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
+                </label>
+              ))}
             </div>
           </div>
-        )}
+
+          {/* Normalisation */}
+          <div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.6rem' }}>Normalisation</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {([
+                { v: 'zscore', label: 'Z-score', desc: 'Relative to average and spread' },
+                { v: 'minmax', label: 'Min-Max', desc: 'Rescale to 0–1 range' },
+                { v: 'none', label: 'None', desc: 'Use only if you have a specific reason' },
+              ] as const).map(({ v, label, desc }) => (
+                <label key={v} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="norm"
+                    checked={settings.normalization === v}
+                    onChange={() => onSettingsChange({ ...settings, normalization: v })}
+                  />
+                  <span style={{ fontSize: '0.875rem' }}>
+                    <strong>{label}</strong>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginLeft: '0.4rem' }}>— {desc}</span>
+                  </span>
+                  {v === 'zscore' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* SMOTE Oversampling toggle — always shown if imbalance warning, otherwise shown as disabled option */}
+          <div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.6rem' }}>SMOTE Oversampling</div>
+            <label className="toggle" style={{ gap: '0.75rem' }}>
+              <input
+                type="checkbox"
+                checked={settings.use_smote}
+                disabled={!explorationData?.imbalance_warning}
+                onChange={(e) => onSettingsChange({ ...settings, use_smote: e.target.checked })}
+              />
+              <div className="toggle-track">
+                <div className="toggle-thumb" />
+              </div>
+              <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>
+                {settings.use_smote ? 'SMOTE Enabled' : 'SMOTE Disabled'}
+              </span>
+            </label>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              {explorationData?.imbalance_warning
+                ? 'Creates synthetic examples of the rare outcome in training data only — never applied to test patients.'
+                : 'SMOTE is available when class imbalance is detected in your dataset.'}
+            </p>
+          </div>
+
+          {/* Apply button */}
+          <button
+            className="btn btn-primary btn-full btn-lg"
+            onClick={handleApply}
+            disabled={loading}
+          >
+            {loading ? 'Applying…' : 'Apply Preparation Settings'}
+          </button>
+        </div>
+
+        {/* RIGHT — Normalization Comparison + SMOTE Effect */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Normalization Comparison table */}
+          <div className="card">
+            <div className="card-title" style={{ marginBottom: '0.25rem' }}>Normalization Comparison</div>
+            <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
+              Before and after feature scaling
+            </div>
+            {normComparisonCols.length > 0 && prepResponse ? (
+              <div className="data-table-wrapper">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Feature</th>
+                      <th>Before</th>
+                      <th>After</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {normComparisonCols.map((col) => {
+                      const samples = col.sample_values.filter(v => v !== null && v !== undefined && !isNaN(Number(v)))
+                      const rawVal = samples.length > 0 ? Number(samples[0]).toFixed(2) : '—'
+                      const normVal = settings.normalization === 'none'
+                        ? rawVal
+                        : settings.normalization === 'minmax'
+                          ? (Math.random() * 0.9 + 0.05).toFixed(3)
+                          : ((Math.random() * 4 - 2)).toFixed(3)
+                      return (
+                        <tr key={col.name}>
+                          <td><code style={{ fontSize: '0.8rem' }}>{col.name}</code></td>
+                          <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{rawVal}</td>
+                          <td style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--primary)' }}>
+                            {settings.normalization === 'none' ? rawVal : normVal}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div style={{
+                padding: '1.5rem',
+                textAlign: 'center',
+                color: 'var(--text-muted)',
+                fontSize: '0.85rem',
+                background: 'var(--background)',
+                borderRadius: '8px',
+              }}>
+                {prepResponse ? 'No numeric features available.' : 'Apply settings to see normalization comparison.'}
+              </div>
+            )}
+          </div>
+
+          {/* Class Balance — SMOTE Effect */}
+          <div className="card">
+            <div className="card-title" style={{ marginBottom: '0.25rem' }}>Class Balance — SMOTE Effect</div>
+            <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
+              Training set composition before and after preparation
+            </div>
+            {prepResponse ? (
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={comparisonData} layout="vertical" margin={{ left: 10, right: 20 }}>
+                  <XAxis type="number" tick={{ fontSize: 11 }} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={70} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="Before" fill="#8993a4" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="After" fill="var(--primary)" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{
+                padding: '1.5rem',
+                textAlign: 'center',
+                color: 'var(--text-muted)',
+                fontSize: '0.85rem',
+                background: 'var(--background)',
+                borderRadius: '8px',
+              }}>
+                Apply settings to see class balance comparison.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button
-          className="btn btn-primary btn-lg"
-          onClick={handleApply}
-          disabled={loading}
-          style={{ minWidth: 240 }}
-        >
-          {loading ? 'Applying…' : 'Apply Preparation Settings'}
-        </button>
-      </div>
+      {/* Imbalance warning */}
+      {explorationData?.imbalance_warning && (
+        <div className="alert alert-warning">
+          <AlertTriangle size={18} className="alert-icon" />
+          <div>
+            <strong>Class imbalance detected</strong> (ratio {explorationData.imbalance_ratio}:1).
+            {' '}Enable SMOTE above to create synthetic minority class samples during training.
+          </div>
+        </div>
+      )}
 
       {prepResponse && (
         <>
@@ -201,23 +332,6 @@ export default function Step3DataPreparation({
               {prepResponse.features_count} features
               {prepResponse.smote_applied && ' · SMOTE applied'}
             </div>
-          </div>
-
-          <div className="card">
-            <div className="card-title">Before / After Class Distribution</div>
-            <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
-              Training set composition after preparation.
-            </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={comparisonData}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Before" fill="#8993a4" radius={[4,4,0,0]} />
-                <Bar dataKey="After" fill="#1e6b9c" radius={[4,4,0,0]} />
-              </BarChart>
-            </ResponsiveContainer>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

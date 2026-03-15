@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ChevronDown, ChevronUp, Download } from 'lucide-react'
+import { ChevronDown, ChevronUp, Download, Shield } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
@@ -12,6 +12,12 @@ function statusColor(s: string) {
   if (s === 'acceptable') return 'var(--success)'
   if (s === 'review') return '#b36800'
   return 'var(--danger)'
+}
+
+function statusBg(s: string) {
+  if (s === 'acceptable') return 'var(--success-light)'
+  if (s === 'review') return 'var(--warning-light)'
+  return 'var(--danger-light)'
 }
 
 function metricCell(v: number) {
@@ -86,14 +92,21 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
 
   return (
     <div className="step-page">
-      <div className="step-page-header">
-        <h2>Step 7 — Ethics & Bias</h2>
-        <p>Check whether the AI treats different patient groups equitably.</p>
+      {/* Page header */}
+      <div>
+        <span className="step-badge">STEP 7 · ETHICS &amp; BIAS</span>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Shield size={22} color="var(--primary)" />
+          Ethics &amp; Bias Assessment
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
+          Is the model fair for all patient groups? Does it perform worse for certain demographics?
+        </p>
       </div>
 
       {loading && (
         <div className="card text-center" style={{ padding: '2rem' }}>
-          ⏳ Analysing subgroup performance…
+          Analysing subgroup performance…
         </div>
       )}
       {error && <div className="alert alert-danger">{error}</div>}
@@ -116,11 +129,11 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
             )
           }
 
-          {/* Subgroup table */}
+          {/* Subgroup Performance Table */}
           <div className="card">
             <div className="card-title">Subgroup Performance Table</div>
             <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
-              Overall sensitivity: <strong>{pct(ethics.overall_sensitivity)}</strong>
+              Overall sensitivity: <strong>{pct(ethics.overall_sensitivity)}</strong> — colour coding indicates performance relative to clinical thresholds.
             </div>
             <div className="data-table-wrapper">
               <table className="data-table">
@@ -146,9 +159,15 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                       {metricCell(sm.specificity)}
                       {metricCell(sm.precision)}
                       {metricCell(sm.f1_score)}
-                      <td style={{ color: statusColor(sm.status), fontWeight: 600 }}>
-                        {sm.status === 'acceptable' ? '✓' : sm.status === 'review' ? '⚠' : '✗'}{' '}
-                        {sm.status.replace('_', ' ')}
+                      <td>
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                          padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700,
+                          color: statusColor(sm.status), background: statusBg(sm.status),
+                        }}>
+                          {sm.status === 'acceptable' ? '✓' : sm.status === 'review' ? '⚠' : '✗'}{' '}
+                          {sm.status.replace('_', ' ')}
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -157,116 +176,138 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
             </div>
           </div>
 
-          {/* Training representation */}
-          <div className="card">
-            <div className="card-title">Training Data Representation</div>
-            <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
-              Gender distribution in training dataset vs. general population norms.
-            </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={reprData}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${v}%`} />
-                <Tooltip formatter={(v: number) => `${v}%`} />
-                <Legend />
-                <Bar dataKey="Dataset" fill="var(--primary)" radius={[4,4,0,0]} />
-                <Bar dataKey="Population Norm" fill="var(--border)" radius={[4,4,0,0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* EU AI Act Checklist */}
-          <div className="card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <div>
-                <div className="card-title">EU AI Act Compliance Checklist</div>
-                <div className="card-subtitle">{checkedCount} / {ethics.eu_ai_act_items.length} items completed</div>
-              </div>
-              {checkedCount === ethics.eu_ai_act_items.length && (
-                <span className="badge badge-success">✅ All complete</span>
-              )}
-            </div>
-
-            <div style={{ width: '100%', background: 'var(--border)', borderRadius: 4, height: 6, marginBottom: '1.25rem' }}>
-              <div style={{
-                width: `${(checkedCount / ethics.eu_ai_act_items.length) * 100}%`,
-                background: 'var(--success)', borderRadius: 4, height: '100%', transition: 'width 0.3s',
-              }} />
-            </div>
-
-            {ethics.eu_ai_act_items.map(item => {
-              const isChecked = item.pre_checked || !!checklistState[item.id]
-              return (
-                <div key={item.id} style={{
-                  display: 'flex', gap: '0.875rem', padding: '0.75rem 0',
-                  borderBottom: '1px solid var(--border)', alignItems: 'flex-start',
-                }}>
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    disabled={item.pre_checked}
-                    onChange={e => !item.pre_checked && handleChecklistToggle(item.id, e.target.checked)}
-                    style={{ marginTop: 2, accentColor: 'var(--primary)', width: 16, height: 16 }}
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.9rem' }}>{item.text}</div>
-                    {item.pre_checked && (
-                      <span className="badge badge-success" style={{ marginTop: '0.25rem', fontSize: '0.7rem' }}>
-                        Auto-completed
-                      </span>
-                    )}
-                  </div>
-                  <span style={{ color: isChecked ? 'var(--success)' : 'var(--text-muted)', fontWeight: 700 }}>
-                    {isChecked ? '✓' : '○'}
-                  </span>
+          {/* Two-column: EU AI Act + Training Data Representation */}
+          <div className="grid-2">
+            {/* EU AI Act Compliance */}
+            <div className="card">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <div>
+                  <div className="card-title">EU AI Act Compliance</div>
+                  <div className="card-subtitle">{checkedCount} / {ethics.eu_ai_act_items.length} items completed</div>
                 </div>
-              )
-            })}
+                {checkedCount === ethics.eu_ai_act_items.length && (
+                  <span className="badge badge-success">All complete</span>
+                )}
+              </div>
+
+              {/* Progress bar */}
+              <div style={{ width: '100%', background: 'var(--border)', borderRadius: 4, height: 8, marginBottom: '1.25rem' }}>
+                <div style={{
+                  width: `${(checkedCount / ethics.eu_ai_act_items.length) * 100}%`,
+                  background: 'var(--success)', borderRadius: 4, height: '100%', transition: 'width 0.3s',
+                }} />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                {ethics.eu_ai_act_items.map((item, idx) => {
+                  const isChecked = item.pre_checked || !!checklistState[item.id]
+                  return (
+                    <div key={item.id} style={{
+                      display: 'flex', gap: '0.875rem', padding: '0.75rem 0',
+                      borderBottom: '1px solid var(--border)', alignItems: 'flex-start',
+                    }}>
+                      <div style={{
+                        width: 22, height: 22, borderRadius: '50%', border: `2px solid ${isChecked ? 'var(--success)' : 'var(--border)'}`,
+                        background: isChecked ? 'var(--success)' : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0, marginTop: 1, fontSize: '0.7rem', color: 'white', fontWeight: 700,
+                      }}>
+                        {isChecked ? '✓' : <span style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>{idx + 1}</span>}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.875rem' }}>{item.text}</div>
+                        {item.pre_checked && (
+                          <span className="badge badge-success" style={{ marginTop: '0.25rem', fontSize: '0.7rem' }}>
+                            Auto-completed
+                          </span>
+                        )}
+                      </div>
+                      {!item.pre_checked && (
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={e => handleChecklistToggle(item.id, e.target.checked)}
+                          style={{ accentColor: 'var(--primary)', width: 16, height: 16, marginTop: 2, cursor: 'pointer' }}
+                        />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Training Data Representation */}
+            <div className="card">
+              <div className="card-title">Training Data Representation</div>
+              <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
+                Gender distribution in training dataset vs. general population norms.
+              </div>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={reprData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${v}%`} />
+                  <Tooltip formatter={(v: number) => `${v}%`} />
+                  <Legend />
+                  <Bar dataKey="Dataset" fill="var(--primary)" radius={[4,4,0,0]} />
+                  <Bar dataKey="Population Norm" fill="var(--border)" radius={[4,4,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          {/* Case studies */}
+          {/* Real-World AI Failure Case Studies */}
           <div className="card">
             <div className="card-title">Real-World AI Failure Case Studies</div>
-            <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
+            <div className="card-subtitle" style={{ marginBottom: '1.25rem' }}>
               How AI tools have failed in clinical settings and what we can learn.
             </div>
-            {ethics.case_studies.map(cs => (
-              <div key={cs.id} style={{
-                borderLeft: '4px solid var(--danger)', borderRadius: '0 8px 8px 0',
-                padding: '1rem', marginBottom: '0.75rem', background: 'var(--background)',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="grid-3">
+              {ethics.case_studies.map(cs => (
+                <div key={cs.id} style={{
+                  borderLeft: '4px solid var(--danger)', borderRadius: '0 8px 8px 0',
+                  padding: '1rem', background: 'var(--background)',
+                  display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                }}>
                   <div>
-                    <div className="font-semibold">{cs.title}</div>
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+                    <div className="font-semibold" style={{ fontSize: '0.9rem', lineHeight: 1.3 }}>{cs.title}</div>
+                    <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
                       <span className="badge badge-danger">{cs.specialty}</span>
                       <span className="badge badge-neutral">{cs.year}</span>
                     </div>
                   </div>
-                  <button className="btn btn-ghost btn-sm" onClick={() =>
-                    setExpandedStudy(expandedStudy === cs.id ? null : cs.id)
-                  }>
-                    {expandedStudy === cs.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  </button>
-                </div>
-                {expandedStudy === cs.id && (
-                  <div style={{ marginTop: '0.875rem', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                    <div>
-                      <div className="text-xs font-semibold" style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>What Happened</div>
-                      <div style={{ fontSize: '0.875rem' }}>{cs.what_happened}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold" style={{ color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Impact</div>
-                      <div style={{ fontSize: '0.875rem' }}>{cs.impact}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold" style={{ color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Lesson Learned</div>
-                      <div style={{ fontSize: '0.875rem' }}>{cs.lesson}</div>
-                    </div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: 1 }}>
+                    {cs.what_happened.length > 120 ? cs.what_happened.slice(0, 120) + '…' : cs.what_happened}
                   </div>
-                )}
-              </div>
-            ))}
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    style={{ alignSelf: 'flex-start', padding: '0.2rem 0', fontSize: '0.78rem', color: 'var(--danger)', fontWeight: 700 }}
+                    onClick={() => setExpandedStudy(expandedStudy === cs.id ? null : cs.id)}
+                  >
+                    {expandedStudy === cs.id ? (
+                      <><ChevronUp size={14} /> HIDE DETAILS</>
+                    ) : (
+                      <><ChevronDown size={14} /> FULL DETAILS</>
+                    )}
+                  </button>
+                  {expandedStudy === cs.id && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
+                      <div>
+                        <div className="text-xs font-semibold" style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>What Happened</div>
+                        <div style={{ fontSize: '0.875rem' }}>{cs.what_happened}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold" style={{ color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Impact</div>
+                        <div style={{ fontSize: '0.875rem' }}>{cs.impact}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold" style={{ color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Lesson Learned</div>
+                        <div style={{ fontSize: '0.875rem' }}>{cs.lesson}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Certificate */}
@@ -295,17 +336,19 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                 />
               </div>
             </div>
-            <button
-              className="btn btn-primary btn-lg mt-3"
-              onClick={handleDownloadCert}
-              disabled={certLoading || !allStepsDone}
-              title={!allStepsDone ? 'Complete all 7 steps first' : ''}
-            >
-              <Download size={18} />
-              {certLoading ? 'Generating certificate…' : 'Download Summary Certificate (PDF)'}
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.25rem' }}>
+              <button
+                className="btn btn-primary btn-lg"
+                onClick={handleDownloadCert}
+                disabled={certLoading || !allStepsDone}
+                title={!allStepsDone ? 'Complete all 7 steps first' : ''}
+              >
+                <Download size={18} />
+                {certLoading ? 'Generating certificate…' : 'Download Summary Certificate (PDF)'}
+              </button>
+            </div>
             {!allStepsDone && (
-              <div className="text-sm text-muted mt-2">
+              <div className="text-sm text-muted mt-2" style={{ textAlign: 'center' }}>
                 Complete Steps 1–6 to unlock the certificate download.
               </div>
             )}

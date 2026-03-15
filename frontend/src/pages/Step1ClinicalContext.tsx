@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRight, Heart, AlertTriangle, CheckCircle, Brain, BarChart3, Settings, Lightbulb, Scale, Database, Tag } from 'lucide-react'
+import { ArrowRight, Heart, AlertTriangle, CheckCircle, Brain, BarChart3, Settings, Lightbulb, Scale, Database, Stethoscope } from 'lucide-react'
 import type { Specialty } from '../types'
 
 const STEP_ROADMAP = [
@@ -23,9 +23,12 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
       {/* Header */}
       <div className="card" style={{ background: 'var(--primary-light)', border: '1px solid rgba(26,122,76,0.15)' }}>
         <span className="step-badge">STEP 1 · CLINICAL CONTEXT</span>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '0.5rem' }}>Clinical Context & Problem Definition</h2>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.75rem', fontWeight: 700, marginTop: '0.5rem' }}>
+          <Stethoscope size={28} style={{ color: 'var(--primary)' }} />
+          Clinical Context &amp; Problem Definition
+        </h2>
         <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
-          Understand the medical problem this AI is trying to solve and what each step of the ML pipeline will produce.
+          Before we look at any data, we define the clinical problem, understand why it matters, and map out every step of the ML workflow.
         </p>
       </div>
 
@@ -33,27 +36,64 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
         {/* Clinical Scenario */}
         <div className="card">
           <div className="card-title" style={{ marginBottom: '1rem' }}>Clinical Scenario</div>
-          <div className="info-card-green" style={{ marginBottom: '0.75rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <Heart size={16} style={{ color: 'var(--primary)' }} />
-              <span className="badge badge-success">{specialty.name}</span>
+
+          {/* Medical Specialty */}
+          <div style={{ marginBottom: '0.75rem' }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
+              MEDICAL SPECIALTY
             </div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+            <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <Heart size={12} />
+              {specialty.name}
+            </span>
+          </div>
+
+          {/* Clinical Question */}
+          <div style={{ marginBottom: '0.75rem' }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
               CLINICAL QUESTION
             </div>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+            <div style={{
+              borderLeft: '3px solid var(--primary)',
+              paddingLeft: '0.75rem',
+              fontSize: '0.9rem',
+              color: 'var(--text-primary)',
+              lineHeight: 1.5,
+            }}>
               {specialty.what_ai_predicts}
+            </div>
+          </div>
+
+          {/* Why This Matters */}
+          <div style={{
+            background: 'var(--background)',
+            borderRadius: '8px',
+            padding: '0.75rem',
+            marginBottom: '0.75rem',
+          }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
+              WHY THIS MATTERS
+            </div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              {specialty.clinical_context}
             </p>
           </div>
-          <div style={{ padding: '0.75rem', background: 'var(--background)', borderRadius: '8px', marginBottom: '0.75rem' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>WHY THIS MATTERS</div>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{specialty.clinical_context}</p>
-          </div>
-          <div className="info-card-green">
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>DATA SOURCE</div>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{specialty.data_source}</p>
+
+          {/* Impact */}
+          <div style={{
+            background: 'var(--primary-light)',
+            border: '1px solid rgba(26,122,76,0.2)',
+            borderRadius: '8px',
+            padding: '0.75rem',
+          }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
+              IMPACT
+            </div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Source: <strong style={{ color: 'var(--text-primary)' }}>{specialty.data_source}</strong>
+            </p>
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-              <span className="badge badge-success">{specialty.target_type === 'binary' ? 'Binary' : 'Multi-class'}</span>
+              <span className="badge badge-success">{specialty.target_type === 'binary' ? 'Binary Classification' : 'Multi-class'}</span>
               <span className="badge badge-neutral">Target: {specialty.target_variable}</span>
             </div>
           </div>
@@ -61,11 +101,15 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
 
         {/* Step Roadmap */}
         <div className="card">
-          <div className="card-title" style={{ marginBottom: '1rem' }}>What Will Be Produced in Each Step</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div className="card-title" style={{ marginBottom: '0.25rem' }}>What Will Be Produced in Each Step</div>
+          <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
+            Outputs you will collect as you progress through the 7 steps
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {STEP_ROADMAP.map(step => {
               const Icon = step.icon
               const isActive = step.n === 1
+              const isCompleted = step.n < 1
               return (
                 <div key={step.n} style={{
                   display: 'flex', alignItems: 'center', gap: '0.75rem',
@@ -74,13 +118,16 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
                   color: isActive ? 'white' : 'var(--text-primary)',
                 }}>
                   <div style={{
-                    width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isActive ? 'rgba(255,255,255,0.2)' : 'var(--surface)', border: isActive ? 'none' : '1px solid var(--border)',
+                    width: 28, height: 28, borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: isActive ? 'rgba(255,255,255,0.2)' : 'var(--surface)',
+                    border: isActive ? 'none' : '1px solid var(--border)',
                     fontSize: '0.75rem', fontWeight: 700, flexShrink: 0,
+                    color: isActive ? 'white' : 'var(--text-secondary)',
                   }}>
-                    {step.n}
+                    {isCompleted ? <CheckCircle size={14} style={{ color: 'var(--primary)' }} /> : step.n}
                   </div>
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{step.title}</div>
                     <div style={{ fontSize: '0.75rem', opacity: isActive ? 0.85 : 0.65 }}>{step.desc}</div>
                   </div>
@@ -99,35 +146,22 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
             <AlertTriangle size={18} style={{ color: '#8a5200' }} />
             <span style={{ fontWeight: 700, color: '#8a5200' }}>What ML Cannot Do</span>
           </div>
-          <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <li>ML cannot replace clinical judgment or doctor-patient relationships</li>
-            <li>Models may reflect biases present in historical training data</li>
-            <li>Predictions are probabilities, not diagnoses</li>
-          </ul>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            ML cannot replace clinical judgment or doctor-patient relationships.{' '}
+            <strong style={{ color: 'var(--text-primary)' }}>Models may reflect biases present in historical training data</strong>{' '}
+            and predictions are probabilities, not diagnoses.
+          </p>
         </div>
         <div className="info-card-green">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <CheckCircle size={18} style={{ color: 'var(--primary)' }} />
             <span style={{ fontWeight: 700, color: 'var(--primary)' }}>Remember</span>
           </div>
-          <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <li>This is a learning tool — experiment freely with different models</li>
-            <li>No real patient data leaves your browser session</li>
-            <li>The goal is understanding, not building a production system</li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Features list */}
-      <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <Tag size={18} style={{ color: 'var(--primary)' }} />
-          <span className="font-semibold">Clinical Features ({specialty.feature_names.length})</span>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-          {specialty.feature_names.map(f => (
-            <span key={f} className="badge badge-neutral">{f.replace(/_/g, ' ')}</span>
-          ))}
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            This is a learning tool — experiment freely with different models.{' '}
+            <strong style={{ color: 'var(--text-primary)' }}>No real patient data leaves your browser session.</strong>{' '}
+            The goal is understanding, not building a production system.
+          </p>
         </div>
       </div>
 

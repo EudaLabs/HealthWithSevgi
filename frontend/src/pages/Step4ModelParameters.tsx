@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { ArrowRight, BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap } from 'lucide-react'
+import { ArrowRight, BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap, Settings } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
 import type { CompareEntry, ModelType, TrainResponse } from '../types'
@@ -10,53 +10,72 @@ import PRCurveChart from '../components/charts/PRCurveChart'
 const MODEL_CONFIGS = [
   {
     type: 'knn' as ModelType,
-    name: 'K-Nearest Neighbors',
-    icon: <Network size={22} />,
-    desc: 'Compares a new patient to the K most similar historical patients and predicts the majority outcome.',
+    name: 'KNN',
+    fullName: 'K-Nearest Neighbours (KNN)',
+    icon: <Network size={16} />,
+    desc: 'Finds the K most similar past patients and predicts the majority outcome. Simple, interpretable, no training phase.',
   },
   {
     type: 'svm' as ModelType,
-    name: 'Support Vector Machine',
-    icon: <Zap size={22} />,
+    name: 'SVM',
+    fullName: 'Support Vector Machine (SVM)',
+    icon: <Zap size={16} />,
     desc: 'Finds the clearest dividing line between patient groups. Good at separating complex patterns.',
   },
   {
     type: 'decision_tree' as ModelType,
     name: 'Decision Tree',
-    icon: <GitBranch size={22} />,
+    fullName: 'Decision Tree',
+    icon: <GitBranch size={16} />,
     desc: 'Asks a series of yes/no questions about patient measurements — like a clinical decision pathway.',
   },
   {
     type: 'random_forest' as ModelType,
     name: 'Random Forest',
-    icon: <Layers size={22} />,
+    fullName: 'Random Forest',
+    icon: <Layers size={16} />,
     desc: 'Trains many decision trees simultaneously and takes a majority vote. More stable and accurate.',
   },
   {
     type: 'logistic_regression' as ModelType,
-    name: 'Logistic Regression',
-    icon: <LineChart size={22} />,
+    name: 'Logistic Reg',
+    fullName: 'Logistic Regression',
+    icon: <LineChart size={16} />,
     desc: 'Calculates the probability a patient belongs to each outcome group based on weighted measurements.',
   },
   {
     type: 'naive_bayes' as ModelType,
-    name: 'Naïve Bayes',
-    icon: <Brain size={22} />,
+    name: 'Naive Bayes',
+    fullName: 'Naïve Bayes',
+    icon: <Brain size={16} />,
     desc: 'Uses probability theory to estimate how likely each outcome is. Very fast and transparent.',
   },
   {
     type: 'xgboost' as ModelType,
     name: 'XGBoost',
-    icon: <TrendingUp size={22} />,
+    fullName: 'XGBoost',
+    icon: <TrendingUp size={16} />,
     desc: 'Gradient-boosted decision trees — fast, powerful, and widely used in healthcare competitions and research.',
   },
   {
     type: 'lightgbm' as ModelType,
     name: 'LightGBM',
-    icon: <BarChart3 size={22} />,
+    fullName: 'LightGBM',
+    icon: <BarChart3 size={16} />,
     desc: 'Light gradient boosting — handles large datasets efficiently with lower memory usage.',
   },
 ]
+
+const PARAM_HINTS: Partial<Record<ModelType, string>> = {
+  knn: 'K = number of Similar Patients to Compare — lower K = more flexible but noisy; higher K = smoother but may miss patterns.',
+  svm: 'C = strictness of the decision boundary — higher C fits training data more tightly but may overfit.',
+  decision_tree: 'Max Depth controls how many questions the tree can ask — deeper trees can overfit.',
+  random_forest: 'More trees = more stable predictions; deeper trees can overfit.',
+  logistic_regression: 'C = inverse regularisation strength — lower C applies more regularisation.',
+  naive_bayes: 'Naïve Bayes has minimal tuning requirements. Variance smoothing is pre-set to the optimal default.',
+  xgboost: 'Lower learning rate + more trees generally improves generalisation.',
+  lightgbm: 'Light gradient boosting — efficient for large datasets with low memory usage.',
+}
 
 const DEFAULT_PARAMS: Record<ModelType, Record<string, number | string>> = {
   knn: { n_neighbors: 5, metric: 'euclidean' },
@@ -120,7 +139,7 @@ export default function Step4ModelParameters({
     try {
       const resp = await trainModel(sessionId, selectedType, params, { tune, useFeatureSelection })
       onTrainSuccess(resp)
-      toast.success(`${MODEL_CONFIGS.find(m=>m.type===selectedType)?.name} trained — AUC ${pct(resp.metrics.auc_roc)}`)
+      toast.success(`${MODEL_CONFIGS.find(m=>m.type===selectedType)?.fullName} trained — AUC ${pct(resp.metrics.auc_roc)}`)
     } catch (err: unknown) {
       toast.error((err as Error).message)
     } finally {
@@ -262,77 +281,191 @@ export default function Step4ModelParameters({
     [comparedModels]
   )
 
+  const selectedConfig = MODEL_CONFIGS.find(m => m.type === selectedType)!
+  const paramHint = PARAM_HINTS[selectedType]
+
   return (
     <div className="step-page">
-      <div className="step-page-header">
-        <h2>Step 4 — Model & Parameters</h2>
-        <p>Choose an AI model type and tune its settings.</p>
+      {/* Page header */}
+      <div>
+        <span className="step-badge">STEP 4 OF 7</span>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Settings size={22} color="var(--primary)" />
+          Model Selection &amp; Parameter Tuning
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
+          Choose a machine learning algorithm, adjust its settings, and train it on your prepared dataset.
+        </p>
       </div>
 
-      {/* Model selection */}
-      <div className="model-cards">
-        {MODEL_CONFIGS.map((m) => (
-          <button
-            key={m.type}
-            className={`model-card ${selectedType === m.type ? 'selected' : ''}`}
-            onClick={() => setSelectedType(m.type)}
-            disabled={loading}
-            aria-disabled={loading}
-          >
-            <div style={{ color: 'var(--primary)' }}>{m.icon}</div>
-            <div className="model-card-name">{m.name}</div>
-            <div className="model-card-desc">{m.desc}</div>
-          </button>
-        ))}
-      </div>
-
-      {/* Parameters */}
-      <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <div>
-            <div className="card-title">Parameters — {MODEL_CONFIGS.find(m=>m.type===selectedType)?.name}</div>
-            <div className="card-subtitle">Adjust settings using the controls below.</div>
-          </div>
-          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-            <label className="toggle" style={{ gap: '0.6rem' }}>
-              <input type="checkbox" checked={autoRetrain} onChange={e => setAutoRetrain(e.target.checked)} />
-              <div className="toggle-track"><div className="toggle-thumb" /></div>
-              <span style={{ fontSize: '0.85rem' }}>Auto-Retrain</span>
-            </label>
-            <label className="toggle" style={{ gap: '0.6rem' }}>
-              <input type="checkbox" checked={tune} onChange={e => setTune(e.target.checked)} />
-              <div className="toggle-track"><div className="toggle-thumb" /></div>
-              <span style={{ fontSize: '0.85rem' }}>Tune</span>
-            </label>
-            <label className="toggle" style={{ gap: '0.6rem' }}>
-              <input type="checkbox" checked={useFeatureSelection} onChange={e => setUseFeatureSelection(e.target.checked)} />
-              <div className="toggle-track"><div className="toggle-thumb" /></div>
-              <span style={{ fontSize: '0.85rem' }}>Feature Selection</span>
-            </label>
-          </div>
+      {/* Algorithm tab selector */}
+      <div className="card" style={{ padding: '1.25rem' }}>
+        <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
+          Choose Algorithm
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {renderParams()}
-        </div>
-
-        <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <button className="btn btn-primary" onClick={handleTrain} disabled={loading} aria-busy={loading}>
-            {loading ? '⏳ Training…' : tune ? '▶ Train & Tune' : '▶ Train Model'}
-          </button>
-          {loading && <span className="text-sm text-muted">This may take a moment…</span>}
-        </div>
-
-        {autoTrainError && (
-          <div className="alert alert-danger" role="alert" style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span>Auto-retrain failed: {autoTrainError}</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0', borderBottom: '2px solid var(--border)' }}>
+          {MODEL_CONFIGS.map((m) => (
             <button
-              onClick={() => setAutoTrainError(null)}
-              aria-label="Dismiss error"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }}
+              key={m.type}
+              onClick={() => setSelectedType(m.type)}
+              disabled={loading}
+              aria-disabled={loading}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.55rem 0.9rem',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: selectedType === m.type ? '2.5px solid var(--primary)' : '2.5px solid transparent',
+                marginBottom: '-2px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                color: selectedType === m.type ? 'var(--primary)' : 'var(--text-secondary)',
+                fontWeight: selectedType === m.type ? 700 : 500,
+                fontSize: '0.82rem',
+                whiteSpace: 'nowrap',
+                transition: 'color 150ms ease, border-color 150ms ease',
+                opacity: loading ? 0.6 : 1,
+              }}
             >
-              <X size={16} />
+              <span style={{ color: selectedType === m.type ? 'var(--primary)' : 'var(--text-muted)' }}>{m.icon}</span>
+              {m.name}
             </button>
+          ))}
+        </div>
+
+        {/* Selected model info box */}
+        <div style={{
+          marginTop: '1rem',
+          borderLeft: '4px solid var(--primary)',
+          background: 'var(--primary-light)',
+          borderRadius: '0 8px 8px 0',
+          padding: '0.875rem 1rem',
+        }}>
+          <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.95rem' }}>
+            {selectedConfig.fullName}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.3rem', lineHeight: 1.5 }}>
+            {selectedConfig.desc}
+          </div>
+          {paramHint && (
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem', fontStyle: 'italic' }}>
+              {paramHint}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Parameters + comparison side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: comparedModels.length > 0 ? '1fr 1fr' : '1fr', gap: '1rem' }}>
+        {/* Parameters card */}
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <div>
+              <div className="card-title">Parameters — {selectedConfig.fullName}</div>
+              <div className="card-subtitle">Adjust settings using the controls below.</div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
+              <label className="toggle" style={{ gap: '0.5rem' }}>
+                <input type="checkbox" checked={autoRetrain} onChange={e => setAutoRetrain(e.target.checked)} />
+                <div className="toggle-track"><div className="toggle-thumb" /></div>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Auto-Retrain</span>
+              </label>
+              <label className="toggle" style={{ gap: '0.5rem' }}>
+                <input type="checkbox" checked={tune} onChange={e => setTune(e.target.checked)} />
+                <div className="toggle-track"><div className="toggle-thumb" /></div>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Tune</span>
+              </label>
+              <label className="toggle" style={{ gap: '0.5rem' }}>
+                <input type="checkbox" checked={useFeatureSelection} onChange={e => setUseFeatureSelection(e.target.checked)} />
+                <div className="toggle-track"><div className="toggle-thumb" /></div>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Feature Selection</span>
+              </label>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {renderParams()}
+          </div>
+
+          <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" onClick={handleTrain} disabled={loading} aria-busy={loading}>
+              {loading ? '⏳ Training…' : tune ? '▶ Train & Tune' : '▶ Train Model'}
+            </button>
+            {trainResponse && (
+              <button className="btn btn-secondary" onClick={handleAddToComparison} disabled={loading}>
+                + Compare
+              </button>
+            )}
+            {loading && <span className="text-sm text-muted">This may take a moment…</span>}
+          </div>
+
+          {autoTrainError && (
+            <div className="alert alert-danger" role="alert" style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>Auto-retrain failed: {autoTrainError}</span>
+              <button
+                onClick={() => setAutoTrainError(null)}
+                aria-label="Dismiss error"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Model Comparison table — shown only when there are compared models */}
+        {comparedModels.length > 0 && (
+          <div className="card">
+            <div className="card-title">Model Comparison</div>
+            <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
+              Sorted by AUC-ROC (best first)
+            </div>
+            <div className="data-table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Accuracy</th>
+                    <th>Sensitivity</th>
+                    <th>Specificity</th>
+                    <th>Precision</th>
+                    <th>F1</th>
+                    <th>MCC</th>
+                    <th>AUC-ROC</th>
+                    <th>Time (ms)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedModels.map((e, i) => (
+                    <tr key={e.model_id}>
+                      <td>
+                        {i === 0 && <span className="badge badge-success" style={{ marginRight: 6 }}>Best</span>}
+                        {e.model_type.replace(/_/g,' ')}
+                      </td>
+                      <td>{pct(e.metrics.accuracy)}</td>
+                      <td className={e.metrics.sensitivity >= 0.7 ? 'metric-green' : e.metrics.sensitivity >= 0.5 ? 'metric-amber' : 'metric-red'}>
+                        {pct(e.metrics.sensitivity)}
+                      </td>
+                      <td>{pct(e.metrics.specificity)}</td>
+                      <td className={e.metrics.precision >= 0.6 ? 'metric-green' : e.metrics.precision >= 0.5 ? 'metric-amber' : 'metric-red'}>
+                        {pct(e.metrics.precision)}
+                      </td>
+                      <td className={e.metrics.f1_score >= 0.65 ? 'metric-green' : e.metrics.f1_score >= 0.55 ? 'metric-amber' : 'metric-red'}>
+                        {pct(e.metrics.f1_score)}
+                      </td>
+                      <td className={e.metrics.mcc >= 0.4 ? 'metric-green' : e.metrics.mcc >= 0.2 ? 'metric-amber' : 'metric-red'}>
+                        {e.metrics.mcc.toFixed(3)}
+                      </td>
+                      <td className={e.metrics.auc_roc >= 0.75 ? 'metric-green' : e.metrics.auc_roc >= 0.65 ? 'metric-amber' : 'metric-red'}>
+                        {pct(e.metrics.auc_roc)}
+                      </td>
+                      <td>{e.training_time_ms.toFixed(0)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
@@ -406,67 +539,20 @@ export default function Step4ModelParameters({
             )}
           </div>
 
-          {/* Diagnostic Charts */}
+          {/* Diagnostic Charts — KNN Visualisation */}
           <div className="card">
-            <div className="card-title">Diagnostic Charts</div>
+            <div style={{ marginBottom: '0.25rem' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                {trainResponse.model_type.replace(/_/g, ' ').toUpperCase()} Visualisation — How the Algorithm Thinks
+              </div>
+              <div className="card-title" style={{ marginTop: '0.2rem' }}>Diagnostic Charts</div>
+            </div>
             <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
               <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
               <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
               <PRCurveChart points={trainResponse.metrics.pr_curve} />
             </div>
           </div>
-
-          {/* Comparison table */}
-          {comparedModels.length > 0 && (
-            <div className="card">
-              <div className="card-title">Model Comparison</div>
-              <div className="data-table-wrapper mt-3">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Model</th>
-                      <th>Accuracy</th>
-                      <th>Sensitivity</th>
-                      <th>Specificity</th>
-                      <th>Precision</th>
-                      <th>F1</th>
-                      <th>MCC</th>
-                      <th>AUC-ROC</th>
-                      <th>Time (ms)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedModels.map((e, i) => (
-                        <tr key={e.model_id}>
-                          <td>
-                            {i === 0 && <span className="badge badge-success" style={{ marginRight: 6 }}>Best</span>}
-                            {e.model_type.replace(/_/g,' ')}
-                          </td>
-                          <td>{pct(e.metrics.accuracy)}</td>
-                          <td className={e.metrics.sensitivity >= 0.7 ? 'metric-green' : e.metrics.sensitivity >= 0.5 ? 'metric-amber' : 'metric-red'}>
-                            {pct(e.metrics.sensitivity)}
-                          </td>
-                          <td>{pct(e.metrics.specificity)}</td>
-                          <td className={e.metrics.precision >= 0.6 ? 'metric-green' : e.metrics.precision >= 0.5 ? 'metric-amber' : 'metric-red'}>
-                            {pct(e.metrics.precision)}
-                          </td>
-                          <td className={e.metrics.f1_score >= 0.65 ? 'metric-green' : e.metrics.f1_score >= 0.55 ? 'metric-amber' : 'metric-red'}>
-                            {pct(e.metrics.f1_score)}
-                          </td>
-                          <td className={e.metrics.mcc >= 0.4 ? 'metric-green' : e.metrics.mcc >= 0.2 ? 'metric-amber' : 'metric-red'}>
-                            {e.metrics.mcc.toFixed(3)}
-                          </td>
-                          <td className={e.metrics.auc_roc >= 0.75 ? 'metric-green' : e.metrics.auc_roc >= 0.65 ? 'metric-amber' : 'metric-red'}>
-                            {pct(e.metrics.auc_roc)}
-                          </td>
-                          <td>{e.training_time_ms.toFixed(0)}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button className="btn btn-primary" onClick={onNext}>

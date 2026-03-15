@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Activity, HelpCircle, RefreshCw, Search } from 'lucide-react'
+import { Stethoscope, RefreshCw, Settings, Search } from 'lucide-react'
 import type { Specialty } from '../types'
 
 const GLOSSARY = [
@@ -45,43 +45,69 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
 
   return (
     <>
+      {/* ---- Main header bar ---- */}
       <nav className="navbar">
-        <div className="navbar-brand">
-          <Activity size={22} style={{ color: 'var(--primary)' }} />
-          <div>
-            <div className="navbar-brand-title">HEALTH-AI · ML Learning Tool</div>
-            <div className="navbar-brand-sub">For Healthcare Professionals</div>
+        <div className="navbar-inner">
+          <div className="navbar-brand">
+            <div className="navbar-logo">H</div>
+            <div>
+              <div className="navbar-brand-title">HEALTH-AI · ML Learning Tool</div>
+              <div className="navbar-brand-sub">For Healthcare Professionals</div>
+            </div>
           </div>
-        </div>
-        <div className="navbar-actions">
-          {specialty && (
-            <span className="badge badge-primary">{specialty.name}</span>
-          )}
-          <button className="btn btn-ghost btn-sm" onClick={onGlossary}>
-            <HelpCircle size={15} /> Help / Glossary
-          </button>
-          {specialty && (
-            <button className="btn btn-secondary btn-sm" onClick={onReset}>
-              <RefreshCw size={14} /> Change Specialty
+
+          <div className="navbar-actions">
+            {specialty && (
+              <span className="navbar-specialty-badge">{specialty.name}</span>
+            )}
+            <button
+              className="navbar-icon-btn"
+              onClick={onReset}
+              title="Change specialty / reset"
+              aria-label="Refresh / reset"
+            >
+              <RefreshCw size={17} />
             </button>
-          )}
+            <button
+              className="navbar-icon-btn"
+              onClick={onGlossary}
+              title="Help / Glossary"
+              aria-label="Settings / glossary"
+            >
+              <Settings size={17} />
+            </button>
+          </div>
         </div>
       </nav>
 
+      {/* ---- Specialty pills bar ---- */}
       {specialties.length > 0 && (
         <div className="specialty-chips">
-          {specialties.map((s) => (
-            <button
-              key={s.id}
-              className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
-              onClick={() => onSpecialtyChange(s)}
-            >
-              {s.name}
-            </button>
-          ))}
+          <div className="specialty-chips-inner">
+            <div className="specialty-chips-label-row">
+              <span className="specialty-chips-label">
+                <Stethoscope size={14} />
+                Medical Domain
+              </span>
+              <span className="specialty-chips-sep" />
+              <span className="specialty-chips-hint">Select your clinical domain</span>
+            </div>
+            <div className="specialty-chips-scroll">
+              {specialties.map((s) => (
+                <button
+                  key={s.id}
+                  className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
+                  onClick={() => onSpecialtyChange(s)}
+                >
+                  {s.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
+      {/* ---- Glossary modal ---- */}
       {glossaryOpen && (
         <div className="modal-overlay" onClick={onGlossaryClose}>
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 640 }}>

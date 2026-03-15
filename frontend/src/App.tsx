@@ -20,19 +20,19 @@ const STEP_NAMES = [
 function BottomNav({ currentStep, onPrev, onNext }: { currentStep: number; onPrev: () => void; onNext: () => void }) {
   return (
     <div className="bottom-nav">
-      <div className="bottom-nav-left">
-        <span className="step-badge">Step {currentStep} / 7</span>
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>
-          {STEP_NAMES[currentStep]}
-        </span>
-      </div>
-      <div className="bottom-nav-right">
-        <button className="btn btn-secondary" onClick={onPrev} disabled={currentStep <= 1}>
-          ← Previous
-        </button>
-        <button className="btn btn-primary" onClick={onNext} disabled={currentStep >= 7}>
-          Next Step →
-        </button>
+      <div className="bottom-nav-inner">
+        <div className="bottom-nav-left">
+          <span className="step-badge">Step {currentStep} / 7</span>
+          <span className="bottom-nav-step-name">{STEP_NAMES[currentStep]}</span>
+        </div>
+        <div className="bottom-nav-right">
+          <button className="btn-prev" onClick={onPrev} disabled={currentStep <= 1}>
+            ← Previous
+          </button>
+          <button className="btn-next" onClick={onNext} disabled={currentStep >= 7}>
+            Next Step →
+          </button>
+        </div>
       </div>
     </div>
   )

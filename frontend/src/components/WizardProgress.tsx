@@ -43,33 +43,46 @@ export default function WizardProgress({
 
   return (
     <div className="wizard-progress">
-      {STEPS.map((step, idx) => {
-        const locked = isLocked(step.n)
-        const completed = isCompleted(step.n)
-        const active = isActive(step.n)
-        return (
-          <React.Fragment key={step.n}>
-            <div
-              className={clsx('step-item', {
-                active,
-                completed: completed && !active,
-                locked,
-              })}
-              onClick={() => !locked && onStepClick(step.n)}
-              title={locked ? 'Complete the previous step first' : step.label}
-            >
-              <div className="step-number">
-                {locked ? <Lock size={11} /> : completed && !active ? <Check size={12} /> : step.n}
+      <div className="wizard-progress-inner">
+        {STEPS.map((step, idx) => {
+          const locked = isLocked(step.n)
+          const completed = isCompleted(step.n)
+          const active = isActive(step.n)
+          const pastStep = step.n < currentStep && completed
+
+          return (
+            <React.Fragment key={step.n}>
+              <div
+                className={clsx('step-item', {
+                  active,
+                  completed: completed && !active,
+                  locked,
+                })}
+                onClick={() => !locked && onStepClick(step.n)}
+                title={locked ? 'Complete the previous step first' : step.label}
+              >
+                <div className="step-number">
+                  {locked
+                    ? <Lock size={16} />
+                    : completed && !active
+                      ? <Check size={18} strokeWidth={2.5} />
+                      : step.n}
+                </div>
+                <div className="step-item-labels">
+                  <div className="step-item-name">{step.label}</div>
+                  <div className="step-item-sub">{step.sub}</div>
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-                <span>{step.label}</span>
-                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 400 }}>{step.sub}</span>
-              </div>
-            </div>
-            {idx < STEPS.length - 1 && <div className="step-connector" />}
-          </React.Fragment>
-        )
-      })}
+
+              {idx < STEPS.length - 1 && (
+                <div className="step-connector">
+                  <div className={clsx('step-connector-line', { filled: pastStep || step.n < currentStep })} />
+                </div>
+              )}
+            </React.Fragment>
+          )
+        })}
+      </div>
     </div>
   )
 }

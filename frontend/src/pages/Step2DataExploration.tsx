@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { ArrowRight, CheckCircle, Lock, Upload, X } from 'lucide-react'
+import { ArrowRight, CheckCircle, Lock, Upload, X, Database, Users, Layers, AlertCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -18,7 +18,7 @@ interface Props {
   onNext: () => void
 }
 
-const CHART_COLORS = ['#1e6b9c', '#00875a', '#de350b', '#ffab00', '#6554c0', '#00b8d9']
+const CLASS_BAR_COLOR = '#c89a2d'
 
 export default function Step2DataExploration({
   specialty,
@@ -88,68 +88,120 @@ export default function Step2DataExploration({
     ? Object.entries(explorationData.class_distribution).map(([k, v]) => ({ name: k, value: v }))
     : []
 
+  const totalPatients = explorationData?.row_count ?? 0
+  const totalFeatures = explorationData ? explorationData.columns.length : 0
+  const missingPct = explorationData
+    ? (
+        explorationData.columns.reduce((sum, c) => sum + c.missing_count, 0) /
+        Math.max(1, explorationData.row_count * explorationData.columns.length) *
+        100
+      ).toFixed(1)
+    : '—'
+
+  const classValues = explorationData ? Object.values(explorationData.class_distribution) : []
+  const classTotal = classValues.reduce((s, v) => s + v, 0)
+  const classBalanceStr = classTotal > 0
+    ? classValues.map(v => Math.round((v / classTotal) * 100)).join(':')
+    : '—'
+
   return (
     <div className="step-page">
-      <div className="step-page-header">
-        <h2>Step 2 — Data Exploration</h2>
-        <p>Choose patient data to explore, then confirm your target outcome column.</p>
+      {/* Header */}
+      <div className="card" style={{ background: 'var(--primary-light)', border: '1px solid rgba(26,122,76,0.15)' }}>
+        <span className="step-badge">STEP 2 · DATA EXPLORATION</span>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '0.5rem' }}>
+          Data Exploration &amp; Understanding
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
+          Explore the <strong>{specialty.name}</strong> dataset — inspect structure, distributions, and data quality before any preprocessing.
+        </p>
       </div>
 
-      {/* Data source cards */}
-      <div className="grid-2">
-        <div className="card" style={{ cursor: 'pointer' }} onClick={handleUseExample}>
-          <div className="card-title">📊 Use Built-in Example Dataset</div>
-          <div className="card-subtitle" style={{ marginTop: '0.5rem' }}>
-            Pre-loaded data from <strong>{specialty.data_source}</strong>. Ready to use immediately.
+      {/* Data Source card — single row with integrated upload */}
+      <div className="card">
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+            background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Database size={20} style={{ color: 'var(--primary)' }} />
           </div>
-          <button className="btn btn-primary mt-3" disabled={loading}>
-            {loading ? 'Loading…' : 'Load Example Data'}
-          </button>
-        </div>
-
-        <div className="card">
-          <div className="card-title">📁 Upload Your Own CSV</div>
-          <div className="card-subtitle" style={{ marginTop: '0.5rem' }}>
-            One row per patient, one column per measurement. Max 50 MB.
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="card-title">Data Source</div>
+            <div className="card-subtitle">Choose how to load your dataset</div>
           </div>
-          <div
-            {...getRootProps()}
-            className={`dropzone mt-3 ${isDragActive ? 'active' : ''}`}
-          >
-            <input {...getInputProps()} />
-            {uploadedFile ? (
-              <div>
-                <div style={{ fontWeight: 600 }}>{uploadedFile.name}</div>
-                <div className="text-sm text-muted">{(uploadedFile.size / 1024).toFixed(0)} KB</div>
-              </div>
-            ) : (
-              <div>
-                <Upload size={24} style={{ margin: '0 auto 0.5rem', color: 'var(--text-muted)' }} />
-                <div>{isDragActive ? 'Drop CSV here…' : 'Drag & drop a CSV, or click to browse'}</div>
-              </div>
+          <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0, alignItems: 'center' }}>
+            <button
+              className="btn btn-primary"
+              onClick={handleUseExample}
+              disabled={loading}
+            >
+              {loading ? 'Loading…' : 'Use Default Dataset'}
+            </button>
+            <div {...getRootProps()} style={{ display: 'inline-flex' }}>
+              <input {...getInputProps()} />
+              <button
+                className="btn btn-secondary"
+                type="button"
+                disabled={loading}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Upload size={15} />
+                {uploadedFile ? uploadedFile.name : 'Upload Your CSV'}
+              </button>
+            </div>
+            {uploadedFile && (
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={(e) => { e.stopPropagation(); onFileChange(null) }}
+                title="Remove uploaded file"
+              >
+                <X size={14} />
+              </button>
             )}
           </div>
-          {uploadedFile && (
-            <button
-              className="btn btn-ghost btn-sm mt-2"
-              onClick={(e) => { e.stopPropagation(); onFileChange(null) }}
-            >
-              <X size={14} /> Remove file
+        </div>
+
+        {/* Dropzone hint when drag is active */}
+        {isDragActive && (
+          <div style={{
+            marginTop: '0.75rem',
+            border: '2px dashed var(--primary)',
+            borderRadius: '8px',
+            padding: '1rem',
+            textAlign: 'center',
+            background: 'var(--primary-light)',
+            color: 'var(--primary)',
+            fontSize: '0.9rem',
+          }}>
+            Drop your CSV here…
+          </div>
+        )}
+      </div>
+
+      {/* Open Column Mapper button */}
+      {explorationData && !loading && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {confirmed ? (
+            <div className="flex items-center gap-2" style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <CheckCircle size={18} />
+              <span style={{ fontWeight: 600 }}>Target confirmed: {targetCol}</span>
+            </div>
+          ) : (
+            <button className="btn btn-primary" onClick={() => setMapperOpen(true)}>
+              Open Column Mapper
             </button>
           )}
+          {!confirmed && (
+            <div className="alert alert-warning" style={{ flex: 1, margin: 0 }}>
+              <Lock size={16} />
+              <span>Step 3 is locked until you confirm the target column.</span>
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
-      {/* Privacy notice */}
-      <div className="alert alert-info">
-        <span>🔒</span>
-        <span>
-          <strong>Your data is private.</strong> If you upload your own file, it is used only within your
-          current browser session and is never saved to any server or shared with anyone.
-        </span>
-      </div>
-
-      {/* Exploration results */}
+      {/* Loading state */}
       {loading && (
         <div className="card text-center" style={{ padding: '2rem' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⏳</div>
@@ -159,58 +211,67 @@ export default function Step2DataExploration({
 
       {explorationData && !loading && (
         <>
-          {/* Class distribution */}
-          <div className="grid-2">
-            <div className="card">
-              <div className="card-title">Class Distribution</div>
-              <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
-                Target: <code style={{ background: 'var(--background)', padding: '0.1rem 0.4rem', borderRadius: 4 }}>{explorationData.target_col}</code>
-                {' · '}{explorationData.row_count} patients total
-              </div>
-              <ResponsiveContainer width="100%" height={160}>
-                <BarChart data={classDistData} layout="vertical" margin={{ left: 10 }}>
-                  <XAxis type="number" tick={{ fontSize: 11 }} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={70} />
-                  <Tooltip formatter={(v: number) => [`${v} patients`]} />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                    {classDistData.map((_, i) => (
-                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              {explorationData.imbalance_warning && (
-                <div className="alert alert-warning mt-3">
-                  <span>⚠️</span>
-                  <span>
-                    <strong>Class imbalance detected</strong> (ratio {explorationData.imbalance_ratio}:1).
-                    Consider enabling SMOTE in Step 3.
-                  </span>
+          {/* Stats row — 4 green-circled stat cards */}
+          <div className="grid-4">
+            {[
+              { label: 'Patients', value: totalPatients.toLocaleString(), icon: <Users size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'Features', value: totalFeatures.toString(), icon: <Layers size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'Missing %', value: `${missingPct}%`, icon: <AlertCircle size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'Class Balance', value: classBalanceStr, icon: <BarChart3Icon size={18} style={{ color: 'var(--primary)' }} /> },
+            ].map(({ label, value, icon }) => (
+              <div key={label} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: '50%',
+                  background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 0.5rem',
+                }}>
+                  {icon}
                 </div>
-              )}
-            </div>
-
-            <div className="card">
-              <div className="card-title">Dataset Summary</div>
-              <table className="data-table mt-2">
-                <tbody>
-                  <tr><td className="text-muted">Total patients</td><td><strong>{explorationData.row_count}</strong></td></tr>
-                  <tr><td className="text-muted">Total columns</td><td><strong>{explorationData.columns.length}</strong></td></tr>
-                  <tr><td className="text-muted">Target column</td><td><code>{explorationData.target_col}</code></td></tr>
-                  <tr><td className="text-muted">Outcome classes</td><td><strong>{Object.keys(explorationData.class_distribution).length}</strong></td></tr>
-                  <tr><td className="text-muted">Imbalance ratio</td><td>
-                    <span className={explorationData.imbalance_warning ? 'metric-amber' : 'metric-green'}>
-                      {explorationData.imbalance_ratio}:1
-                    </span>
-                  </td></tr>
-                </tbody>
-              </table>
-            </div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)' }}>{value}</div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{label}</div>
+              </div>
+            ))}
           </div>
 
-          {/* Column stats */}
+          {/* Class Balance card with warm-color horizontal bars */}
           <div className="card">
-            <div className="card-title">Column Summary</div>
+            <div className="card-title" style={{ marginBottom: '0.25rem' }}>Class Balance</div>
+            <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
+              Target: <code style={{ background: 'var(--background)', padding: '0.1rem 0.4rem', borderRadius: 4 }}>{explorationData.target_col}</code>
+              {' · '}{explorationData.row_count} patients total
+            </div>
+            <ResponsiveContainer width="100%" height={120}>
+              <BarChart data={classDistData} layout="vertical" margin={{ left: 10, right: 20 }}>
+                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  tick={{ fontSize: 11 }}
+                  width={90}
+                  tickFormatter={(v) => v === '0' ? 'Negative (0)' : v === '1' ? 'Positive (1)' : v}
+                />
+                <Tooltip formatter={(v: number) => [`${v} patients`]} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]} fill={CLASS_BAR_COLOR}>
+                  {classDistData.map((_, i) => (
+                    <Cell key={i} fill={i === 0 ? CLASS_BAR_COLOR : '#a07820'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            {explorationData.imbalance_warning && (
+              <div className="alert alert-warning mt-3">
+                <span>⚠️</span>
+                <span>
+                  <strong>Class imbalance detected</strong> (ratio {explorationData.imbalance_ratio}:1).
+                  Consider enabling SMOTE in Step 3.
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Patient Measurements table (formerly Column Summary) */}
+          <div className="card">
+            <div className="card-title">Patient Measurements</div>
             <div className="data-table-wrapper mt-3">
               <table className="data-table">
                 <thead>
@@ -226,19 +287,33 @@ export default function Step2DataExploration({
                   {explorationData.columns.map((col) => (
                     <tr key={col.name}>
                       <td>
-                        <code style={{ fontSize: '0.82rem' }}>{col.name}</code>
+                        <code style={{ fontSize: '0.82rem', fontFamily: 'monospace' }}>{col.name}</code>
                         {col.name === explorationData.target_col && (
                           <span className="badge badge-primary" style={{ marginLeft: 6 }}>target</span>
                         )}
                       </td>
                       <td><span className="badge badge-neutral">{col.dtype}</span></td>
                       <td>
-                        <span className={col.missing_pct > 20 ? 'metric-red' : col.missing_pct > 5 ? 'metric-amber' : 'metric-green'}>
-                          {col.missing_count} ({col.missing_pct}%)
-                        </span>
+                        {col.missing_count > 0 ? (
+                          <span style={{
+                            background: 'var(--warning-light)',
+                            color: '#7a5200',
+                            fontWeight: 600,
+                            fontSize: '0.78rem',
+                            padding: '0.15rem 0.5rem',
+                            borderRadius: '4px',
+                            border: '1px solid var(--warning)',
+                          }}>
+                            Missing ({col.missing_pct}%)
+                          </span>
+                        ) : (
+                          <span className="metric-green" style={{ fontSize: '0.85rem' }}>
+                            {col.missing_count} ({col.missing_pct}%)
+                          </span>
+                        )}
                       </td>
                       <td>{col.unique_count}</td>
-                      <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
                         {col.sample_values.slice(0, 4).map(String).join(', ')}
                       </td>
                     </tr>
@@ -246,32 +321,6 @@ export default function Step2DataExploration({
                 </tbody>
               </table>
             </div>
-          </div>
-
-          {/* Column Mapper */}
-          <div className="card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div className="card-title">Target Column Confirmation</div>
-                <div className="card-subtitle">Confirm which column represents the patient outcome to predict.</div>
-              </div>
-              {confirmed ? (
-                <div className="flex items-center gap-2" style={{ color: 'var(--success)' }}>
-                  <CheckCircle size={20} />
-                  <span className="font-semibold">Confirmed: {targetCol}</span>
-                </div>
-              ) : (
-                <button className="btn btn-primary" onClick={() => setMapperOpen(true)}>
-                  Open Column Mapper
-                </button>
-              )}
-            </div>
-            {!confirmed && (
-              <div className="alert alert-warning mt-3">
-                <Lock size={16} />
-                <span>Step 3 is locked until you confirm the target column.</span>
-              </div>
-            )}
           </div>
 
           {confirmed && (
@@ -323,5 +372,27 @@ export default function Step2DataExploration({
         </div>
       )}
     </div>
+  )
+}
+
+// Inline icon component to avoid extra import name collision
+function BarChart3Icon({ size, style }: { size: number; style?: React.CSSProperties }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={style}
+    >
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
   )
 }
