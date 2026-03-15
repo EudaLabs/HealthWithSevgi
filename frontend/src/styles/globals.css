@@ -422,3 +422,20 @@ input, select, textarea { font-family: inherit; }
 }
 .bottom-nav-left { display: flex; align-items: center; }
 .bottom-nav-right { display: flex; gap: 0.5rem; }
+
+/* ---- Confusion Matrix (chart component) ---- */
+.cm-container { text-align: center; }
+.cm-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; }
+.cm-cell-label { font-size: 0.65rem; font-weight: 500; opacity: 0.8; margin-top: 2px; }
+.cm-cell-diag { background: rgba(26,122,76,0.15); color: var(--primary); }
+.cm-cell-off { background: rgba(220,53,69,0.1); color: #dc3545; }
+.cm-axis-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
+.cm-axis-y { writing-mode: vertical-lr; transform: rotate(180deg); }
+
+/* ---- Chart cards ---- */
+.chart-card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; }
+.chart-auc-badge {
+  display: inline-block; background: var(--primary-light); color: var(--primary);
+  font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 12px;
+  margin-left: 0.5rem;
+}
