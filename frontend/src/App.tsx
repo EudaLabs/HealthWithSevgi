@@ -159,9 +159,21 @@ export default function App() {
           />
         )
       case 4:
+        if (!state.prepResponse) {
+          return (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+              <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+                Please complete Data Preparation (Step 3) first.
+              </p>
+              <button className="btn btn-primary" onClick={() => goToStep(3)}>
+                Go to Step 3
+              </button>
+            </div>
+          )
+        }
         return (
           <Step4ModelParameters
-            sessionId={state.prepResponse!.session_id}
+            sessionId={state.prepResponse.session_id}
             trainResponse={state.trainResponse}
             comparedModels={state.comparedModels}
             onTrainSuccess={(r) => { update({ trainResponse: r }); completeStep(4) }}
