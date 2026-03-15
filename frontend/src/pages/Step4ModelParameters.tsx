@@ -3,6 +3,9 @@ import { ArrowRight, BarChart3, Brain, GitBranch, Layers, LineChart, Network, Tr
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
 import type { CompareEntry, ModelType, TrainResponse } from '../types'
+import ConfusionMatrixChart from '../components/charts/ConfusionMatrixChart'
+import ROCCurveChart from '../components/charts/ROCCurveChart'
+import PRCurveChart from '../components/charts/PRCurveChart'
 
 const MODEL_CONFIGS = [
   {
@@ -88,6 +91,8 @@ export default function Step4ModelParameters({
   const [selectedType, setSelectedType] = useState<ModelType>('random_forest')
   const [params, setParams] = useState<Record<string, number | string>>(DEFAULT_PARAMS['random_forest'])
   const [autoRetrain, setAutoRetrain] = useState(true)
+  const [tune, setTune] = useState(false)
+  const [useFeatureSelection, setUseFeatureSelection] = useState(false)
   const [loading, setLoading] = useState(false)
   const [autoTrainError, setAutoTrainError] = useState<string | null>(null)
 
@@ -113,7 +118,7 @@ export default function Step4ModelParameters({
     setAutoTrainError(null)
     setLoading(true)
     try {
-      const resp = await trainModel(sessionId, selectedType, params)
+      const resp = await trainModel(sessionId, selectedType, params, { tune, useFeatureSelection })
       onTrainSuccess(resp)
       toast.success(`${MODEL_CONFIGS.find(m=>m.type===selectedType)?.name} trained — AUC ${pct(resp.metrics.auc_roc)}`)
     } catch (err: unknown) {
@@ -132,7 +137,7 @@ export default function Step4ModelParameters({
     setAutoTrainError(null)
     setLoading(true)
     try {
-      const resp = await trainModel(sessionId, modelType, newParams, { signal: controller.signal })
+      const resp = await trainModel(sessionId, modelType, newParams, { tune, useFeatureSelection, signal: controller.signal })
       // Only apply if this controller was not aborted (i.e. it is still the latest)
       if (!controller.signal.aborted) {
         onTrainSuccess(resp)
@@ -149,7 +154,7 @@ export default function Step4ModelParameters({
         setLoading(false)
       }
     }
-  }, [sessionId, onTrainSuccess])
+  }, [sessionId, onTrainSuccess, tune, useFeatureSelection])
 
   const handleParamChange = (key: string, value: number | string) => {
     const newParams = { ...params, [key]: value }
@@ -288,11 +293,23 @@ export default function Step4ModelParameters({
             <div className="card-title">Parameters — {MODEL_CONFIGS.find(m=>m.type===selectedType)?.name}</div>
             <div className="card-subtitle">Adjust settings using the controls below.</div>
           </div>
-          <label className="toggle" style={{ gap: '0.6rem' }}>
-            <input type="checkbox" checked={autoRetrain} onChange={e => setAutoRetrain(e.target.checked)} />
-            <div className="toggle-track"><div className="toggle-thumb" /></div>
-            <span style={{ fontSize: '0.85rem' }}>Auto-Retrain</span>
-          </label>
+          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
+            <label className="toggle" style={{ gap: '0.6rem' }}>
+              <input type="checkbox" checked={autoRetrain} onChange={e => setAutoRetrain(e.target.checked)} />
+              <div className="toggle-track"><div className="toggle-thumb" /></div>
+              <span style={{ fontSize: '0.85rem' }}>Auto-Retrain</span>
+            </label>
+            <label className="toggle" style={{ gap: '0.6rem' }}>
+              <input type="checkbox" checked={tune} onChange={e => setTune(e.target.checked)} />
+              <div className="toggle-track"><div className="toggle-thumb" /></div>
+              <span style={{ fontSize: '0.85rem' }}>Tune</span>
+            </label>
+            <label className="toggle" style={{ gap: '0.6rem' }}>
+              <input type="checkbox" checked={useFeatureSelection} onChange={e => setUseFeatureSelection(e.target.checked)} />
+              <div className="toggle-track"><div className="toggle-thumb" /></div>
+              <span style={{ fontSize: '0.85rem' }}>Feature Selection</span>
+            </label>
+          </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -301,7 +318,7 @@ export default function Step4ModelParameters({
 
         <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <button className="btn btn-primary" onClick={handleTrain} disabled={loading} aria-busy={loading}>
-            {loading ? '⏳ Training…' : '▶ Train Model'}
+            {loading ? '⏳ Training…' : tune ? '▶ Train & Tune' : '▶ Train Model'}
           </button>
           {loading && <span className="text-sm text-muted">This may take a moment…</span>}
         </div>
@@ -338,22 +355,36 @@ export default function Step4ModelParameters({
             <div className="grid-3" key={trainResponse?.model_id}>
               {([
                 { label: 'Accuracy', v: trainResponse.metrics.accuracy, g: 0.65, a: 0.55 },
+                { label: 'Train Accuracy', v: trainResponse.metrics.train_accuracy, g: 0.65, a: 0.55 },
                 { label: 'Sensitivity', starred: true, v: trainResponse.metrics.sensitivity, g: 0.70, a: 0.50 },
                 { label: 'Specificity', v: trainResponse.metrics.specificity, g: 0.65, a: 0.55 },
                 { label: 'Precision', v: trainResponse.metrics.precision, g: 0.60, a: 0.50 },
                 { label: 'F1 Score', v: trainResponse.metrics.f1_score, g: 0.65, a: 0.55 },
                 { label: 'AUC-ROC', v: trainResponse.metrics.auc_roc, g: 0.75, a: 0.65 },
-              ]).map(({ label, v, g, a, starred }: { label: string; v: number; g: number; a: number; starred?: boolean }) => {
+                { label: 'MCC', v: trainResponse.metrics.mcc, g: 0.4, a: 0.2, raw: true },
+              ] as { label: string; v: number; g: number; a: number; starred?: boolean; raw?: boolean }[]).map(({ label, v, g, a, starred, raw }) => {
                 const cls = v >= g ? 'metric-green' : v >= a ? 'metric-amber' : 'metric-red'
                 const bgCls = v >= g ? 'metric-bg-green' : v >= a ? 'metric-bg-amber' : 'metric-bg-red'
                 return (
                   <div key={label} className={`card ${bgCls} metric-card-enter`} style={{ padding: '0.875rem', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>{label}{starred && <>{" "}<span aria-hidden="true">⭐</span></>}</div>
-                    <div className={`font-bold ${cls}`} style={{ fontSize: '1.5rem' }}>{pct(v)}</div>
+                    <div className={`font-bold ${cls}`} style={{ fontSize: '1.5rem' }}>{raw ? v.toFixed(3) : pct(v)}</div>
                   </div>
                 )
               })}
             </div>
+
+            {trainResponse.metrics.cross_val_scores.length > 0 && (
+              <div className="cv-summary" style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'var(--surface)', borderRadius: '8px', fontSize: '0.85rem' }}>
+                <strong>Cross-Validation (AUC):</strong>{' '}
+                {(trainResponse.metrics.cross_val_scores.reduce((a,b)=>a+b,0) / trainResponse.metrics.cross_val_scores.length).toFixed(3)}
+                {' \u00b1 '}
+                {Math.sqrt(trainResponse.metrics.cross_val_scores.reduce((sum, v, _, arr) => sum + Math.pow(v - arr.reduce((a,b)=>a+b,0)/arr.length, 2), 0) / trainResponse.metrics.cross_val_scores.length).toFixed(3)}
+                <span style={{ color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
+                  ({trainResponse.metrics.cross_val_scores.length} folds)
+                </span>
+              </div>
+            )}
 
             {trainResponse.metrics.low_sensitivity_warning && (
               <div className="alert alert-danger mt-3">
@@ -364,6 +395,25 @@ export default function Step4ModelParameters({
                 </span>
               </div>
             )}
+
+            {trainResponse.metrics.overfitting_warning && (
+              <div className="alert alert-warning mt-3">
+                <span aria-hidden="true">⚠️</span>
+                <span>
+                  <strong>Overfitting Warning:</strong> Training accuracy ({pct(trainResponse.metrics.train_accuracy)}) is significantly higher than test accuracy ({pct(trainResponse.metrics.accuracy)}). The model may not generalise well to new patients.
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Diagnostic Charts */}
+          <div className="card">
+            <div className="card-title">Diagnostic Charts</div>
+            <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
+              <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
+              <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
+              <PRCurveChart points={trainResponse.metrics.pr_curve} />
+            </div>
           </div>
 
           {/* Comparison table */}
@@ -378,6 +428,9 @@ export default function Step4ModelParameters({
                       <th>Accuracy</th>
                       <th>Sensitivity</th>
                       <th>Specificity</th>
+                      <th>Precision</th>
+                      <th>F1</th>
+                      <th>MCC</th>
                       <th>AUC-ROC</th>
                       <th>Time (ms)</th>
                     </tr>
@@ -394,6 +447,15 @@ export default function Step4ModelParameters({
                             {pct(e.metrics.sensitivity)}
                           </td>
                           <td>{pct(e.metrics.specificity)}</td>
+                          <td className={e.metrics.precision >= 0.6 ? 'metric-green' : e.metrics.precision >= 0.5 ? 'metric-amber' : 'metric-red'}>
+                            {pct(e.metrics.precision)}
+                          </td>
+                          <td className={e.metrics.f1_score >= 0.65 ? 'metric-green' : e.metrics.f1_score >= 0.55 ? 'metric-amber' : 'metric-red'}>
+                            {pct(e.metrics.f1_score)}
+                          </td>
+                          <td className={e.metrics.mcc >= 0.4 ? 'metric-green' : e.metrics.mcc >= 0.2 ? 'metric-amber' : 'metric-red'}>
+                            {e.metrics.mcc.toFixed(3)}
+                          </td>
                           <td className={e.metrics.auc_roc >= 0.75 ? 'metric-green' : e.metrics.auc_roc >= 0.65 ? 'metric-amber' : 'metric-red'}>
                             {pct(e.metrics.auc_roc)}
                           </td>
