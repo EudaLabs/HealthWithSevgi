@@ -150,8 +150,12 @@ export default function Step4ModelParameters({
       const resp = await trainModel(sessionId, selectedType, params, { tune, useFeatureSelection })
       onTrainSuccess(resp)
       toast.success(`${MODEL_CONFIGS.find(m=>m.type===selectedType)?.fullName} trained — AUC ${pct(resp.metrics.auc_roc)}`)
-      // Bug #12: Scroll to results after training
-      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+      // Bug #12: Scroll to results after training (use rAF to wait for DOM update)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+      })
     } catch (err: unknown) {
       toast.error((err as Error).message)
     } finally {

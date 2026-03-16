@@ -6,6 +6,8 @@ export type UploadErrorType =
   | 'file_too_large'
   | 'dataset_too_small'
   | 'no_numeric_columns'
+  | 'empty_file'
+  | 'target_not_found'
 
 interface Props {
   errorType: UploadErrorType
@@ -37,6 +39,16 @@ const ERROR_CONFIG: Record<UploadErrorType, {
     title: 'No Numeric Columns Detected',
     description: 'The dataset must contain at least one numeric column.',
     detail: 'Numeric features are essential for machine learning analysis.',
+  },
+  empty_file: {
+    title: 'Empty file',
+    description: 'The uploaded file contains no data.',
+    detail: 'Please upload a CSV file with at least 10 rows of patient data.',
+  },
+  target_not_found: {
+    title: 'Target column not found',
+    description: 'The expected target column was not found in your dataset.',
+    detail: 'Upload your CSV and use the Column Mapper to select the correct target column.',
   },
 }
 

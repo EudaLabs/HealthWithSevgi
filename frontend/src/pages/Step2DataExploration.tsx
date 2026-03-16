@@ -79,10 +79,14 @@ export default function Step2DataExploration({
       } catch (err: unknown) {
         const msg = (err as Error).message || ''
         // Map backend errors to error modals
-        if (msg.toLowerCase().includes('too small') || msg.toLowerCase().includes('row')) {
+        if (msg.toLowerCase().includes('too small') || msg.toLowerCase().includes('at least 10 row')) {
           setUploadError('dataset_too_small')
         } else if (msg.toLowerCase().includes('numeric')) {
           setUploadError('no_numeric_columns')
+        } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('target column')) {
+          setUploadError('target_not_found')
+        } else if (msg.toLowerCase().includes('parse') || msg.toLowerCase().includes('empty') || msg.toLowerCase().includes('no columns')) {
+          setUploadError('empty_file')
         } else {
           toast.error(msg)
         }
@@ -120,6 +124,12 @@ export default function Step2DataExploration({
       // Double-check file size
       if (file.size > MAX_FILE_SIZE) {
         setUploadError('file_too_large')
+        return
+      }
+
+      // Check for empty file
+      if (file.size === 0) {
+        setUploadError('empty_file')
         return
       }
 
@@ -161,8 +171,9 @@ export default function Step2DataExploration({
 
   const handleErrorRetry = useCallback(() => {
     setUploadError(null)
+    onFileChange(null)
     openFileDialog()
-  }, [openFileDialog])
+  }, [openFileDialog, onFileChange])
 
   // --- Derived data ---
   const classDistData = explorationData
