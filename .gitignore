@@ -41,5 +41,8 @@ desktop.ini
 # ─── Temp ────────────────────────────────────────
 temp/
 
+# ─── QA / UAT ────────────────────────────────────
+qa/
+
 # ─── Data cache (auto-downloaded at runtime) ──────
 backend/data_cache/
