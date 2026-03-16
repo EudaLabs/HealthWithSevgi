@@ -124,85 +124,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
         })}
       </div>
 
-      {/* Overfitting / CV */}
-      <div className="grid-2">
-        <div className="card">
-          <div className="card-title">Training vs. Test Accuracy</div>
-          <div style={{ marginTop: '0.5rem', display: 'flex', gap: '2rem' }}>
-            <div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Train</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 700 }}>{pct(metrics.train_accuracy)}</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Test</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 700 }}>{pct(metrics.accuracy)}</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Gap</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: overfitGap > 0.1 ? 'var(--warning)' : 'var(--success)' }}>
-                {pct(overfitGap)}
-              </div>
-            </div>
-          </div>
-          {overfitGap > 0.1 && (
-            <div className="alert alert-warning mt-3" style={{ fontSize: '0.8rem' }}>
-              <AlertTriangle size={14} />
-              <span>Gap &gt;10% suggests possible overfitting. Try reducing model complexity.</span>
-            </div>
-          )}
-          {metrics.cross_val_scores.length > 0 && (
-            <div style={{ marginTop: '0.75rem' }}>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                Cross-Validation Fold Scores (mean: <strong style={{ color: 'var(--primary)' }}>{cvMean !== null ? pct(cvMean) : 'N/A'}</strong>)
-              </div>
-              <ResponsiveContainer width="100%" height={100}>
-                <BarChart data={cvFoldData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="fold" tick={{ fontSize: 10 }} />
-                  <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} />
-                  <Tooltip formatter={(v: number) => pct(v)} />
-                  {cvMean !== null && <ReferenceLine y={cvMean} stroke="var(--primary)" strokeDasharray="5 5" label={{ value: 'Mean', fontSize: 10 }} />}
-                  <Bar dataKey="score" fill="var(--primary)" radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                High variance across folds may indicate unstable model performance.
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ROC Curve */}
-        <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <div className="card-title" style={{ margin: 0 }}>ROC Curve</div>
-            <span className="chart-auc-badge">AUC {metrics.auc_roc.toFixed(2)}</span>
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-            AUC = <strong style={{ color: 'var(--primary)' }}>{metrics.auc_roc.toFixed(3)}</strong>
-          </div>
-          {rocData.length < 2 ? (
-            <div className="alert alert-info">
-              <Info size={16} />
-              <span>ROC curve not available for this classification type. The chart requires binary probability scores.</span>
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="fpr" type="number" domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'FPR', position: 'insideBottomRight', offset: -5, fontSize: 11 }} />
-                <YAxis domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'TPR', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                <Tooltip formatter={(v: number) => [v.toFixed(3)]} />
-                <Legend verticalAlign="bottom" height={24} />
-                <Line data={DIAG_DATA} dataKey="tpr" stroke="var(--border)" strokeDasharray="5 5" dot={false} name="Random" />
-                <Line data={rocData} dataKey="tpr" stroke="var(--primary)" strokeWidth={2} dot={false} name="Model" />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-      </div>
-
-      {/* Confusion Matrix + PR Curve side by side */}
+      {/* Confusion Matrix + ROC Curve side by side (Figma layout) */}
       <div className="grid-2">
         {/* Confusion Matrix */}
         <div className="card">
@@ -299,6 +221,84 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
                   </tr>
                 </tbody>
               </table>
+            </div>
+          )}
+        </div>
+
+        {/* ROC Curve */}
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <div className="card-title" style={{ margin: 0 }}>ROC Curve</div>
+            <span className="chart-auc-badge">AUC {metrics.auc_roc.toFixed(2)}</span>
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+            Plot Sensitivity vs 1-Specificity. Further above the diagonal = better classification.
+          </div>
+          {rocData.length < 2 ? (
+            <div className="alert alert-info">
+              <Info size={16} />
+              <span>ROC curve not available for this classification type. The chart requires binary probability scores.</span>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="fpr" type="number" domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'FPR', position: 'insideBottomRight', offset: -5, fontSize: 11 }} />
+                <YAxis domain={[0,1]} tick={{ fontSize: 10 }} label={{ value: 'TPR', angle: -90, position: 'insideLeft', fontSize: 11 }} />
+                <Tooltip formatter={(v: number) => [v.toFixed(3)]} />
+                <Legend verticalAlign="bottom" height={24} />
+                <Line data={DIAG_DATA} dataKey="tpr" stroke="var(--border)" strokeDasharray="5 5" dot={false} name="Random" />
+                <Line data={rocData} dataKey="tpr" stroke="var(--primary)" strokeWidth={2} dot={false} name="Model" />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+            <strong>Interpretation:</strong> AUC = {metrics.auc_roc.toFixed(3)}{metrics.auc_roc >= 0.7 ? ' indicates good discrimination; a perfect model = 1.0.' : ' — consider tuning parameters for better performance.'}
+          </div>
+        </div>
+      </div>
+
+      {/* Overfitting / CV + PR Curve */}
+      <div className="grid-2">
+        <div className="card">
+          <div className="card-title">Training vs. Test Accuracy</div>
+          <div style={{ marginTop: '0.5rem', display: 'flex', gap: '2rem' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Train</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700 }}>{pct(metrics.train_accuracy)}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Test</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700 }}>{pct(metrics.accuracy)}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Gap</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, color: overfitGap > 0.1 ? 'var(--warning)' : 'var(--success)' }}>
+                {pct(overfitGap)}
+              </div>
+            </div>
+          </div>
+          {overfitGap > 0.1 && (
+            <div className="alert alert-warning mt-3" style={{ fontSize: '0.8rem' }}>
+              <AlertTriangle size={14} />
+              <span>Gap &gt;10% suggests possible overfitting. Try reducing model complexity.</span>
+            </div>
+          )}
+          {metrics.cross_val_scores.length > 0 && (
+            <div style={{ marginTop: '0.75rem' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                Cross-Validation Fold Scores (mean: <strong style={{ color: 'var(--primary)' }}>{cvMean !== null ? pct(cvMean) : 'N/A'}</strong>)
+              </div>
+              <ResponsiveContainer width="100%" height={100}>
+                <BarChart data={cvFoldData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="fold" tick={{ fontSize: 10 }} />
+                  <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} />
+                  <Tooltip formatter={(v: number) => pct(v)} />
+                  {cvMean !== null && <ReferenceLine y={cvMean} stroke="var(--primary)" strokeDasharray="5 5" label={{ value: 'Mean', fontSize: 10 }} />}
+                  <Bar dataKey="score" fill="var(--primary)" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           )}
         </div>
