@@ -48,3 +48,4 @@ qa/
 backend/data_cache/
 *.Zone.Identifier
 *:Zone.Identifier
+docs/media/HEALTH_AI_Sprint2_Detailed_QA_Report*
