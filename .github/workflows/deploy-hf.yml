@@ -42,9 +42,9 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd deploy
-          git init
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git init -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Deploy ${{ github.event.release.tag_name }}"
           git push --force https://0xBatuhan4:${HF_TOKEN}@huggingface.co/spaces/0xBatuhan4/HealthWithSevgi main
