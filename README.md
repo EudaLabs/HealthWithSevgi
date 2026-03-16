@@ -132,7 +132,7 @@ npm run dev
 
 ## 📋 Links
 
-- **Jira Board:** [TBD]
+- **Jira Board:** [Jira →](https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
 - **Figma Designs:** [Figma →](https://www.figma.com/design/1K1Dw8PC6P98NZAa30DzII/430-HealthWithSevgi?node-id=0-1)
 - **GitHub Wiki:** [Wiki →](../../wiki)
 - **API Docs:** `http://localhost:8000/docs` (when running locally)
