@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react'
-import { Stethoscope, RefreshCw, Settings, Search, ChevronLeft, ChevronRight } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import { Stethoscope, RefreshCw, Settings, Search, ChevronDown, Check } from 'lucide-react'
 import type { Specialty } from '../types'
 
 const GLOSSARY = [
@@ -37,13 +37,53 @@ interface Props {
 
 export default function NavBar({ specialty, specialties, onSpecialtyChange, onReset, onGlossary, glossaryOpen, onGlossaryClose }: Props) {
   const [search, setSearch] = useState('')
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const scrollBy = (dir: number) => scrollRef.current?.scrollBy({ left: dir * 200, behavior: 'smooth' })
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [dropdownSearch, setDropdownSearch] = useState('')
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Bug #3: Reset glossary search when modal reopens
+  useEffect(() => {
+    if (glossaryOpen) setSearch('')
+  }, [glossaryOpen])
+
+  // Bug #4: Close glossary on Escape key
+  useEffect(() => {
+    if (!glossaryOpen) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onGlossaryClose() }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [glossaryOpen, onGlossaryClose])
+
   const filtered = GLOSSARY.filter(
     (g) =>
       g.term.toLowerCase().includes(search.toLowerCase()) ||
       g.def.toLowerCase().includes(search.toLowerCase())
   )
+
+  const filteredSpecialties = specialties.filter((s) =>
+    s.name.toLowerCase().includes(dropdownSearch.toLowerCase())
+  )
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!dropdownOpen) return
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false)
+        setDropdownSearch('')
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [dropdownOpen])
+
+  // Focus search when dropdown opens
+  useEffect(() => {
+    if (dropdownOpen && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [dropdownOpen])
 
   return (
     <>
@@ -59,9 +99,62 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
           </div>
 
           <div className="navbar-actions">
-            {specialty && (
-              <span className="navbar-specialty-badge">{specialty.name}</span>
+            {/* Specialty dropdown */}
+            {specialties.length > 0 && (
+              <div className="navbar-dropdown-wrapper" ref={dropdownRef}>
+                <button
+                  className="navbar-dropdown-trigger"
+                  onClick={() => { setDropdownOpen(!dropdownOpen); setDropdownSearch('') }}
+                >
+                  <Stethoscope size={14} />
+                  <span className="navbar-dropdown-label">
+                    {specialty ? specialty.name : 'Select Domain'}
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    style={{
+                      transition: 'transform 200ms ease',
+                      transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    }}
+                  />
+                </button>
+
+                {dropdownOpen && (
+                  <div className="navbar-dropdown-menu">
+                    <div className="navbar-dropdown-search">
+                      <Search size={13} className="navbar-dropdown-search-icon" />
+                      <input
+                        ref={searchInputRef}
+                        className="navbar-dropdown-search-input"
+                        placeholder="Search domains..."
+                        value={dropdownSearch}
+                        onChange={(e) => setDropdownSearch(e.target.value)}
+                      />
+                    </div>
+                    <div className="navbar-dropdown-list">
+                      {filteredSpecialties.map((s) => (
+                        <button
+                          key={s.id}
+                          className={`navbar-dropdown-item${specialty?.id === s.id ? ' active' : ''}`}
+                          onClick={() => {
+                            onSpecialtyChange(s)
+                            setDropdownOpen(false)
+                            setDropdownSearch('')
+                          }}
+                        >
+                          <span>{s.name}</span>
+                          {specialty?.id === s.id && <Check size={14} />}
+                        </button>
+                      ))}
+                      {filteredSpecialties.length === 0 && (
+                        <div className="navbar-dropdown-empty">No domains found</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
+
             <button
               className="navbar-icon-btn"
               onClick={onReset}
@@ -82,48 +175,13 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
         </div>
       </nav>
 
-      {/* ---- Specialty pills bar ---- */}
-      {specialties.length > 0 && (
-        <div className="specialty-chips">
-          <div className="specialty-chips-inner">
-            <div className="specialty-chips-label-row">
-              <span className="specialty-chips-label">
-                <Stethoscope size={14} />
-                Medical Domain
-              </span>
-              <span className="specialty-chips-sep" />
-              <span className="specialty-chips-hint">Select your clinical domain</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <button className="specialty-chips-arrow" onClick={() => scrollBy(-1)} aria-label="Scroll left">
-                <ChevronLeft size={16} />
-              </button>
-              <div className="specialty-chips-scroll" ref={scrollRef}>
-                {specialties.map((s) => (
-                  <button
-                    key={s.id}
-                    className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
-                    onClick={() => onSpecialtyChange(s)}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-              </div>
-              <button className="specialty-chips-arrow" onClick={() => scrollBy(1)} aria-label="Scroll right">
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ---- Glossary modal ---- */}
       {glossaryOpen && (
         <div className="modal-overlay" onClick={onGlossaryClose}>
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 640 }}>
             <div className="modal-header">
               <span className="modal-title">Glossary — Key Terms</span>
-              <button className="btn btn-ghost btn-sm" onClick={onGlossaryClose}>✕</button>
+              <button className="btn btn-ghost btn-sm" onClick={onGlossaryClose}>&#10005;</button>
             </div>
             <div className="modal-body">
               <div style={{ position: 'relative', marginBottom: '1rem' }}>
@@ -131,7 +189,7 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
                 <input
                   className="form-input"
                   style={{ paddingLeft: '2rem' }}
-                  placeholder="Search terms…"
+                  placeholder="Search terms..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   autoFocus
