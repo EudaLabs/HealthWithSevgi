@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Search, Settings } from 'lucide-react'
+import React, { useState, useRef } from 'react'
+import { Stethoscope, RefreshCw, Settings, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Specialty } from '../types'
 
 const GLOSSARY = [
@@ -35,22 +35,10 @@ interface Props {
   onGlossaryClose: () => void
 }
 
-export default function NavBar({ specialty, specialties, onSpecialtyChange, onGlossary, glossaryOpen, onGlossaryClose }: Props) {
+export default function NavBar({ specialty, specialties, onSpecialtyChange, onReset, onGlossary, glossaryOpen, onGlossaryClose }: Props) {
   const [search, setSearch] = useState('')
-
-  // Bug #3: Reset glossary search when modal reopens
-  useEffect(() => {
-    if (glossaryOpen) setSearch('')
-  }, [glossaryOpen])
-
-  // Bug #4: Close glossary on Escape key
-  useEffect(() => {
-    if (!glossaryOpen) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onGlossaryClose() }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [glossaryOpen, onGlossaryClose])
-
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollBy = (dir: number) => scrollRef.current?.scrollBy({ left: dir * 200, behavior: 'smooth' })
   const filtered = GLOSSARY.filter(
     (g) =>
       g.term.toLowerCase().includes(search.toLowerCase()) ||
@@ -71,17 +59,22 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onGl
           </div>
 
           <div className="navbar-actions">
+            {specialty && (
+              <span className="navbar-specialty-badge">{specialty.name}</span>
+            )}
             <button
-              className="navbar-glossary-btn"
-              onClick={onGlossary}
+              className="navbar-icon-btn"
+              onClick={onReset}
+              title="Change specialty / reset"
+              aria-label="Refresh / reset"
             >
-              Glossary
+              <RefreshCw size={17} />
             </button>
             <button
               className="navbar-icon-btn"
               onClick={onGlossary}
-              title="Settings"
-              aria-label="Settings"
+              title="Help / Glossary"
+              aria-label="Settings / glossary"
             >
               <Settings size={17} />
             </button>
@@ -89,19 +82,37 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onGl
         </div>
       </nav>
 
-      {/* ---- Specialty pill bar ---- */}
+      {/* ---- Specialty pills bar ---- */}
       {specialties.length > 0 && (
-        <div className="specialty-bar">
-          <div className="specialty-bar-inner">
-            {specialties.map((s) => (
-              <button
-                key={s.id}
-                className={`specialty-pill${specialty?.id === s.id ? ' active' : ''}`}
-                onClick={() => onSpecialtyChange(s)}
-              >
-                {s.name}
+        <div className="specialty-chips">
+          <div className="specialty-chips-inner">
+            <div className="specialty-chips-label-row">
+              <span className="specialty-chips-label">
+                <Stethoscope size={14} />
+                Medical Domain
+              </span>
+              <span className="specialty-chips-sep" />
+              <span className="specialty-chips-hint">Select your clinical domain</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button className="specialty-chips-arrow" onClick={() => scrollBy(-1)} aria-label="Scroll left">
+                <ChevronLeft size={16} />
               </button>
-            ))}
+              <div className="specialty-chips-scroll" ref={scrollRef}>
+                {specialties.map((s) => (
+                  <button
+                    key={s.id}
+                    className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
+                    onClick={() => onSpecialtyChange(s)}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+              <button className="specialty-chips-arrow" onClick={() => scrollBy(1)} aria-label="Scroll right">
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -112,7 +123,7 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onGl
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 640 }}>
             <div className="modal-header">
               <span className="modal-title">Glossary — Key Terms</span>
-              <button className="btn btn-ghost btn-sm" onClick={onGlossaryClose}>&#10005;</button>
+              <button className="btn btn-ghost btn-sm" onClick={onGlossaryClose}>✕</button>
             </div>
             <div className="modal-body">
               <div style={{ position: 'relative', marginBottom: '1rem' }}>
@@ -120,7 +131,7 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onGl
                 <input
                   className="form-input"
                   style={{ paddingLeft: '2rem' }}
-                  placeholder="Search terms..."
+                  placeholder="Search terms…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   autoFocus
