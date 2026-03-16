@@ -241,7 +241,7 @@ export default function App() {
         currentStep={state.currentStep}
         canAdvance={
           state.currentStep === 1 ? true :
-          state.currentStep === 2 ? state.stepsCompleted.has(2) :
+          state.currentStep === 2 ? !!state.targetColumn :
           state.currentStep === 3 ? !!state.prepResponse :
           state.currentStep === 4 ? !!state.trainResponse :
           state.currentStep === 5 ? !!state.trainResponse :
@@ -250,6 +250,16 @@ export default function App() {
         }
         onPrev={() => goToStep(state.currentStep - 1)}
         onNext={() => {
+          // Guard: only advance if the step's unlock condition is actually met
+          const canGo =
+            state.currentStep === 1 ? true :
+            state.currentStep === 2 ? !!state.targetColumn :
+            state.currentStep === 3 ? !!state.prepResponse :
+            state.currentStep === 4 ? !!state.trainResponse :
+            state.currentStep === 5 ? !!state.trainResponse :
+            state.currentStep === 6 ? !!state.trainResponse :
+            false
+          if (!canGo) return
           completeStep(state.currentStep)
           goToStep(state.currentStep + 1)
         }}
