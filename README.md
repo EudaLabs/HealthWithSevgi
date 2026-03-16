@@ -78,6 +78,20 @@ HealthWithSevgi/
 
 ## 🚀 Quick Start
 
+### Docker (recommended)
+
+```bash
+docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest
+```
+
+Open http://localhost:7860 — that's it.
+
+### Live Demo
+
+https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi
+
+### Local Development
+
 See **[SETUP.md](SETUP.md)** for full instructions.
 
 ```bash
@@ -85,9 +99,9 @@ See **[SETUP.md](SETUP.md)** for full instructions.
 cd backend
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8001
 
-# Frontend
+# Frontend (separate terminal)
 cd frontend
 npm install
 npm run dev
