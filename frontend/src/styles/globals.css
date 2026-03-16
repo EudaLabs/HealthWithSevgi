@@ -185,120 +185,21 @@ input, select, textarea { font-family: inherit; }
   align-items: center;
   gap: 10px;
 }
-/* ---- Navbar specialty dropdown ---- */
-.navbar-dropdown-wrapper {
-  position: relative;
-}
-.navbar-dropdown-trigger {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+/* ---- Navbar buttons ---- */
+.navbar-glossary-btn {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
-  padding: 5px 12px;
+  padding: 5px 14px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 200ms ease;
   white-space: nowrap;
 }
-.navbar-dropdown-trigger:hover {
+.navbar-glossary-btn:hover {
   background: rgba(255, 255, 255, 0.25);
-}
-.navbar-dropdown-label {
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.navbar-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  width: 280px;
-  max-height: 420px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: dropdown-enter 150ms ease;
-}
-@keyframes dropdown-enter {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.navbar-dropdown-search {
-  position: relative;
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
-}
-.navbar-dropdown-search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-}
-.navbar-dropdown-search-input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 8px 6px 28px;
-  font-size: 13px;
-  background: var(--background);
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color 200ms ease;
-}
-.navbar-dropdown-search-input:focus {
-  border-color: var(--primary);
-}
-.navbar-dropdown-list {
-  overflow-y: auto;
-  flex: 1;
-  max-height: 320px;
-  padding: 4px;
-  /* Bug #5: Always show scrollbar so users know there are more items */
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-.navbar-dropdown-list::-webkit-scrollbar { width: 6px; }
-.navbar-dropdown-list::-webkit-scrollbar-track { background: transparent; }
-.navbar-dropdown-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-.navbar-dropdown-list::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-.navbar-dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 8px 10px;
-  border: none;
-  background: none;
-  font-size: 13px;
-  color: var(--text-primary);
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 150ms ease;
-  text-align: left;
-}
-.navbar-dropdown-item:hover {
-  background: var(--primary-light);
-}
-.navbar-dropdown-item.active {
-  background: var(--primary-light);
-  color: var(--primary);
-  font-weight: 600;
-}
-.navbar-dropdown-empty {
-  padding: 16px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-muted);
 }
 .navbar-icon-btn {
   width: 30px;
@@ -318,7 +219,46 @@ input, select, textarea { font-family: inherit; }
   background: rgba(255, 255, 255, 0.28);
 }
 
-/* (specialty chips bar removed — replaced by navbar dropdown) */
+/* ---- Specialty pill bar ---- */
+.specialty-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+}
+.specialty-bar-inner {
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 0 var(--layout-px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.specialty-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+.specialty-pill:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.specialty-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+}
 
 /* ---- Specialty grid ---- */
 .specialty-grid {
