@@ -1,11 +1,15 @@
-name: Deploy to HuggingFace Spaces
+name: Release — Deploy & Docker
 
 on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -24,7 +28,7 @@ jobs:
           npm ci
           npm run build
 
-      - name: Prepare Space files
+      - name: Prepare deploy directory
         run: |
           mkdir -p deploy
           cp hf-space/Dockerfile deploy/
@@ -48,3 +52,19 @@ jobs:
           git add -A
           git commit -m "Deploy ${{ github.event.release.tag_name }}"
           git push --force https://0xBatuhan4:${HF_TOKEN}@huggingface.co/spaces/0xBatuhan4/HealthWithSevgi main
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: deploy
+          push: true
+          tags: |
+            ghcr.io/eudalabs/healthwithsevgi:${{ github.event.release.tag_name }}
+            ghcr.io/eudalabs/healthwithsevgi:latest
