@@ -366,10 +366,16 @@ class MLService:
         cv_pipe = ImbPipeline(cv_steps)
 
         # Use RepeatedStratifiedKFold for small datasets (<500), else StratifiedKFold
-        if len(X_cv) < 500:
-            cv_splitter: Any = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=42)
+        # Ensure n_splits doesn't exceed the smallest class count
+        from collections import Counter
+        min_cv_class = min(Counter(y_cv).values()) if len(y_cv) > 0 else 0
+        n_splits = min(5, min_cv_class) if min_cv_class >= 2 else 2
+        if len(X_cv) < 500 and n_splits >= 2:
+            cv_splitter: Any = RepeatedStratifiedKFold(n_splits=n_splits, n_repeats=3, random_state=42)
+        elif n_splits >= 2:
+            cv_splitter = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
         else:
-            cv_splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+            cv_splitter = 2  # fallback to simple 2-fold
 
         try:
             cv_scores = cross_val_score(

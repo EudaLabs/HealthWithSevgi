@@ -46,3 +46,5 @@ qa/
 
 # ─── Data cache (auto-downloaded at runtime) ──────
 backend/data_cache/
+*.Zone.Identifier
+*:Zone.Identifier

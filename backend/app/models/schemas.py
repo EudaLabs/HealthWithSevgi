@@ -52,3 +52,4 @@ class PrepResponse(BaseModel):
     class_distribution_after: dict[str, int]
     smote_applied: bool
     normalization_applied: str
+    norm_samples: list[dict[str, object]] = Field(default_factory=list)  # [{feature, before, after}, ...]

@@ -127,8 +127,18 @@ export default function Step4ModelParameters({
   }, [])
 
   useEffect(() => {
-    setParams(DEFAULT_PARAMS[selectedType])
-  }, [selectedType])
+    const newParams = DEFAULT_PARAMS[selectedType]
+    setParams(newParams)
+    // Bug #10: Auto-retrain when switching model tabs (if auto-retrain is on)
+    if (autoRetrain) {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => {
+        fireAutoRetrain(selectedType, newParams)
+      }, 300)
+    }
+  }, [selectedType]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const resultsRef = useRef<HTMLDivElement>(null)
 
   const handleTrain = async () => {
     // Cancel any pending auto-retrain
@@ -140,6 +150,8 @@ export default function Step4ModelParameters({
       const resp = await trainModel(sessionId, selectedType, params, { tune, useFeatureSelection })
       onTrainSuccess(resp)
       toast.success(`${MODEL_CONFIGS.find(m=>m.type===selectedType)?.fullName} trained — AUC ${pct(resp.metrics.auc_roc)}`)
+      // Bug #12: Scroll to results after training
+      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
     } catch (err: unknown) {
       toast.error((err as Error).message)
     } finally {
@@ -473,7 +485,7 @@ export default function Step4ModelParameters({
       {/* Results preview */}
       {trainResponse && (
         <>
-          <div className="card">
+          <div className="card" ref={resultsRef}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
               <div>
                 <div className="card-title">Latest Training Results</div>
@@ -565,16 +577,18 @@ const SliderParam = React.memo(function SliderParam({ label, min, max, step, val
   onChange: (v: number) => void; decimals?: number
 }) {
   const sliderId = `slider-${label.replace(/\s+/g, '-').toLowerCase()}`
+  // Bug #9: Fallback to min when value is undefined during model switch
+  const safeValue = value ?? min
   return (
     <div className="form-group">
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <label className="form-label" htmlFor={sliderId}>{label}</label>
-        <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{Number(value).toFixed(decimals)}</span>
+        <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{Number(safeValue).toFixed(decimals)}</span>
       </div>
       <input
         id={sliderId}
         type="range" className="form-range"
-        min={min} max={max} step={step} value={value}
+        min={min} max={max} step={step} value={safeValue}
         onChange={e => onChange(Number(e.target.value))}
       />
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>

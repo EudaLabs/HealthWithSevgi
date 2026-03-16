@@ -24,7 +24,7 @@ from app.models.schemas import (
 
 logger = logging.getLogger(__name__)
 
-IMBALANCE_RATIO_THRESHOLD = 3.0
+IMBALANCE_RATIO_THRESHOLD = 1.5
 MIN_ROWS = 10
 MAX_UPLOAD_MB = 50
 
@@ -153,8 +153,15 @@ class DataService:
         X = feature_df.values.astype(float)
 
         # --- Train / test split (BEFORE imputation to avoid data leakage) ---
+        # Use stratified split only when every class has at least 2 samples;
+        # otherwise fall back to non-stratified to avoid ValueError.
+        from collections import Counter
+        class_counts_y = Counter(y)
+        min_class_size = min(class_counts_y.values()) if class_counts_y else 0
+        can_stratify = min_class_size >= 2
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=settings.test_size, random_state=42, stratify=y
+            X, y, test_size=settings.test_size, random_state=42,
+            stratify=y if can_stratify else None,
         )
 
         # --- Handle missing values AFTER split (train-only statistics) ---
@@ -222,6 +229,18 @@ class DataService:
 
         dist_after = {str(k): int((y_train == v).sum()) for k, v in class_to_int.items()}
 
+        # Bug #1: Build real normalization sample data (first row before vs after)
+        norm_samples: list[dict[str, object]] = []
+        sample_count = min(5, len(feature_names))
+        for i in range(sample_count):
+            before_val = float(X_train_raw[0, i]) if len(X_train_raw) > 0 else 0.0
+            after_val = float(X_train[0, i]) if len(X_train) > 0 else 0.0
+            norm_samples.append({
+                "feature": feature_names[i],
+                "before": round(before_val, 2),
+                "after": round(after_val, 3),
+            })
+
         response = PrepResponse(
             session_id=session_id,
             train_size=int(len(X_train)),
@@ -231,6 +250,7 @@ class DataService:
             class_distribution_after=dist_after,
             smote_applied=smote_applied,
             normalization_applied=normalization_applied,
+            norm_samples=norm_samples,
         )
 
         # Persist to session store

@@ -76,12 +76,8 @@ export default function Step3DataPreparation({
     After: afterData.find((a) => a.name === b.name)?.after ?? 0,
   }))
 
-  // Sample normalization comparison rows using column names from exploration data
-  const normComparisonCols = explorationData
-    ? explorationData.columns
-        .filter(c => c.name !== targetColumn && c.dtype !== 'object')
-        .slice(0, 5)
-    : []
+  // Normalization comparison from real backend data
+  const normSamples = prepResponse?.norm_samples ?? []
 
   return (
     <div className="step-page">
@@ -232,7 +228,7 @@ export default function Step3DataPreparation({
             <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
               Before and after feature scaling
             </div>
-            {normComparisonCols.length > 0 && prepResponse ? (
+            {normSamples.length > 0 && prepResponse ? (
               <div className="data-table-wrapper">
                 <table className="data-table">
                   <thead>
@@ -243,24 +239,15 @@ export default function Step3DataPreparation({
                     </tr>
                   </thead>
                   <tbody>
-                    {normComparisonCols.map((col) => {
-                      const samples = col.sample_values.filter(v => v !== null && v !== undefined && !isNaN(Number(v)))
-                      const rawVal = samples.length > 0 ? Number(samples[0]).toFixed(2) : '—'
-                      const normVal = settings.normalization === 'none'
-                        ? rawVal
-                        : settings.normalization === 'minmax'
-                          ? (Math.random() * 0.9 + 0.05).toFixed(3)
-                          : ((Math.random() * 4 - 2)).toFixed(3)
-                      return (
-                        <tr key={col.name}>
-                          <td><code style={{ fontSize: '0.8rem' }}>{col.name}</code></td>
-                          <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{rawVal}</td>
-                          <td style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--primary)' }}>
-                            {settings.normalization === 'none' ? rawVal : normVal}
-                          </td>
-                        </tr>
-                      )
-                    })}
+                    {normSamples.map((s) => (
+                      <tr key={s.feature}>
+                        <td><code style={{ fontSize: '0.8rem' }}>{s.feature}</code></td>
+                        <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{s.before}</td>
+                        <td style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--primary)' }}>
+                          {s.after}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

@@ -26,14 +26,14 @@ function metricCell(v: number) {
 }
 
 interface Props {
-  trainResponse: TrainResponse
+  trainResponse: TrainResponse | null
   specialty: Specialty
   stepsCompleted: Set<number>
 }
 
 export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }: Props) {
   const [ethics, setEthics] = useState<EthicsResponse | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [expandedStudy, setExpandedStudy] = useState<string | null>(null)
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>({})
@@ -42,15 +42,18 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
   const [certLoading, setCertLoading] = useState(false)
 
   useEffect(() => {
+    if (!trainResponse) return
+    setLoading(true)
     fetchEthics(trainResponse.model_id)
       .then(setEthics)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
-  }, [trainResponse.model_id])
+  }, [trainResponse?.model_id])
 
   const handleChecklistToggle = async (itemId: string, checked: boolean) => {
     const next = { ...checklistState, [itemId]: checked }
     setChecklistState(next)
+    if (!trainResponse) return
     try {
       await updateChecklist(trainResponse.model_id, itemId, checked)
     } catch (_) { /* silent */ }
@@ -60,6 +63,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
     stepsCompleted.has(3) && stepsCompleted.has(4) && stepsCompleted.has(6)
 
   const handleDownloadCert = async () => {
+    if (!trainResponse) return
     setCertLoading(true)
     try {
       await downloadCertificate({
@@ -103,6 +107,18 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
           Is the model fair for all patient groups? Does it perform worse for certain demographics?
         </p>
       </div>
+
+      {!trainResponse && (
+        <div className="card" style={{ textAlign: 'center', padding: '2.5rem 2rem' }}>
+          <Shield size={40} style={{ color: 'var(--text-muted)', marginBottom: '0.75rem' }} />
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            Train a model in <strong>Step 4</strong> to unlock the full ethics and bias assessment.
+          </p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            The subgroup fairness audit, EU AI Act checklist, and certificate require a trained model.
+          </p>
+        </div>
+      )}
 
       {loading && (
         <div className="card text-center" style={{ padding: '2rem' }}>

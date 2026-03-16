@@ -33,6 +33,12 @@ def _get_ml_service(request: Request):
 
 def _load_df(file: UploadFile | None, specialty_id: str, data_service) -> pd.DataFrame:
     if file is not None and file.filename:
+        # Bug #6: Validate file extension
+        if not file.filename.lower().endswith(".csv"):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Only .csv files are accepted (got: {file.filename})",
+            )
         content = file.file.read()
         # Enforce 50 MB limit
         if len(content) > _MAX_UPLOAD_BYTES:
@@ -46,6 +52,17 @@ def _load_df(file: UploadFile | None, specialty_id: str, data_service) -> pd.Dat
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail=f"Could not parse CSV file: {exc}",
+            )
+        # Bug #7: Minimum dataset size validation
+        if len(df) < 10:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Dataset must have at least 10 rows (got {len(df)})",
+            )
+        if len(df.columns) < 2:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Dataset must have at least 2 columns (got {len(df.columns)})",
             )
         return df
     return data_service.get_example_dataset(specialty_id)

@@ -47,6 +47,7 @@ export interface PrepResponse {
   class_distribution_after: Record<string, number>
   smote_applied: boolean
   normalization_applied: string
+  norm_samples: { feature: string; before: number; after: number }[]
 }
 
 export type ModelType =
