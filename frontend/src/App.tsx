@@ -142,7 +142,7 @@ export default function App() {
             uploadedFile={state.uploadedFile}
             onFileChange={(file) => update({ uploadedFile: file })}
             explorationData={state.explorationData}
-            onExploreSuccess={(data, targetCol) => update({ explorationData: data, targetColumn: targetCol })}
+            onExploreSuccess={(data) => update({ explorationData: data })}
             onTargetConfirmed={(col) => { update({ targetColumn: col }); completeStep(2) }}
             onNext={() => goToStep(3)}
           />

@@ -19,7 +19,7 @@ interface Props {
   uploadedFile: File | null
   onFileChange: (file: File | null) => void
   explorationData: DataExplorationResponse | null
-  onExploreSuccess: (data: DataExplorationResponse, targetCol: string) => void
+  onExploreSuccess: (data: DataExplorationResponse) => void
   onTargetConfirmed: (col: string) => void
   onNext: () => void
 }
@@ -74,7 +74,7 @@ export default function Step2DataExploration({
           return
         }
 
-        onExploreSuccessRef.current(data, col)
+        onExploreSuccessRef.current(data)
         setTargetCol(col)
       } catch (err: unknown) {
         const msg = (err as Error).message || ''
