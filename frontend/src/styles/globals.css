@@ -185,121 +185,7 @@ input, select, textarea { font-family: inherit; }
   align-items: center;
   gap: 10px;
 }
-/* ---- Navbar specialty dropdown ---- */
-.navbar-dropdown-wrapper {
-  position: relative;
-}
-.navbar-dropdown-trigger {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 200ms ease;
-  white-space: nowrap;
-}
-.navbar-dropdown-trigger:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-.navbar-dropdown-label {
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.navbar-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  width: 280px;
-  max-height: 420px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: dropdown-enter 150ms ease;
-}
-@keyframes dropdown-enter {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.navbar-dropdown-search {
-  position: relative;
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
-}
-.navbar-dropdown-search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-}
-.navbar-dropdown-search-input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 8px 6px 28px;
-  font-size: 13px;
-  background: var(--background);
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color 200ms ease;
-}
-.navbar-dropdown-search-input:focus {
-  border-color: var(--primary);
-}
-.navbar-dropdown-list {
-  overflow-y: auto;
-  flex: 1;
-  max-height: 320px;
-  padding: 4px;
-  /* Bug #5: Always show scrollbar so users know there are more items */
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-.navbar-dropdown-list::-webkit-scrollbar { width: 6px; }
-.navbar-dropdown-list::-webkit-scrollbar-track { background: transparent; }
-.navbar-dropdown-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-.navbar-dropdown-list::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-.navbar-dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 8px 10px;
-  border: none;
-  background: none;
-  font-size: 13px;
-  color: var(--text-primary);
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 150ms ease;
-  text-align: left;
-}
-.navbar-dropdown-item:hover {
-  background: var(--primary-light);
-}
-.navbar-dropdown-item.active {
-  background: var(--primary-light);
-  color: var(--primary);
-  font-weight: 600;
-}
-.navbar-dropdown-empty {
-  padding: 16px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-muted);
-}
+/* ---- Navbar buttons ---- */
 .navbar-icon-btn {
   width: 30px;
   height: 30px;
@@ -317,8 +203,106 @@ input, select, textarea { font-family: inherit; }
 .navbar-icon-btn:hover {
   background: rgba(255, 255, 255, 0.28);
 }
+.navbar-specialty-badge {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
 
-/* (specialty chips bar removed — replaced by navbar dropdown) */
+/* ---- Specialty chips bar ---- */
+.specialty-chips {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0 8px;
+}
+.specialty-chips-inner {
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 0 var(--layout-px);
+}
+.specialty-chips-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.specialty-chips-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.specialty-chips-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+}
+.specialty-chips-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.specialty-chips-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+.specialty-chips-scroll::-webkit-scrollbar { display: none; }
+.specialty-chips-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 150ms ease;
+}
+.specialty-chips-arrow:hover {
+  background: var(--background);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.specialty-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.specialty-chip:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.specialty-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+}
 
 /* ---- Specialty grid ---- */
 .specialty-grid {
