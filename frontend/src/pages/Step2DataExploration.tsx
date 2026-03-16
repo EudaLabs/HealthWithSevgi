@@ -1,11 +1,17 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { CheckCircle, Lock, Upload, X, Database, Users, Layers, AlertCircle } from 'lucide-react'
+import {
+  CheckCircle, Lock, Upload, X, Database, Users, Layers, AlertCircle,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts'
 import { exploreData } from '../api/data'
+import ColumnMapperModal from '../components/ColumnMapperModal'
+import type { ColumnMapping } from '../components/ColumnMapperModal'
+import ErrorModal from '../components/ErrorModal'
+import type { UploadErrorType } from '../components/ErrorModal'
 import type { DataExplorationResponse, Specialty } from '../types'
 
 interface Props {
@@ -19,6 +25,7 @@ interface Props {
 }
 
 const CLASS_BAR_COLOR = '#c89a2d'
+const MAX_FILE_SIZE = 50 * 1024 * 1024
 
 export default function Step2DataExploration({
   specialty,
@@ -33,57 +40,131 @@ export default function Step2DataExploration({
   const [targetCol, setTargetCol] = useState(specialty.target_variable)
   const [mapperOpen, setMapperOpen] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
-  const [tempTarget, setTempTarget] = useState(specialty.target_variable)
+  const [savedMappings, setSavedMappings] = useState<ColumnMapping[] | null>(null)
+
+  // Error modal state
+  const [uploadError, setUploadError] = useState<UploadErrorType | null>(null)
+
+  // Bug #8: Keep refs in sync to avoid stale closures
+  const specialtyRef = React.useRef(specialty)
+  const onExploreSuccessRef = React.useRef(onExploreSuccess)
+  specialtyRef.current = specialty
+  onExploreSuccessRef.current = onExploreSuccess
 
   const runExplore = useCallback(
     async (file: File | null, col: string) => {
       setLoading(true)
       try {
-        const data = await exploreData(specialty.id, col, file)
-        onExploreSuccess(data, col)
+        const data = await exploreData(specialtyRef.current.id, col, file)
+
+        // Check for no numeric columns
+        const numericCols = data.columns.filter(
+          (c) => c.dtype.includes('int') || c.dtype.includes('float')
+        )
+        if (numericCols.length === 0) {
+          setUploadError('no_numeric_columns')
+          setLoading(false)
+          return
+        }
+
+        // Check for dataset too small
+        if (data.row_count < 10) {
+          setUploadError('dataset_too_small')
+          setLoading(false)
+          return
+        }
+
+        onExploreSuccessRef.current(data, col)
         setTargetCol(col)
-        toast.success(`Loaded ${data.row_count} patients with ${data.columns.length} features`)
       } catch (err: unknown) {
-        toast.error((err as Error).message)
+        const msg = (err as Error).message || ''
+        // Map backend errors to error modals
+        if (msg.toLowerCase().includes('too small') || msg.toLowerCase().includes('row')) {
+          setUploadError('dataset_too_small')
+        } else if (msg.toLowerCase().includes('numeric')) {
+          setUploadError('no_numeric_columns')
+        } else {
+          toast.error(msg)
+        }
       } finally {
         setLoading(false)
       }
     },
-    [specialty.id, onExploreSuccess]
+    []
   )
 
   const onDrop = useCallback(
-    (accepted: File[]) => {
+    (accepted: File[], rejected: unknown[]) => {
+      // Handle rejected files
+      if (rejected && (rejected as Array<unknown>).length > 0) {
+        const firstReject = (rejected as Array<{ file: File; errors: Array<{ code: string }> }>)[0]
+        if (firstReject?.errors?.[0]?.code === 'file-too-large') {
+          setUploadError('file_too_large')
+          return
+        }
+        if (firstReject?.errors?.[0]?.code === 'file-invalid-type') {
+          setUploadError('invalid_format')
+          return
+        }
+      }
+
       const file = accepted[0]
       if (!file) return
+
+      // Double-check file type
+      if (!file.name.toLowerCase().endsWith('.csv')) {
+        setUploadError('invalid_format')
+        return
+      }
+
+      // Double-check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setUploadError('file_too_large')
+        return
+      }
+
       onFileChange(file)
+      setConfirmed(false)
+      setSavedMappings(null)
       runExplore(file, targetCol)
     },
     [onFileChange, runExplore, targetCol]
   )
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open: openFileDialog } = useDropzone({
     onDrop,
     accept: { 'text/csv': ['.csv'] },
-    maxSize: 50 * 1024 * 1024,
+    maxSize: MAX_FILE_SIZE,
     multiple: false,
+    noClick: true,
   })
 
   const handleUseExample = () => {
     onFileChange(null)
+    setConfirmed(false)
+    setSavedMappings(null)
     runExplore(null, targetCol)
   }
 
-  const handleConfirmTarget = () => {
-    setTargetCol(tempTarget)
+  const handleMapperSave = useCallback((newTargetCol: string, mappings: ColumnMapping[]) => {
+    setTargetCol(newTargetCol)
+    setSavedMappings(mappings)
     setConfirmed(true)
     setMapperOpen(false)
-    onTargetConfirmed(tempTarget)
-    toast.success('Target column confirmed')
-    // Re-explore with new target
-    runExplore(uploadedFile, tempTarget)
-  }
+    onTargetConfirmed(newTargetCol)
 
+    // Re-explore with new target if changed
+    if (newTargetCol !== targetCol) {
+      runExplore(uploadedFile, newTargetCol)
+    }
+  }, [targetCol, uploadedFile, runExplore, onTargetConfirmed])
+
+  const handleErrorRetry = useCallback(() => {
+    setUploadError(null)
+    openFileDialog()
+  }, [openFileDialog])
+
+  // --- Derived data ---
   const classDistData = explorationData
     ? Object.entries(explorationData.class_distribution).map(([k, v]) => ({ name: k, value: v }))
     : []
@@ -101,11 +182,22 @@ export default function Step2DataExploration({
   const classValues = explorationData ? Object.values(explorationData.class_distribution) : []
   const classTotal = classValues.reduce((s, v) => s + v, 0)
   const classBalanceStr = classTotal > 0
-    ? classValues.map(v => Math.round((v / classTotal) * 100)).join(':')
+    ? classValues.map(v => Math.round((v / classTotal) * 100)).join(' : ')
     : '—'
 
+  // File info for success banner
+  const fileName = uploadedFile?.name || `${specialty.id}_clinical_records.csv`
+  const fileSizeStr = uploadedFile
+    ? (uploadedFile.size / 1024).toFixed(0) + ' KB'
+    : explorationData ? '—' : '—'
+  const numericColCount = explorationData
+    ? explorationData.columns.filter(c => c.dtype.includes('int') || c.dtype.includes('float')).length
+    : 0
+
   return (
-    <div className="step-page">
+    <div className="step-page" {...getRootProps()}>
+      <input {...getInputProps()} />
+
       {/* Header */}
       <div className="card" style={{ background: 'var(--primary-light)', border: '1px solid rgba(26,122,76,0.15)' }}>
         <span className="step-badge">STEP 2 · DATA EXPLORATION</span>
@@ -113,11 +205,12 @@ export default function Step2DataExploration({
           Data Exploration &amp; Understanding
         </h2>
         <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
-          Explore the <strong>{specialty.name}</strong> dataset — inspect structure, distributions, and data quality before any preprocessing.
+          Upload and explore your patient dataset for <strong>{specialty.name}</strong>. Understanding your data distribution,
+          quality, and patterns is crucial before building any ML model.
         </p>
       </div>
 
-      {/* Data Source card — single row with integrated upload */}
+      {/* Data Source card */}
       <div className="card">
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={{
@@ -136,20 +229,17 @@ export default function Step2DataExploration({
               onClick={handleUseExample}
               disabled={loading}
             >
-              {loading ? 'Loading…' : 'Use Default Dataset'}
+              {loading ? 'Loading...' : 'Use Default Dataset'}
             </button>
-            <div {...getRootProps()} style={{ display: 'inline-flex' }}>
-              <input {...getInputProps()} />
-              <button
-                className="btn btn-secondary"
-                type="button"
-                disabled={loading}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Upload size={15} />
-                {uploadedFile ? uploadedFile.name : 'Upload Your CSV'}
-              </button>
-            </div>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              disabled={loading}
+              onClick={openFileDialog}
+            >
+              <Upload size={15} />
+              {uploadedFile ? uploadedFile.name : 'Upload Your CSV'}
+            </button>
             {uploadedFile && (
               <button
                 className="btn btn-ghost btn-sm"
@@ -174,50 +264,110 @@ export default function Step2DataExploration({
             color: 'var(--primary)',
             fontSize: '0.9rem',
           }}>
-            Drop your CSV here…
+            Drop your CSV here...
           </div>
         )}
       </div>
 
-      {/* Open Column Mapper button */}
-      {explorationData && !loading && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {confirmed ? (
-            <div className="flex items-center gap-2" style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CheckCircle size={18} />
-              <span style={{ fontWeight: 600 }}>Target confirmed: {targetCol}</span>
-            </div>
-          ) : (
-            <button className="btn btn-primary" onClick={() => setMapperOpen(true)}>
-              Open Column Mapper
-            </button>
-          )}
-          {!confirmed && (
-            <div className="alert alert-warning" style={{ flex: 1, margin: 0 }}>
-              <Lock size={16} />
-              <span>Step 3 is locked until you confirm the target column.</span>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Loading state */}
       {loading && (
         <div className="card text-center" style={{ padding: '2rem' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⏳</div>
-          <div>Loading dataset…</div>
+          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>&#8987;</div>
+          <div>Loading dataset...</div>
         </div>
       )}
 
       {explorationData && !loading && (
         <>
+          {/* Dataset Success Banner or Schema Saved Banner */}
+          {confirmed && savedMappings ? (
+            <div className="schema-saved-banner">
+              <CheckCircle size={20} style={{ flexShrink: 0, marginTop: 2 }} />
+              <div>
+                <strong>Schema mapping saved successfully</strong>
+                <p>
+                  Target column has been configured: &ldquo;<strong>{targetCol}</strong>&rdquo;
+                </p>
+                <p>
+                  You can now continue to Step 3: Data Preparation.{' '}
+                  <a onClick={() => setMapperOpen(true)}>Edit mapping</a>
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="dataset-success-banner">
+              <CheckCircle size={20} style={{ flexShrink: 0, marginTop: 2 }} />
+              <div style={{ flex: 1 }}>
+                <strong>Dataset successfully loaded</strong>
+                <p>Open the Column Mapper for data exploration and schema mapping.</p>
+
+                {/* Dataset Information + Dataset Preview */}
+                <div className="dataset-info-grid">
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                      Dataset Information
+                    </div>
+                    <table className="dataset-info-table">
+                      <tbody>
+                        <tr><th>Dataset Name</th><td>{fileName}</td></tr>
+                        {uploadedFile && <tr><th>File Size</th><td>{fileSizeStr}</td></tr>}
+                        <tr><th>Rows</th><td>{totalPatients.toLocaleString()}</td></tr>
+                        <tr><th>Columns</th><td>{totalFeatures}</td></tr>
+                        <tr><th>Numeric Columns</th><td>{numericColCount}</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                      Dataset Preview
+                    </div>
+                    <table className="dataset-info-table">
+                      <tbody>
+                        {explorationData.columns.slice(0, 6).map((col) => (
+                          <tr key={col.name}>
+                            <th>{col.name}</th>
+                            <td style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                              {col.sample_values.length > 0 ? String(col.sample_values[0]) : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                        {explorationData.columns.length > 6 && (
+                          <tr>
+                            <th colSpan={2} style={{ textAlign: 'center', fontStyle: 'italic' }}>
+                              Showing first 6 of {explorationData.columns.length} columns
+                            </th>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Open Column Mapper button */}
+                <div style={{ marginTop: '0.75rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-primary" onClick={() => setMapperOpen(true)}>
+                    Open Column Mapper
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Lock warning if not confirmed */}
+          {!confirmed && (
+            <div className="alert alert-warning" style={{ margin: 0 }}>
+              <Lock size={16} />
+              <span>Step 3 is locked until you confirm the target column via the Column Mapper.</span>
+            </div>
+          )}
+
           {/* Stats row — 4 green-circled stat cards */}
           <div className="grid-4">
             {[
-              { label: 'Patients', value: totalPatients.toLocaleString(), icon: <Users size={18} style={{ color: 'var(--primary)' }} /> },
-              { label: 'Features', value: totalFeatures.toString(), icon: <Layers size={18} style={{ color: 'var(--primary)' }} /> },
-              { label: 'Missing %', value: `${missingPct}%`, icon: <AlertCircle size={18} style={{ color: 'var(--primary)' }} /> },
-              { label: 'Class Balance', value: classBalanceStr, icon: <BarChart3Icon size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'PATIENTS', value: totalPatients.toLocaleString(), icon: <Users size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'FEATURES', value: totalFeatures.toString(), icon: <Layers size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'MISSING %', value: `${missingPct}%`, icon: <AlertCircle size={18} style={{ color: 'var(--primary)' }} /> },
+              { label: 'CLASS BALANCE', value: classBalanceStr, icon: <BarChart3Icon size={18} style={{ color: 'var(--primary)' }} /> },
             ].map(({ label, value, icon }) => (
               <div key={label} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
                 <div style={{
@@ -233,12 +383,11 @@ export default function Step2DataExploration({
             ))}
           </div>
 
-          {/* Class Balance card with warm-color horizontal bars */}
+          {/* Class Balance card */}
           <div className="card">
             <div className="card-title" style={{ marginBottom: '0.25rem' }}>Class Balance</div>
             <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
-              Target: <code style={{ background: 'var(--background)', padding: '0.1rem 0.4rem', borderRadius: 4 }}>{explorationData.target_col}</code>
-              {' · '}{explorationData.row_count} patients total
+              Distribution of target variable classes
             </div>
             <ResponsiveContainer width="100%" height={120}>
               <BarChart data={classDistData} layout="vertical" margin={{ left: 10, right: 20 }}>
@@ -260,7 +409,7 @@ export default function Step2DataExploration({
             </ResponsiveContainer>
             {explorationData.imbalance_warning && (
               <div className="alert alert-warning mt-3">
-                <span>⚠️</span>
+                <span>&#9888;&#65039;</span>
                 <span>
                   <strong>Class imbalance detected</strong> (ratio {explorationData.imbalance_ratio}:1).
                   Consider enabling SMOTE in Step 3.
@@ -269,9 +418,10 @@ export default function Step2DataExploration({
             )}
           </div>
 
-          {/* Patient Measurements table (formerly Column Summary) */}
+          {/* Patient Measurements table */}
           <div className="card">
             <div className="card-title">Patient Measurements</div>
+            <div className="card-subtitle">Sample rows from the dataset — missing values are highlighted</div>
             <div className="data-table-wrapper mt-3">
               <table className="data-table">
                 <thead>
@@ -323,46 +473,35 @@ export default function Step2DataExploration({
             </div>
           </div>
 
+          {/* Privacy notice */}
+          <div style={{
+            textAlign: 'center',
+            fontSize: '0.78rem',
+            color: 'var(--text-muted)',
+            padding: '0.5rem 0',
+          }}>
+            Patient data is processed locally within this session. No patient data is stored or transmitted.
+          </div>
         </>
       )}
 
       {/* Column Mapper Modal */}
       {mapperOpen && explorationData && (
-        <div className="modal-overlay" onClick={() => setMapperOpen(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <span className="modal-title">Column Mapper</span>
-              <button className="btn btn-ghost btn-sm" onClick={() => setMapperOpen(false)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-                Select the column that contains the patient outcome you want the AI to predict.
-              </p>
-              <div className="form-group">
-                <label className="form-label">Target / Outcome Column</label>
-                <select
-                  className="form-select"
-                  value={tempTarget}
-                  onChange={(e) => setTempTarget(e.target.value)}
-                >
-                  {explorationData.columns.map((c) => (
-                    <option key={c.name} value={c.name}>{c.name} ({c.dtype})</option>
-                  ))}
-                </select>
-              </div>
-              <div className="alert alert-info mt-3">
-                <span>ℹ️</span>
-                <span>Recommended for this specialty: <strong>{specialty.target_variable}</strong></span>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-ghost" onClick={() => setMapperOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleConfirmTarget}>
-                <CheckCircle size={15} /> Save Selection
-              </button>
-            </div>
-          </div>
-        </div>
+        <ColumnMapperModal
+          explorationData={explorationData}
+          specialty={specialty}
+          onSave={handleMapperSave}
+          onClose={() => setMapperOpen(false)}
+        />
+      )}
+
+      {/* Error Modal */}
+      {uploadError && (
+        <ErrorModal
+          errorType={uploadError}
+          onRetry={handleErrorRetry}
+          onClose={() => setUploadError(null)}
+        />
       )}
     </div>
   )
