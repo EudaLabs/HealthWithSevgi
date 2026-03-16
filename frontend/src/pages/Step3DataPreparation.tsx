@@ -78,6 +78,13 @@ export default function Step3DataPreparation({
 
   // Normalization comparison from real backend data
   const normSamples = prepResponse?.norm_samples ?? []
+  const truncName = (s: string, max: number) => s.length > max ? s.slice(0, max) + '…' : s
+  const normChartData = normSamples.map((s) => ({
+    feature: truncName(s.feature, 16),
+    before: s.before,
+    after: Number(s.after.toFixed(3)),
+  }))
+  const normChartH = normChartData.length * 34 + 28
 
   return (
     <div className="step-page">
@@ -222,34 +229,42 @@ export default function Step3DataPreparation({
 
         {/* RIGHT — Normalization Comparison + SMOTE Effect */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {/* Normalization Comparison table */}
+          {/* Normalization Comparison — Before / After bar charts */}
           <div className="card">
             <div className="card-title" style={{ marginBottom: '0.25rem' }}>Normalization Comparison</div>
             <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
               Before and after feature scaling
             </div>
-            {normSamples.length > 0 && prepResponse ? (
-              <div className="data-table-wrapper">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Feature</th>
-                      <th>Before</th>
-                      <th>After</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {normSamples.map((s) => (
-                      <tr key={s.feature}>
-                        <td><code style={{ fontSize: '0.8rem' }}>{s.feature}</code></td>
-                        <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{s.before}</td>
-                        <td style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--primary)' }}>
-                          {s.after}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {normChartData.length > 0 && prepResponse ? (
+              <div style={{ display: 'flex', gap: '0.25rem' }}>
+                {/* Before chart — with feature labels */}
+                <div style={{ flex: 1.2 }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#8993a4', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', textAlign: 'center' }}>
+                    Before
+                  </div>
+                  <ResponsiveContainer width="100%" height={normChartH}>
+                    <BarChart data={normChartData} layout="vertical" margin={{ left: 0, right: 8, top: 0, bottom: 0 }}>
+                      <XAxis type="number" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                      <YAxis type="category" dataKey="feature" tick={{ fontSize: 9.5 }} width={110} tickLine={false} axisLine={false} />
+                      <Tooltip formatter={(v: number) => [v, 'Raw value']} />
+                      <Bar dataKey="before" fill="#8993a4" radius={[0, 4, 4, 0]} barSize={16} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                {/* After chart — no feature labels */}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', textAlign: 'center' }}>
+                    After
+                  </div>
+                  <ResponsiveContainer width="100%" height={normChartH}>
+                    <BarChart data={normChartData} layout="vertical" margin={{ left: 0, right: 8, top: 0, bottom: 0 }}>
+                      <XAxis type="number" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                      <YAxis type="category" dataKey="feature" hide />
+                      <Tooltip formatter={(v: number) => [v, 'Normalized']} />
+                      <Bar dataKey="after" fill="var(--primary)" radius={[0, 4, 4, 0]} barSize={16} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             ) : (
               <div style={{
