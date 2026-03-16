@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { ArrowRight, BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap, Settings } from 'lucide-react'
+import { BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap, Settings } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
 import type { CompareEntry, ModelType, TrainResponse } from '../types'
@@ -554,11 +554,6 @@ export default function Step4ModelParameters({
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button className="btn btn-primary" onClick={onNext}>
-              View Results <ArrowRight size={16} />
-            </button>
-          </div>
         </>
       )}
     </div>

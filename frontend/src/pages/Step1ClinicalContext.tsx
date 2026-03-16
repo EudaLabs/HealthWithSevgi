@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRight, Heart, AlertTriangle, CheckCircle, Brain, BarChart3, Settings, Lightbulb, Scale, Database, Stethoscope } from 'lucide-react'
+import { Heart, AlertTriangle, CheckCircle, Brain, BarChart3, Settings, Lightbulb, Scale, Database, Stethoscope } from 'lucide-react'
 import type { Specialty } from '../types'
 
 const STEP_ROADMAP = [
@@ -165,11 +165,6 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button className="btn btn-primary" onClick={onNext}>
-          Continue to Data Exploration <ArrowRight size={16} />
-        </button>
-      </div>
     </div>
   )
 }

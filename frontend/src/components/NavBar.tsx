@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Stethoscope, RefreshCw, Settings, Search } from 'lucide-react'
+import React, { useState, useRef } from 'react'
+import { Stethoscope, RefreshCw, Settings, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Specialty } from '../types'
 
 const GLOSSARY = [
@@ -37,6 +37,8 @@ interface Props {
 
 export default function NavBar({ specialty, specialties, onSpecialtyChange, onReset, onGlossary, glossaryOpen, onGlossaryClose }: Props) {
   const [search, setSearch] = useState('')
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollBy = (dir: number) => scrollRef.current?.scrollBy({ left: dir * 200, behavior: 'smooth' })
   const filtered = GLOSSARY.filter(
     (g) =>
       g.term.toLowerCase().includes(search.toLowerCase()) ||
@@ -92,16 +94,24 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
               <span className="specialty-chips-sep" />
               <span className="specialty-chips-hint">Select your clinical domain</span>
             </div>
-            <div className="specialty-chips-scroll">
-              {specialties.map((s) => (
-                <button
-                  key={s.id}
-                  className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
-                  onClick={() => onSpecialtyChange(s)}
-                >
-                  {s.name}
-                </button>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button className="specialty-chips-arrow" onClick={() => scrollBy(-1)} aria-label="Scroll left">
+                <ChevronLeft size={16} />
+              </button>
+              <div className="specialty-chips-scroll" ref={scrollRef}>
+                {specialties.map((s) => (
+                  <button
+                    key={s.id}
+                    className={`specialty-chip${specialty?.id === s.id ? ' active' : ''}`}
+                    onClick={() => onSpecialtyChange(s)}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+              <button className="specialty-chips-arrow" onClick={() => scrollBy(1)} aria-label="Scroll right">
+                <ChevronRight size={16} />
+              </button>
             </div>
           </div>
         </div>

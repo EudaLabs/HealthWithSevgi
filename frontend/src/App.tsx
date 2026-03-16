@@ -17,7 +17,7 @@ const STEP_NAMES = [
   'Model & Parameters', 'Results', 'Explainability', 'Ethics & Bias'
 ]
 
-function BottomNav({ currentStep, onPrev, onNext }: { currentStep: number; onPrev: () => void; onNext: () => void }) {
+function BottomNav({ currentStep, canAdvance, onPrev, onNext }: { currentStep: number; canAdvance: boolean; onPrev: () => void; onNext: () => void }) {
   return (
     <div className="bottom-nav">
       <div className="bottom-nav-inner">
@@ -29,9 +29,11 @@ function BottomNav({ currentStep, onPrev, onNext }: { currentStep: number; onPre
           <button className="btn-prev" onClick={onPrev} disabled={currentStep <= 1}>
             ← Previous
           </button>
-          <button className="btn-next" onClick={onNext} disabled={currentStep >= 7}>
-            Next Step →
-          </button>
+          {currentStep < 7 && (
+            <button className="btn-next" onClick={onNext} disabled={!canAdvance}>
+              Next Step →
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -234,6 +236,15 @@ export default function App() {
       </div>
       <BottomNav
         currentStep={state.currentStep}
+        canAdvance={
+          state.currentStep === 1 ? true :
+          state.currentStep === 2 ? state.stepsCompleted.has(2) :
+          state.currentStep === 3 ? !!state.prepResponse :
+          state.currentStep === 4 ? !!state.trainResponse :
+          state.currentStep === 5 ? !!state.trainResponse :
+          state.currentStep === 6 ? !!state.trainResponse :
+          false
+        }
         onPrev={() => goToStep(state.currentStep - 1)}
         onNext={() => {
           completeStep(state.currentStep)

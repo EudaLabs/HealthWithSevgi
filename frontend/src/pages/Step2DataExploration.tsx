@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { ArrowRight, CheckCircle, Lock, Upload, X, Database, Users, Layers, AlertCircle } from 'lucide-react'
+import { CheckCircle, Lock, Upload, X, Database, Users, Layers, AlertCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -323,13 +323,6 @@ export default function Step2DataExploration({
             </div>
           </div>
 
-          {confirmed && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button className="btn btn-primary" onClick={onNext}>
-                Continue to Data Preparation <ArrowRight size={16} />
-              </button>
-            </div>
-          )}
         </>
       )}
 

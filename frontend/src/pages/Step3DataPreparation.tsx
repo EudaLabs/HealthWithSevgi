@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ArrowRight, CheckCircle, AlertTriangle } from 'lucide-react'
+import { CheckCircle, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -334,11 +334,6 @@ export default function Step3DataPreparation({
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button className="btn btn-primary" onClick={onNext}>
-              Continue to Model Selection <ArrowRight size={16} />
-            </button>
-          </div>
         </>
       )}
     </div>

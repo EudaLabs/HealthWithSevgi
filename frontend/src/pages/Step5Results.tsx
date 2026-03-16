@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { ArrowRight, AlertTriangle, CheckCircle, XCircle, Info, BarChart2 } from 'lucide-react'
+import { AlertTriangle, CheckCircle, XCircle, Info, BarChart2 } from 'lucide-react'
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   ReferenceLine, CartesianGrid, Legend, Bar, BarChart,
@@ -366,11 +366,6 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button className="btn btn-primary" onClick={onNext}>
-          View Explainability <ArrowRight size={16} />
-        </button>
-      </div>
     </div>
   )
 }

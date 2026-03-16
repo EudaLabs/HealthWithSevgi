@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ArrowRight, AlertTriangle, Eye } from 'lucide-react'
+import { AlertTriangle, Eye } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   Cell, ReferenceLine, ComposedChart,
@@ -17,7 +17,7 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
   const [globalLoading, setGlobalLoading] = useState(true)
   const [globalError, setGlobalError] = useState<string | null>(null)
 
-  const [patientIdx, setPatientIdx] = useState(0)
+  const [patientIdx, setPatientIdx] = useState(1)
   const [patient, setPatient] = useState<SinglePatientExplainResponse | null>(null)
   const [patientLoading, setPatientLoading] = useState(false)
   const [showAll, setShowAll] = useState(false)
@@ -37,7 +37,7 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
   const handleExplainPatient = async () => {
     setPatientLoading(true)
     try {
-      const data = await fetchPatientExplanation(trainResponse.model_id, patientIdx)
+      const data = await fetchPatientExplanation(trainResponse.model_id, patientIdx - 1)
       setPatient(data)
     } catch (e: unknown) {
       setGlobalError((e as Error).message)
@@ -220,12 +220,12 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
             )}
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end' }}>
               <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                <label className="form-label">Select test patient (0–{testSize - 1})</label>
+                <label className="form-label">Select test patient (1–{testSize})</label>
                 <input
                   type="number"
                   className="form-input"
-                  min={0}
-                  max={testSize - 1}
+                  min={1}
+                  max={testSize}
                   value={patientIdx}
                   onChange={e => setPatientIdx(Number(e.target.value))}
                 />
@@ -277,11 +277,6 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button className="btn btn-primary" onClick={onNext}>
-          View Ethics &amp; Bias <ArrowRight size={16} />
-        </button>
-      </div>
     </div>
   )
 }

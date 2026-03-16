@@ -134,7 +134,7 @@ input, select, textarea { font-family: inherit; }
 /* ---- NavBar ---- */
 .navbar {
   background: #1a7a4c;
-  height: 80px;
+  height: 60px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -155,28 +155,28 @@ input, select, textarea { font-family: inherit; }
   gap: 14px;
 }
 .navbar-logo {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   background: rgba(255, 255, 255, 0.18);
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #ffffff;
   flex-shrink: 0;
   letter-spacing: -1px;
 }
 .navbar-brand-title {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
   color: #ffffff;
   line-height: 1.2;
   letter-spacing: 0.01em;
 }
 .navbar-brand-sub {
-  font-size: 13px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
   margin-top: 1px;
 }
@@ -198,8 +198,8 @@ input, select, textarea { font-family: inherit; }
   text-overflow: ellipsis;
 }
 .navbar-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 8px;
   border: none;
   background: rgba(255, 255, 255, 0.15);
@@ -263,8 +263,30 @@ input, select, textarea { font-family: inherit; }
   padding-bottom: 2px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 .specialty-chips-scroll::-webkit-scrollbar { display: none; }
+.specialty-chips-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.specialty-chips-arrow:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
 .specialty-chip {
   height: 39px;
   padding: 0 18px;
