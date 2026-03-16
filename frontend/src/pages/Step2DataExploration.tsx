@@ -473,15 +473,6 @@ export default function Step2DataExploration({
             </div>
           </div>
 
-          {/* Privacy notice */}
-          <div style={{
-            textAlign: 'center',
-            fontSize: '0.78rem',
-            color: 'var(--text-muted)',
-            padding: '0.5rem 0',
-          }}>
-            Patient data is processed locally within this session. No patient data is stored or transmitted.
-          </div>
         </>
       )}
 

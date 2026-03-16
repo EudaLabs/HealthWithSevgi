@@ -187,7 +187,7 @@ export default function App() {
         return (
           <Step5Results
             trainResponse={state.trainResponse!}
-            onNext={() => goToStep(6)}
+            onNext={() => { completeStep(5); goToStep(6) }}
           />
         )
       case 6:
@@ -200,7 +200,7 @@ export default function App() {
       case 7:
         return (
           <Step7Ethics
-            trainResponse={state.trainResponse!}
+            trainResponse={state.trainResponse}
             specialty={state.specialty!}
             stepsCompleted={state.stepsCompleted}
           />
@@ -230,9 +230,12 @@ export default function App() {
         onStepClick={goToStep}
       />
       <div className="main-content">
-        <React.Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}><div className="skeleton" style={{ width: 200, height: 24, margin: '0 auto' }} /><p className="text-muted text-sm" style={{ marginTop: '0.5rem' }}>Loading…</p></div>}>
+        <React.Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}><div className="skeleton" style={{ width: 200, height: 24, margin: '0 auto' }} /><p className="text-muted text-sm" style={{ marginTop: '0.5rem' }}>Loading...</p></div>}>
           {renderStep()}
         </React.Suspense>
+        <div style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', padding: '1rem 0 0.5rem' }}>
+          Patient data is processed locally within this session. No patient data is stored or transmitted.
+        </div>
       </div>
       <BottomNav
         currentStep={state.currentStep}
@@ -254,17 +257,30 @@ export default function App() {
       {confirmSwitch && (
         <div className="modal-overlay" onClick={() => setConfirmSwitch(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
-            <div className="modal-header">
-              <span className="modal-title">Switch Specialty?</span>
-              <button className="btn btn-ghost btn-sm" onClick={() => setConfirmSwitch(null)}>✕</button>
+            <div style={{ padding: '2rem', textAlign: 'center' }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: '50%', margin: '0 auto 1rem',
+                background: 'var(--warning-light)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{ fontSize: '1.5rem' }}>&#9888;</span>
+              </div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+                Switch Clinical Domain
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '0.25rem' }}>
+                Changing the clinical domain will reset the current machine learning workflow and clear the uploaded dataset and all results.
+              </p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: '0.5rem' }}>
+                This action cannot be undone.
+              </p>
             </div>
-            <div className="modal-body">
-              <p>Switching to <strong>{confirmSwitch.name}</strong> will reset your progress. Continue?</p>
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmSwitch(null)}>Cancel</button>
+            <div style={{
+              display: 'flex', gap: '0.75rem', justifyContent: 'center',
+              padding: '0 2rem 1.5rem',
+            }}>
+              <button className="btn btn-ghost" onClick={() => setConfirmSwitch(null)}>Cancel</button>
               <button className="btn btn-primary" onClick={() => { handleSpecialtySelect(confirmSwitch); setConfirmSwitch(null) }}>
-                Switch Specialty
+                Switch Domain
               </button>
             </div>
           </div>
