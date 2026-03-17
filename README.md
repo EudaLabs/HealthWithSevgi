@@ -267,15 +267,18 @@ HealthWithSevgi/
 ### Option 1: Docker (Recommended)
 
 ```bash
-# Clone the repository
-git clone https://github.com/EudaLabs/jira-healthWithSevgi.git
-cd jira-healthWithSevgi
-
-# Build and run with Docker Compose
-docker-compose up --build
+docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest
 ```
 
-Open **http://localhost:7860** — the app is ready.
+Open **http://localhost:7860** — that's it.
+
+Or build from source:
+
+```bash
+git clone https://github.com/EudaLabs/jira-healthWithSevgi.git
+cd jira-healthWithSevgi
+docker-compose up --build
+```
 
 ### Option 2: Local Development
 
