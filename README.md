@@ -253,79 +253,43 @@ HealthWithSevgi/
 
 ---
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
-
-| Tool | Version | Required For |
-|------|---------|-------------|
-| Python | >= 3.10 | Backend |
-| Node.js | >= 18 | Frontend |
-| pnpm | >= 8 | Frontend package management |
-| Git | latest | Version control |
-
-### Option 1: Docker (Recommended)
+### Docker (Recommended)
 
 ```bash
 docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest
 ```
 
-Open **http://localhost:7860** — that's it.
+Open http://localhost:7860 — that's it.
 
-Or build from source:
+### Live Demo
+
+https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi
+
+### Local Development
+
+See **[SETUP.md](SETUP.md)** for full instructions.
+
+```bash
+# Backend
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8001
+
+# Frontend (separate terminal)
+cd frontend
+pnpm install
+pnpm dev
+```
+
+Or build from source with Docker Compose:
 
 ```bash
 git clone https://github.com/EudaLabs/jira-healthWithSevgi.git
 cd jira-healthWithSevgi
 docker-compose up --build
-```
-
-### Option 2: Local Development
-
-**Backend:**
-
-```bash
-cd backend
-
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate        # macOS / Linux
-# venv\Scripts\activate         # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the API server
-uvicorn app.main:app --reload --port 8001
-```
-
-API docs available at: **http://localhost:8001/docs** (Swagger UI)
-
-**Frontend** (in a separate terminal):
-
-```bash
-cd frontend
-
-# Install dependencies
-pnpm install
-
-# Start the dev server
-pnpm dev
-```
-
-App available at: **http://localhost:5173** (proxies `/api` requests to port 8001)
-
-### Environment Variables
-
-Create a `.env` file in the project root:
-
-```env
-# Backend
-BACKEND_PORT=8001
-DEBUG=true
-
-# Frontend (Vite uses VITE_ prefix)
-VITE_API_URL=http://localhost:8001
 ```
 
 ---
@@ -450,6 +414,15 @@ The production deployment runs on HuggingFace Spaces as a Docker container. The 
 | Lead Developer + Scrum Master | Batuhan Bayazit | 202228008 |
 | Developer | Berat Mert Gokkaya | 202228019 |
 | QA / Documentation Lead | Berfin Duru Alkan | 202228005 |
+
+---
+
+## Links
+
+- **Jira Board:** [Jira](https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
+- **Figma Designs:** [Figma](https://www.figma.com/design/1K1Dw8PC6P98NZAa30DzII/430-HealthWithSevgi?node-id=0-1)
+- **GitHub Wiki:** [Wiki](../../wiki)
+- **API Docs:** `http://localhost:8001/docs` (when running locally)
 
 ---
 
