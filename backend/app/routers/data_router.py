@@ -124,17 +124,16 @@ def prepare_data(
         else:
             raise HTTPException(status_code=422, detail=f"Target column '{target_col}' not found")
 
-    settings = PrepSettings(
-        test_size=test_size,
-        missing_strategy=missing_strategy,  # type: ignore[arg-type]
-        normalization=normalization,  # type: ignore[arg-type]
-        use_smote=use_smote,
-        outlier_handling=outlier_handling,  # type: ignore[arg-type]
-    )
-
     new_session_id = session_id or str(uuid.uuid4())
 
     try:
+        settings = PrepSettings(
+            test_size=test_size,
+            missing_strategy=missing_strategy,  # type: ignore[arg-type]
+            normalization=normalization,  # type: ignore[arg-type]
+            use_smote=use_smote,
+            outlier_handling=outlier_handling,  # type: ignore[arg-type]
+        )
         X_train, X_test, y_train, y_test, response, feature_names = ds.prepare_data(
             df, target_col, settings, new_session_id
         )
