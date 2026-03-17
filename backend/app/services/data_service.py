@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 IMBALANCE_RATIO_THRESHOLD = 1.5
 MIN_ROWS = 10
 MAX_UPLOAD_MB = 50
+MAX_TARGET_CLASSES = 20
 
 _CACHE_DIR = pathlib.Path(__file__).parent.parent.parent / "data_cache"
 
@@ -124,6 +125,17 @@ class DataService:
 
         # Drop rows where target is NaN
         df = df.dropna(subset=[target_col]).copy()
+
+        # Guard: reject continuous / high-cardinality target columns
+        n_unique = df[target_col].nunique()
+        if n_unique > MAX_TARGET_CLASSES:
+            raise ValueError(
+                f"Target column '{target_col}' has {n_unique} unique values, "
+                f"which looks like a continuous measurement rather than a "
+                f"classification label. Choose a column with at most "
+                f"{MAX_TARGET_CLASSES} distinct classes (e.g. a binary "
+                f"outcome like 0/1)."
+            )
 
         # Encode target
         y_raw = df[target_col]

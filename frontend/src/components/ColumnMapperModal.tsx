@@ -59,6 +59,8 @@ function defaultRole(col: ColumnStat, detectedType: ColumnType, targetCol: strin
   return 'Feature'
 }
 
+const MAX_TARGET_CLASSES = 20
+
 const TYPE_BADGE_CLASS: Record<ColumnType, string> = {
   Identifier: 'mapper-type-identifier',
   Number: 'mapper-type-number',
@@ -141,7 +143,13 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
   const identifiersIgnored = mappings
     .filter((m) => m.detectedType === 'Identifier')
     .every((m) => m.role === 'Ignore')
-  const schemaValid = hasTarget && identifiersIgnored
+
+  // Guard: target column must not be continuous / high-cardinality
+  const targetStat = explorationData.columns.find((c) => c.name === targetCol)
+  const targetUniqueCount = targetStat?.unique_count ?? 0
+  const targetTooManyClasses = targetUniqueCount > MAX_TARGET_CLASSES
+
+  const schemaValid = hasTarget && identifiersIgnored && !targetTooManyClasses
 
   const isDirty = useMemo(() => {
     return JSON.stringify(mappings) !== JSON.stringify(initialMappings)
@@ -292,6 +300,15 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                   </span>
                 </div>
                 <div className="mapper-schema-row">
+                  <span>Target Classes</span>
+                  <span style={{
+                    color: targetTooManyClasses ? 'var(--danger)' : 'var(--text-secondary)',
+                    fontWeight: 600,
+                  }}>
+                    {targetUniqueCount}{targetTooManyClasses ? ` (max ${MAX_TARGET_CLASSES})` : ''}
+                  </span>
+                </div>
+                <div className="mapper-schema-row">
                   <span>Missing Values</span>
                   <span style={{ fontWeight: 600 }}>{missingPct}%</span>
                 </div>
@@ -306,6 +323,22 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                     <p style={{ margin: 0, marginTop: 4 }}>
                       Patient IDs and unique identifiers should be set to
                       &quot;Ignore&quot; to prevent data leakage in your model.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* High-cardinality target warning */}
+              {targetTooManyClasses && (
+                <div className="mapper-warning" style={{ borderColor: 'var(--danger)' }}>
+                  <AlertTriangle size={16} style={{ color: 'var(--danger)', flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <strong>Target Column Is Not Suitable</strong>
+                    <p style={{ margin: 0, marginTop: 4 }}>
+                      &quot;{targetCol}&quot; has {targetUniqueCount} unique values,
+                      which looks like a continuous measurement — not a classification
+                      label. Pick a column with at most {MAX_TARGET_CLASSES} distinct
+                      classes (e.g. a binary outcome like 0/1).
                     </p>
                   </div>
                 </div>
@@ -447,8 +480,10 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                   <div>
                     <strong>Blocking Rules</strong>
                     <p style={{ margin: 0, marginTop: 4 }}>
-                      Model training will be prevented if no target column is selected
-                      or if all identifier columns are not set to &#39;Ignore&#39;.
+                      Model training will be prevented if no target column is selected,
+                      identifier columns are not set to &#39;Ignore&#39;, or the target
+                      column has more than {MAX_TARGET_CLASSES} unique values
+                      (continuous data).
                     </p>
                   </div>
                 </div>
