@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CheckCircle, AlertTriangle } from 'lucide-react'
+import { CheckCircle, AlertTriangle, ChevronDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -41,6 +41,7 @@ export default function Step3DataPreparation({
         missingStrategy: settings.missing_strategy,
         normalization: settings.normalization,
         useSmote: settings.use_smote,
+        outlierHandling: settings.outlier_handling,
         file: uploadedFile,
       })
       setPrepResponse(resp)
@@ -148,72 +149,101 @@ export default function Step3DataPreparation({
 
           {/* Missing Values Strategy */}
           <div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.6rem' }}>Missing Values Strategy</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {(['median', 'mode', 'drop'] as const).map((s) => (
-                <label key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
-                  <input
-                    type="radio"
-                    name="missing"
-                    checked={settings.missing_strategy === s}
-                    onChange={() => onSettingsChange({ ...settings, missing_strategy: s })}
-                  />
-                  <span style={{ fontSize: '0.875rem' }}>
-                    <strong>{s === 'median' ? 'Median' : s === 'mode' ? 'Mode' : 'Remove patients'}</strong>
-                  </span>
-                  {s === 'median' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
-                </label>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Missing Values Strategy</span>
+              {settings.missing_strategy === 'median' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
             </div>
+            <div className="mapper-select-wrapper">
+              <select
+                className="form-select"
+                value={settings.missing_strategy}
+                onChange={(e) => onSettingsChange({ ...settings, missing_strategy: e.target.value as typeof settings.missing_strategy })}
+              >
+                <option value="median">Median Imputation</option>
+                <option value="mode">Mode Imputation</option>
+                <option value="drop">Remove Patients with Missing Data</option>
+              </select>
+              <ChevronDown size={14} className="mapper-select-icon" />
+            </div>
+            <p style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              {settings.missing_strategy === 'median' && 'Replaces missing numeric values with the column median — robust to outliers.'}
+              {settings.missing_strategy === 'mode' && 'Replaces missing values with the most frequent value in each column.'}
+              {settings.missing_strategy === 'drop' && 'Removes any patient row that contains missing values.'}
+            </p>
           </div>
 
           {/* Normalisation */}
           <div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.6rem' }}>Normalisation</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {([
-                { v: 'zscore', label: 'Z-score', desc: 'Relative to average and spread' },
-                { v: 'minmax', label: 'Min-Max', desc: 'Rescale to 0–1 range' },
-                { v: 'none', label: 'None', desc: 'Use only if you have a specific reason' },
-              ] as const).map(({ v, label, desc }) => (
-                <label key={v} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
-                  <input
-                    type="radio"
-                    name="norm"
-                    checked={settings.normalization === v}
-                    onChange={() => onSettingsChange({ ...settings, normalization: v })}
-                  />
-                  <span style={{ fontSize: '0.875rem' }}>
-                    <strong>{label}</strong>
-                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginLeft: '0.4rem' }}>— {desc}</span>
-                  </span>
-                  {v === 'zscore' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
-                </label>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Normalisation</span>
+              {settings.normalization === 'zscore' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
             </div>
+            <div className="mapper-select-wrapper">
+              <select
+                className="form-select"
+                value={settings.normalization}
+                onChange={(e) => onSettingsChange({ ...settings, normalization: e.target.value as typeof settings.normalization })}
+              >
+                <option value="zscore">Z-Score Standardisation</option>
+                <option value="minmax">Min-Max Scaling (0–1)</option>
+                <option value="none">None — Keep Original Scale</option>
+              </select>
+              <ChevronDown size={14} className="mapper-select-icon" />
+            </div>
+            <p style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              {settings.normalization === 'zscore' && 'Centres features around zero with unit variance — best for most ML models.'}
+              {settings.normalization === 'minmax' && 'Rescales each feature to the 0–1 range based on training data min/max.'}
+              {settings.normalization === 'none' && 'No scaling applied — use only if features are already on comparable scales.'}
+            </p>
           </div>
 
-          {/* SMOTE Oversampling toggle — always shown if imbalance warning, otherwise shown as disabled option */}
+          {/* SMOTE Oversampling */}
           <div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.6rem' }}>SMOTE Oversampling</div>
-            <label className="toggle" style={{ gap: '0.75rem' }}>
-              <input
-                type="checkbox"
-                checked={settings.use_smote}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>SMOTE Oversampling</span>
+            </div>
+            <div className="mapper-select-wrapper">
+              <select
+                className="form-select"
+                value={settings.use_smote ? 'enabled' : 'disabled'}
                 disabled={!explorationData?.imbalance_warning}
-                onChange={(e) => onSettingsChange({ ...settings, use_smote: e.target.checked })}
-              />
-              <div className="toggle-track">
-                <div className="toggle-thumb" />
-              </div>
-              <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>
-                {settings.use_smote ? 'SMOTE Enabled' : 'SMOTE Disabled'}
-              </span>
-            </label>
-            <p style={{ marginTop: '0.5rem', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              {explorationData?.imbalance_warning
-                ? 'Creates synthetic examples of the rare outcome in training data only — never applied to test patients.'
-                : 'SMOTE is available when class imbalance is detected in your dataset.'}
+                onChange={(e) => onSettingsChange({ ...settings, use_smote: e.target.value === 'enabled' })}
+              >
+                <option value="disabled">Disabled</option>
+                <option value="enabled">Enabled — Synthesise Minority Samples</option>
+              </select>
+              <ChevronDown size={14} className="mapper-select-icon" />
+            </div>
+            <p style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              {!explorationData?.imbalance_warning
+                ? 'SMOTE is available when class imbalance is detected in your dataset.'
+                : settings.use_smote
+                  ? 'Creates synthetic examples of the rare outcome in training data only — never applied to test patients.'
+                  : 'Enable to balance class distribution using synthetic minority oversampling.'}
+            </p>
+          </div>
+
+          {/* Outlier Handling */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Outlier Handling</span>
+            </div>
+            <div className="mapper-select-wrapper">
+              <select
+                className="form-select"
+                value={settings.outlier_handling}
+                onChange={(e) => onSettingsChange({ ...settings, outlier_handling: e.target.value as typeof settings.outlier_handling })}
+              >
+                <option value="none">None — Keep All Values</option>
+                <option value="iqr">IQR Clipping (1.5 × IQR)</option>
+                <option value="zscore_clip">Z-Score Clipping (± 3 Std)</option>
+              </select>
+              <ChevronDown size={14} className="mapper-select-icon" />
+            </div>
+            <p style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              {settings.outlier_handling === 'none' && 'No outlier treatment — extreme values remain unchanged.'}
+              {settings.outlier_handling === 'iqr' && 'Clips values outside Q1 − 1.5×IQR / Q3 + 1.5×IQR using training statistics.'}
+              {settings.outlier_handling === 'zscore_clip' && 'Clips values beyond ± 3 standard deviations from the training mean.'}
             </p>
           </div>
 

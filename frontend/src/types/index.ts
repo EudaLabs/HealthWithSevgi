@@ -30,12 +30,14 @@ export interface DataExplorationResponse {
 
 export type MissingStrategy = 'median' | 'mode' | 'drop'
 export type Normalization = 'zscore' | 'minmax' | 'none'
+export type OutlierHandling = 'none' | 'iqr' | 'zscore_clip'
 
 export interface PrepSettings {
   test_size: number
   missing_strategy: MissingStrategy
   normalization: Normalization
   use_smote: boolean
+  outlier_handling: OutlierHandling
 }
 
 export interface PrepResponse {

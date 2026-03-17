@@ -51,6 +51,7 @@ const createDefaultState = (): WizardState => ({
     missing_strategy: 'median',
     normalization: 'zscore',
     use_smote: false,
+    outlier_handling: 'none',
   },
   trainResponse: null,
   comparedModels: [],

@@ -20,6 +20,7 @@ export const prepareData = (params: {
   missingStrategy: string
   normalization: string
   useSmote: boolean
+  outlierHandling: string
   sessionId?: string
   file?: File | null
 }): Promise<PrepResponse> => {
@@ -30,6 +31,7 @@ export const prepareData = (params: {
   fd.append('missing_strategy', params.missingStrategy)
   fd.append('normalization', params.normalization)
   fd.append('use_smote', String(params.useSmote))
+  fd.append('outlier_handling', params.outlierHandling)
   if (params.sessionId) fd.append('session_id', params.sessionId)
   if (params.file) fd.append('file', params.file)
   return api.post<PrepResponse>('/prepare', fd).then((r) => r.data)
