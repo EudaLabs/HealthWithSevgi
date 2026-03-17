@@ -255,32 +255,25 @@ HealthWithSevgi/
 
 ## Getting Started
 
-### Prerequisites
+### Quick Start (Docker — single command)
+
+> **Prerequisite:** [Docker](https://docs.docker.com/get-docker/) must be installed.
+
+```bash
+git clone https://github.com/EudaLabs/HealthWithSevgi.git && cd HealthWithSevgi && docker build -t healthwithsevgi . && docker run -p 7860:7860 healthwithsevgi
+```
+
+Open **http://localhost:7860** — that's it.
+
+### Prerequisites (for local development)
 
 | Tool | Version | Required For |
 |------|---------|-------------|
 | Python | >= 3.10 | Backend |
 | Node.js | >= 18 | Frontend |
-| pnpm | >= 8 | Frontend package management |
 | Git | latest | Version control |
 
-### Option 1: Docker (Recommended)
-
-```bash
-docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest
-```
-
-Open **http://localhost:7860** — that's it.
-
-Or build from source:
-
-```bash
-git clone https://github.com/EudaLabs/jira-healthWithSevgi.git
-cd jira-healthWithSevgi
-docker-compose up --build
-```
-
-### Option 2: Local Development
+### Local Development
 
 **Backend:**
 
