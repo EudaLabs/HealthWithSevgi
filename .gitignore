@@ -44,6 +44,10 @@ temp/
 # ─── QA / UAT ────────────────────────────────────
 qa/
 
+# ─── Screenshots (local only) ────────────────────
+docs/sprint2-check/
+docs/media/*.png
+
 # ─── Data cache (auto-downloaded at runtime) ──────
 backend/data_cache/
 *.Zone.Identifier
