@@ -126,6 +126,7 @@ def prepare_data(
     missing_strategy: str = Form("median"),
     normalization: str = Form("zscore"),
     use_smote: bool = Form(False),
+    outlier_handling: str = Form("none"),
     session_id: str = Form(None),
     file: UploadFile | None = File(None),
 ) -> PrepResponse:
@@ -145,6 +146,7 @@ def prepare_data(
         missing_strategy=missing_strategy,  # type: ignore[arg-type]
         normalization=normalization,  # type: ignore[arg-type]
         use_smote=use_smote,
+        outlier_handling=outlier_handling,  # type: ignore[arg-type]
     )
 
     new_session_id = session_id or str(uuid.uuid4())
