@@ -41,6 +41,7 @@ class PrepSettings(BaseModel):
     missing_strategy: Literal["median", "mode", "drop"] = "median"
     normalization: Literal["zscore", "minmax", "none"] = "zscore"
     use_smote: bool = False
+    outlier_handling: Literal["none", "iqr", "zscore_clip"] = "none"
 
 
 class PrepResponse(BaseModel):

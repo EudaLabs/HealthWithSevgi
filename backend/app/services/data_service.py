@@ -176,6 +176,25 @@ class DataService:
             X_train = train_df.fillna(modes).values
             X_test = pd.DataFrame(X_test, columns=feature_names).fillna(modes).values
 
+        # --- Outlier handling (train statistics applied to test) ---
+        if settings.outlier_handling == "iqr":
+            train_df = pd.DataFrame(X_train, columns=feature_names)
+            Q1 = train_df.quantile(0.25)
+            Q3 = train_df.quantile(0.75)
+            IQR = Q3 - Q1
+            lower = Q1 - 1.5 * IQR
+            upper = Q3 + 1.5 * IQR
+            X_train = train_df.clip(lower=lower, upper=upper, axis=1).values
+            X_test = pd.DataFrame(X_test, columns=feature_names).clip(lower=lower, upper=upper, axis=1).values
+        elif settings.outlier_handling == "zscore_clip":
+            train_df = pd.DataFrame(X_train, columns=feature_names)
+            mean = train_df.mean()
+            std = train_df.std().replace(0, 1)
+            lower = mean - 3 * std
+            upper = mean + 3 * std
+            X_train = train_df.clip(lower=lower, upper=upper, axis=1).values
+            X_test = pd.DataFrame(X_test, columns=feature_names).clip(lower=lower, upper=upper, axis=1).values
+
         # Capture raw (pre-scaling) arrays for session storage
         X_train_raw = X_train.copy()
         X_test_raw = X_test.copy()
