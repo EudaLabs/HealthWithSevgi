@@ -6,6 +6,7 @@ import type { CompareEntry, ModelType, TrainResponse } from '../types'
 import ConfusionMatrixChart from '../components/charts/ConfusionMatrixChart'
 import ROCCurveChart from '../components/charts/ROCCurveChart'
 import PRCurveChart from '../components/charts/PRCurveChart'
+import KNNScatterCanvas from '../components/charts/KNNScatterCanvas'
 
 const MODEL_CONFIGS = [
   {
@@ -573,6 +574,11 @@ export default function Step4ModelParameters({
               <div className="chart-cell">
                 <PRCurveChart points={trainResponse.metrics.pr_curve} />
               </div>
+              {trainResponse.knn_scatter && trainResponse.model_type === 'knn' && (
+                <div className="chart-cell" style={{ gridColumn: '1 / -1' }}>
+                  <KNNScatterCanvas data={trainResponse.knn_scatter} />
+                </div>
+              )}
             </div>
           </div>
 
