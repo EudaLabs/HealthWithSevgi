@@ -23,7 +23,7 @@ const ROCCurveChart: React.FC<Props> = ({ points, auc }) => {
   }));
 
   return (
-    <div>
+    <div style={{ width: '100%', minWidth: 0 }}>
       <div className="chart-card-title">
         ROC Curve
         <span className="chart-auc-badge">AUC = {auc.toFixed(3)}</span>

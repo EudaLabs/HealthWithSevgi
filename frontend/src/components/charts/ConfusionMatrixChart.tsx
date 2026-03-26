@@ -86,7 +86,12 @@ const ConfusionMatrixChart: React.FC<Props> = ({ data }) => {
       <div className="cm-title">Confusion Matrix</div>
       <div
         className="cm-grid"
-        style={{ gridTemplateColumns: `auto repeat(${n}, 1fr)`, gap: 3 }}
+        style={{
+          display: 'inline-grid',
+          gridTemplateColumns: `auto repeat(${n}, minmax(${n > 10 ? '28px' : '40px'}, 1fr))`,
+          gap: n > 10 ? 1 : 3,
+          maxWidth: '100%',
+        }}
       >
         {/* Top-left corner */}
         <div />
@@ -109,7 +114,13 @@ const ConfusionMatrixChart: React.FC<Props> = ({ data }) => {
                 <div
                   key={`cell-${i}-${j}`}
                   className={`cm-cell ${isDiag ? 'cm-cell-diag' : 'cm-cell-off'}`}
-                  style={{ background: cellColor(val, maxVal, isDiag), minWidth: 56, minHeight: 50, fontSize: '1rem' }}
+                  style={{
+                    background: cellColor(val, maxVal, isDiag),
+                    minWidth: n > 10 ? 24 : 40,
+                    minHeight: n > 10 ? 24 : 36,
+                    fontSize: n > 10 ? '0.6rem' : '0.85rem',
+                    padding: n > 10 ? '2px' : '0.5rem',
+                  }}
                 >
                   {val}
                 </div>

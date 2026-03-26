@@ -563,10 +563,16 @@ export default function Step4ModelParameters({
               </div>
               <div className="card-title" style={{ marginTop: '0.2rem' }}>Diagnostic Charts</div>
             </div>
-            <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
-              <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
-              <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
-              <PRCurveChart points={trainResponse.metrics.pr_curve} />
+            <div className="charts-grid">
+              <div className="chart-cell">
+                <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
+              </div>
+              <div className="chart-cell">
+                <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
+              </div>
+              <div className="chart-cell">
+                <PRCurveChart points={trainResponse.metrics.pr_curve} />
+              </div>
             </div>
           </div>
 
