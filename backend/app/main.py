@@ -45,6 +45,18 @@ app.include_router(data_router)
 app.include_router(ml_router)
 app.include_router(explain_router)
 
+# Model Arena extension
+import sys
+from pathlib import Path
+_arena_path = str(Path(__file__).resolve().parent.parent.parent / "local" / "model-arena")
+if _arena_path not in sys.path:
+    sys.path.insert(0, _arena_path)
+from arena.router import router as arena_router  # noqa: E402
+from arena.service import ArenaService  # noqa: E402
+
+app.state.arena_service = ArenaService(app.state.ml_service)
+app.include_router(arena_router)
+
 
 @app.get("/")
 async def root() -> dict:
