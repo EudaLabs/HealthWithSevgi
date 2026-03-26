@@ -255,41 +255,70 @@ HealthWithSevgi/
 
 ## Quick Start
 
-### Docker (Recommended)
+### Quick Start (Docker — single command)
+
+> **Prerequisite:** [Docker](https://docs.docker.com/get-docker/) must be installed.
 
 ```bash
-docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest
+git clone https://github.com/EudaLabs/HealthWithSevgi.git && cd HealthWithSevgi && docker build -t healthwithsevgi . && docker run -p 7860:7860 healthwithsevgi
 ```
 
-Open http://localhost:7860 — that's it.
+Open **http://localhost:7860** — that's it.
 
-### Live Demo
+### Prerequisites (for local development)
 
-https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi
+| Tool | Version | Required For |
+|------|---------|-------------|
+| Python | >= 3.10 | Backend |
+| Node.js | >= 18 | Frontend |
+| Git | latest | Version control |
 
 ### Local Development
 
-See **[SETUP.md](SETUP.md)** for full instructions.
+**Backend:**
 
 ```bash
-# Backend
 cd backend
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8001
 
-# Frontend (separate terminal)
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate        # macOS / Linux
+# venv\Scripts\activate         # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the API server
+uvicorn app.main:app --reload --port 8001
+```
+
+API docs available at: **http://localhost:8001/docs** (Swagger UI)
+
+**Frontend** (in a separate terminal):
+
+```bash
 cd frontend
+
+# Install dependencies
 pnpm install
+
+# Start the dev server
 pnpm dev
 ```
 
-Or build from source with Docker Compose:
+App available at: **http://localhost:5173** (proxies `/api` requests to port 8001)
 
-```bash
-git clone https://github.com/EudaLabs/jira-healthWithSevgi.git
-cd jira-healthWithSevgi
-docker-compose up --build
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+# Backend
+BACKEND_PORT=8001
+DEBUG=true
+
+# Frontend (Vite uses VITE_ prefix)
+VITE_API_URL=http://localhost:8001
 ```
 
 ---
