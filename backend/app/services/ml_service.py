@@ -38,14 +38,19 @@ from imblearn.over_sampling import SMOTE
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
+from sklearn.decomposition import PCA
+
 from app.models.ml_schemas import (
     PARAM_SCHEMAS,
     CompareEntry,
     CompareResponse,
     ConfusionMatrixData,
+    DecisionMesh,
+    KNNScatterData,
     MetricsResponse,
     ModelType,
     ROCPoint,
+    ScatterPoint,
     TrainResponse,
 )
 
@@ -432,6 +437,23 @@ class MLService:
             float(np.mean(metrics.cross_val_scores)) if metrics.cross_val_scores else 0.0,
         )
 
+        # Build KNN scatter visualization data when applicable
+        knn_scatter = None
+        if model_type == ModelType.KNN:
+            try:
+                knn_scatter = self._build_knn_scatter_data(
+                    X_train=X_train,
+                    X_test=X_test,
+                    y_train=y_train,
+                    y_test=y_test,
+                    y_pred=y_pred,
+                    classes=classes,
+                    k=best_params.get("n_neighbors", 5),
+                    metric=best_params.get("metric", "euclidean"),
+                )
+            except Exception as exc:
+                logger.warning("KNN scatter data generation failed: %s", exc)
+
         return TrainResponse(
             model_id=model_id,
             session_id=session_id,
@@ -440,6 +462,77 @@ class MLService:
             metrics=metrics,
             training_time_ms=round(training_time_ms, 1),
             feature_names=selected_feature_names,
+            knn_scatter=knn_scatter,
+        )
+
+    def _build_knn_scatter_data(
+        self,
+        X_train: np.ndarray,
+        X_test: np.ndarray,
+        y_train: np.ndarray,
+        y_test: np.ndarray,
+        y_pred: np.ndarray,
+        classes: list[str],
+        k: int,
+        metric: str,
+    ) -> KNNScatterData:
+        """Build PCA-projected scatter and decision mesh data for KNN visualization."""
+        pca = PCA(n_components=2)
+        X_train_2d = pca.fit_transform(X_train)
+        X_test_2d = pca.transform(X_test)
+
+        # Build scatter points
+        scatter_points: list[ScatterPoint] = []
+        for i in range(len(X_train_2d)):
+            scatter_points.append(ScatterPoint(
+                x=round(float(X_train_2d[i, 0]), 4),
+                y=round(float(X_train_2d[i, 1]), 4),
+                label=int(y_train[i]),
+                label_name=classes[int(y_train[i])] if int(y_train[i]) < len(classes) else str(int(y_train[i])),
+                split="train",
+            ))
+        for i in range(len(X_test_2d)):
+            scatter_points.append(ScatterPoint(
+                x=round(float(X_test_2d[i, 0]), 4),
+                y=round(float(X_test_2d[i, 1]), 4),
+                label=int(y_test[i]),
+                label_name=classes[int(y_test[i])] if int(y_test[i]) < len(classes) else str(int(y_test[i])),
+                split="test",
+                predicted=int(y_pred[i]),
+            ))
+
+        # Decision mesh in PCA space
+        all_2d = np.vstack([X_train_2d, X_test_2d])
+        x_min, x_max = float(all_2d[:, 0].min()), float(all_2d[:, 0].max())
+        y_min, y_max = float(all_2d[:, 1].min()), float(all_2d[:, 1].max())
+        x_pad = (x_max - x_min) * 0.10
+        y_pad = (y_max - y_min) * 0.10
+
+        x_vals = np.linspace(x_min - x_pad, x_max + x_pad, 80)
+        y_vals = np.linspace(y_min - y_pad, y_max + y_pad, 80)
+        xx, yy = np.meshgrid(x_vals, y_vals)
+        grid_points = np.c_[xx.ravel(), yy.ravel()]
+
+        # Fit a lightweight KNN on the 2D PCA training coordinates
+        knn_2d = KNeighborsClassifier(
+            n_neighbors=k, metric=metric, weights="distance", algorithm="auto", n_jobs=1,
+        )
+        knn_2d.fit(X_train_2d, y_train)
+        grid_pred = knn_2d.predict(grid_points).reshape(xx.shape)
+
+        decision_mesh = DecisionMesh(
+            x_values=[round(float(v), 4) for v in x_vals],
+            y_values=[round(float(v), 4) for v in y_vals],
+            predictions=[[int(grid_pred[r, c]) for c in range(grid_pred.shape[1])] for r in range(grid_pred.shape[0])],
+        )
+
+        return KNNScatterData(
+            scatter_points=scatter_points,
+            decision_mesh=decision_mesh,
+            pca_explained_variance=[round(float(v), 4) for v in pca.explained_variance_ratio_],
+            classes=classes,
+            k=k,
+            metric=metric,
         )
 
     def _predict_proba(self, model: Any, X: np.ndarray) -> np.ndarray:

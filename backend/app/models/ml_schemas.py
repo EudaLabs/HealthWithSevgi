@@ -122,6 +122,30 @@ class MetricsResponse(BaseModel):
     overfitting_warning: bool = False
 
 
+class ScatterPoint(BaseModel):
+    x: float
+    y: float
+    label: int
+    label_name: str
+    split: str  # "train" or "test"
+    predicted: int | None = None  # only for test points
+
+
+class DecisionMesh(BaseModel):
+    x_values: list[float]  # unique x coordinates of the grid
+    y_values: list[float]  # unique y coordinates of the grid
+    predictions: list[list[int]]  # 2D array [y][x] of predicted class indices
+
+
+class KNNScatterData(BaseModel):
+    scatter_points: list[ScatterPoint]
+    decision_mesh: DecisionMesh
+    pca_explained_variance: list[float]
+    classes: list[str]
+    k: int
+    metric: str
+
+
 class TrainResponse(BaseModel):
     model_id: str
     session_id: str
@@ -130,6 +154,7 @@ class TrainResponse(BaseModel):
     metrics: MetricsResponse
     training_time_ms: float
     feature_names: list[str]
+    knn_scatter: KNNScatterData | None = None
 
 
 class CompareEntry(BaseModel):
