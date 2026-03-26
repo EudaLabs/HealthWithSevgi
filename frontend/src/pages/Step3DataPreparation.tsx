@@ -206,7 +206,7 @@ export default function Step3DataPreparation({
               <select
                 className="form-select"
                 value={settings.use_smote ? 'enabled' : 'disabled'}
-                disabled={!explorationData?.imbalance_warning}
+                disabled={false}
                 onChange={(e) => onSettingsChange({ ...settings, use_smote: e.target.value === 'enabled' })}
               >
                 <option value="disabled">Disabled</option>

@@ -92,6 +92,7 @@ export interface MetricsResponse {
   low_sensitivity_warning: boolean
   mcc: number
   overfitting_warning: boolean
+  optimal_threshold?: number
 }
 
 export interface ScatterPoint {

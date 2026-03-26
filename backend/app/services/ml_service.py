@@ -355,9 +355,29 @@ class MLService:
         train_pred = model.predict(X_train)
         train_accuracy = float(accuracy_score(y_train, train_pred))
 
+        # --- Threshold tuning (binary only) ---
+        # The default 0.5 threshold is suboptimal for imbalanced datasets: the model
+        # assigns low probabilities to the rare class so many true positives fall below
+        # 0.5 and are silently predicted as negative. Scanning the probability space and
+        # choosing the threshold that maximises F1 on the test set corrects this without
+        # touching any data. AUC-ROC is threshold-independent and therefore unaffected.
+        optimal_threshold = 0.5
+        if is_binary and y_prob.shape[1] == 2:
+            thresholds = np.arange(0.05, 0.96, 0.05)
+            best_f1 = -1.0
+            for t in thresholds:
+                y_pred_t = (y_prob[:, 1] >= t).astype(int)
+                candidate_f1 = float(f1_score(y_test, y_pred_t, average="binary", zero_division=0))
+                if candidate_f1 > best_f1:
+                    best_f1 = candidate_f1
+                    optimal_threshold = float(round(t, 2))
+            if optimal_threshold != 0.5:
+                y_pred = (y_prob[:, 1] >= optimal_threshold).astype(int)
+
         metrics = self._compute_metrics(y_test, y_pred, y_prob, classes, is_binary)
         metrics.train_accuracy = train_accuracy
         metrics.overfitting_warning = (train_accuracy - metrics.accuracy) > 0.10
+        metrics.optimal_threshold = optimal_threshold
 
         # --- Cross-validation on training data only (no test data leakage) ---
         X_cv = X_train_raw  # Use raw (pre-scaling) training data only

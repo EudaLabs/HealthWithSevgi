@@ -524,6 +524,14 @@ export default function Step4ModelParameters({
               })}
             </div>
 
+            {trainResponse.metrics.optimal_threshold !== undefined && trainResponse.metrics.optimal_threshold !== 0.5 && (
+              <div style={{ marginTop: '0.75rem', padding: '0.6rem 1rem', background: 'var(--surface)', borderRadius: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)', borderLeft: '3px solid var(--accent)' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>Threshold tuned:</strong>{' '}
+                Default 0.5 → <strong style={{ color: 'var(--accent)' }}>{trainResponse.metrics.optimal_threshold.toFixed(2)}</strong>
+                {' — adjusted to maximise F1 score for this class distribution.'}
+              </div>
+            )}
+
             {trainResponse.metrics.cross_val_scores.length > 0 && (
               <div className="cv-summary" style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'var(--surface)', borderRadius: '8px', fontSize: '0.85rem' }}>
                 <strong>Cross-Validation (AUC):</strong>{' '}

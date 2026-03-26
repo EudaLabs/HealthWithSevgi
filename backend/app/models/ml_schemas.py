@@ -120,6 +120,7 @@ class MetricsResponse(BaseModel):
     low_sensitivity_warning: bool
     mcc: float = 0.0
     overfitting_warning: bool = False
+    optimal_threshold: float = 0.5
 
 
 class ScatterPoint(BaseModel):
