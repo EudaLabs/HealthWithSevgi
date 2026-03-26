@@ -23,6 +23,9 @@
   --transition: 200ms ease;
   --layout-max: 1280px;
   --layout-px: 128px;
+  --bg-card: var(--surface);
+  --bg-secondary: #f4f7fb;
+  --border-light: #f1f5f9;
 }
 
 /* ---- Reset ---- */
@@ -1180,4 +1183,416 @@ input, select, textarea { font-family: inherit; }
   .step-item-sub { display: none; }
   .step-item-name { font-size: 11px; }
   .step-number { width: 36px; height: 36px; font-size: 0.85rem; }
+}
+
+/* =============================================
+   MODEL ARENA
+   ============================================= */
+
+.arena-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.arena-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.arena-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.arena-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+.arena-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.arena-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.arena-error {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--danger-light, #fef2f2);
+  color: var(--danger);
+  font-size: 0.875rem;
+  border: 1px solid var(--danger);
+}
+
+/* ---- Run Selector ---- */
+.arena-selector {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.arena-selector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.arena-selector-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.arena-model-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.arena-model-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.875rem;
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card, #fff);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+}
+
+.arena-model-chip:hover {
+  border-color: var(--primary);
+  color: var(--text-primary);
+}
+
+.arena-model-chip.active {
+  border-color: var(--primary);
+  background: var(--primary-light, #eef2ff);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.arena-chip-check {
+  width: 16px;
+  font-size: 0.75rem;
+}
+
+.arena-selector-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.arena-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.arena-toggle input[type="checkbox"] {
+  accent-color: var(--primary);
+}
+
+.arena-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arena-spinner::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff4;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Run List ---- */
+.arena-run-list {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.arena-run-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.arena-run-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card, #fff);
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+}
+
+.arena-run-chip.active {
+  background: var(--bg-secondary, #f8fafc);
+}
+
+.arena-run-chip input[type="checkbox"] {
+  display: none;
+}
+
+.arena-run-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.arena-run-auc {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-left: 0.25rem;
+}
+
+/* ---- Comparison Table ---- */
+.arena-table-wrapper {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.arena-table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+.arena-table-scroll {
+  overflow-x: auto;
+}
+
+.arena-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.arena-table th,
+.arena-table td {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light, #f1f5f9);
+  white-space: nowrap;
+}
+
+.arena-table th {
+  background: var(--bg-secondary, #f8fafc);
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.arena-th-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  position: sticky;
+  left: 0;
+  background: var(--bg-card, #fff);
+  z-index: 1;
+  min-width: 140px;
+}
+
+.arena-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.arena-sortable:hover {
+  color: var(--primary);
+}
+
+.arena-model-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arena-model-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.arena-badge-best {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  background: var(--success-light, #ecfdf5);
+  color: var(--success);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.arena-section-row td {
+  background: var(--bg-secondary, #f8fafc);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+}
+
+.arena-cell {
+  font-variant-numeric: tabular-nums;
+}
+
+.arena-cell-best {
+  background: var(--success-light, #ecfdf5);
+  color: var(--success);
+  font-weight: 700;
+}
+
+.arena-cell-worst {
+  background: var(--danger-light, #fef2f2);
+  color: var(--danger);
+}
+
+.arena-cell-diff {
+  background: var(--warning-light, #fffbeb);
+}
+
+/* ---- Charts ---- */
+.arena-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.arena-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .arena-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.arena-chart-card {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.arena-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.arena-select {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  background: var(--bg-card, #fff);
+}
+
+/* ---- Empty/Disabled State ---- */
+.arena-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-secondary);
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-md);
+}
+
+.arena-empty p {
+  margin-bottom: 1rem;
+}
+
+/* ---- NavBar active state for arena ---- */
+.navbar-icon-btn-active {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* ---- Arena table z-index for sticky header ---- */
+.arena-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.arena-table thead .arena-th-label {
+  z-index: 3;
+}
+
+/* ---- Arena mobile breakpoints ---- */
+@media (max-width: 600px) {
+  .arena-header {
+    flex-direction: column;
+  }
+
+  .arena-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .arena-selector-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .arena-selector-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .arena-charts-grid {
+    grid-template-columns: 1fr;
+  }
 }
