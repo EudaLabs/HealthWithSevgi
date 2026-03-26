@@ -247,9 +247,30 @@ class MLService:
 
         is_binary = len(classes) == 2
 
+        # --- Ensure contiguous labels for XGBoost/LightGBM ---
+        # After SMOTE or train/test split some class labels may have gaps
+        # (e.g. [0, 2, 5] instead of [0, 1, 2]).  XGBoost requires labels
+        # in the range 0..n_classes-1 with no gaps.
+        _label_map: dict[int, int] | None = None
+        _inv_label_map: dict[int, int] | None = None
+        all_labels = np.unique(np.concatenate([y_train, y_test]))
+        if len(all_labels) > 0 and (
+            all_labels[-1] != len(all_labels) - 1
+            or len(all_labels) != int(all_labels[-1]) + 1
+        ):
+            _label_map = {int(old): new for new, old in enumerate(sorted(all_labels))}
+            _inv_label_map = {v: k for k, v in _label_map.items()}
+            y_train = np.array([_label_map[int(v)] for v in y_train])
+            y_test = np.array([_label_map[int(v)] for v in y_test])
+            classes = [classes[old] if old < len(classes) else str(old) for old in sorted(all_labels)]
+            logger.info("ML re-encoded %d classes to contiguous labels", len(all_labels))
+
         # Check if SMOTE was applied during data preparation
         smote_applied = session.get("smote_applied", False)
         y_train_original = session.get("y_train_original", y_train)
+        if _label_map is not None:
+            y_train_original = np.array([_label_map.get(int(v), v) for v in y_train_original
+                                          if int(v) in _label_map])
 
         # --- Optional hyperparameter tuning ---
         best_params = dict(params)
@@ -504,14 +525,38 @@ class MLService:
         try:
             if is_binary:
                 return float(roc_auc_score(y_true, y_prob[:, 1]))
-            n_classes = len(classes)
-            y_bin = label_binarize(y_true, classes=sorted(np.unique(y_true)))
-            if y_prob.shape[1] >= n_classes:
-                return float(
-                    roc_auc_score(y_bin, y_prob, multi_class="ovr", average="macro")
+
+            # --- Multiclass AUC-ROC (OVR macro) ---
+            # predict_proba columns correspond to model classes 0..N-1.
+            # Binarize y_true against the SAME full label set so columns align.
+            n_model_classes = y_prob.shape[1]
+            all_labels = list(range(n_model_classes))
+            y_bin = label_binarize(y_true, classes=all_labels)
+
+            # label_binarize returns 1-D when len(all_labels)==2; expand back
+            if y_bin.ndim == 1:
+                y_bin = np.column_stack([1 - y_bin, y_bin])
+
+            # Only evaluate classes that have at least one positive sample in
+            # y_true -- OVR needs >= 1 positive per class column.
+            present_mask = y_bin.sum(axis=0) > 0
+            if present_mask.sum() < 2:
+                logger.warning(
+                    "AUC: fewer than 2 classes in y_true (%d); returning 0.5",
+                    int(present_mask.sum()),
                 )
+                return 0.5
+
+            return float(
+                roc_auc_score(
+                    y_bin[:, present_mask],
+                    y_prob[:, present_mask],
+                    multi_class="ovr",
+                    average="macro",
+                )
+            )
         except Exception as exc:
-            logger.warning("AUC computation failed: %s", exc)
+            logger.error("AUC computation failed: %s", exc)
         return 0.5
 
     def _build_confusion_matrix_data(
