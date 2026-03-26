@@ -119,6 +119,9 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
                 Target: ≥{pct(green)}
               </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '0.5rem', lineHeight: 1.4 }}>
+                {meaning}
+              </div>
             </div>
           )
         })}
@@ -222,6 +225,26 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {/* FN red banner + FP info banner (Sprint 3 deliverable) */}
+          {isBinary && (
+            <>
+              <div className="alert alert-danger" style={{ marginTop: '1rem', fontSize: '0.82rem' }}>
+                <AlertTriangle size={16} />
+                <div>
+                  <strong>False Negatives (FN = {cm.fn})</strong> are the most dangerous errors in clinical screening
+                  — these patients had the condition but were <strong>missed</strong> by the model.
+                </div>
+              </div>
+              <div className="alert alert-info" style={{ marginTop: '0.5rem', fontSize: '0.82rem' }}>
+                <Info size={16} />
+                <div>
+                  <strong>False Positives (FP = {cm.fp})</strong> represent unnecessary alarms — these patients were
+                  flagged but didn't have the condition. Less dangerous than FN, but they increase clinical workload.
+                </div>
+              </div>
+            </>
           )}
         </div>
 

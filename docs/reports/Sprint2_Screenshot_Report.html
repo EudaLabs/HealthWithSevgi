@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthWithSevgi — Sprint 2 Screenshot Report</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#2e7d32;--primary-light:#4caf50;--primary-dark:#1b5e20;--primary-bg:#e8f5e9;--text:#212121;--text-secondary:#555;--border:#c8e6c9;--white:#fff;--gray-50:#fafafa;--gray-200:#eee;--gray-300:#e0e0e0}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:var(--text);background:var(--white);line-height:1.5;font-size:14px}
+
+    @media print{
+      body{font-size:9.5pt;line-height:1.35}
+      @page{size:A4;margin:15mm 12mm}
+      @page cover{margin:0}
+      .cover-page{page:cover;page-break-after:always;min-height:0;padding:30mm 15mm}
+      .toc-page{page-break-after:auto;padding:8mm 0;min-height:0}
+      .section-header{break-before:auto;break-after:avoid;padding:10px 16px;margin:16px 0 6px;border-radius:4px}
+      .section-header h2{font-size:15pt;margin-bottom:2px}.section-header p{font-size:8.5pt}
+      .content{padding:4px 0}
+      .subsection{font-size:11pt;margin:10px 0 6px;padding-bottom:3px}
+      .req-check{padding:5px 10px;margin-bottom:8px;font-size:8.5pt}
+      .figure-block{break-inside:auto;margin-bottom:10px;box-shadow:none;border:1px solid #ccc;border-radius:4px}
+      .figure-block .figure-title{padding:5px 10px;font-size:9pt}
+      .figure-block .figure-desc{padding:4px 10px;font-size:8pt}
+      .figure-block .figure-img{padding:6px}
+      .figure-block .figure-img img{max-width:100%;max-height:340px;width:auto;height:auto}
+      .figure-block .figure-caption{padding:3px 10px 5px;font-size:7.5pt;color:#1565c0}
+      .figure-row{display:flex;gap:8px;break-inside:avoid;margin-bottom:10px}
+      .figure-row .figure-block{flex:1;margin-bottom:0}
+      .figure-row .figure-block .figure-img img{max-height:240px}
+      .screen-header,.screen-footer{display:none}.print-header{display:block!important}
+      a{color:var(--primary)!important;text-decoration:none!important}
+      .cover-table th{padding:6px 12px;font-size:8.5pt}.cover-table td{padding:5px 12px;font-size:8.5pt}
+      .cover-title{font-size:24pt}.cover-subtitle{font-size:14pt;margin-bottom:16px}
+      .cover-org{font-size:10pt}.cover-group{font-size:9pt}
+      .cover-meta{font-size:9pt;line-height:1.8}
+      .cover-logo{width:56px;height:56px;margin-bottom:14px}.cover-logo span{font-size:26px}
+      .toc-page h2{font-size:14pt;margin-bottom:10px;padding-bottom:4px}
+      .toc-list{font-size:9pt}.toc-list li{padding:3px 0}.toc-list .toc-section{font-size:10pt;padding-top:8px}.toc-list .toc-sub{font-size:8.5pt}
+      .step-break{break-before:page}
+    }
+    @media screen{.print-header{display:none}.figure-row{display:flex;gap:16px;margin-bottom:24px}.figure-row .figure-block{flex:1;margin-bottom:0}}
+
+    .screen-header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:var(--white);padding:12px 32px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+    .screen-header h1{font-size:16px;font-weight:600;letter-spacing:.5px}
+    .cover-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+    .cover-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 4px 20px rgba(46,125,50,.3)}
+    .cover-logo span{font-size:36px;color:#fff;font-weight:bold}
+    .cover-title{font-size:32px;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
+    .cover-subtitle{font-size:20px;color:var(--primary);font-weight:500;margin-bottom:32px}
+    .cover-org{font-size:16px;color:var(--text-secondary);margin-bottom:4px}
+    .cover-group{font-size:14px;color:var(--text-secondary);margin-bottom:32px}
+    .cover-table{border-collapse:collapse;margin:0 auto 24px;font-size:13px;min-width:500px}
+    .cover-table th{background:var(--primary);color:var(--white);padding:8px 14px;text-align:left;font-weight:600}
+    .cover-table td{padding:6px 14px;border-bottom:1px solid var(--border)}
+    .cover-table tr:nth-child(even) td{background:var(--primary-bg)}
+    .cover-meta{font-size:13px;color:var(--text-secondary);line-height:2}
+    .cover-meta a{color:var(--primary);text-decoration:none}.cover-meta a:hover{text-decoration:underline}
+    .cover-meta strong{color:var(--text)}
+    .toc-page{padding:40px;min-height:40vh}
+    .toc-page h2{font-size:22px;color:var(--primary-dark);border-bottom:3px solid var(--primary);padding-bottom:6px;margin-bottom:16px}
+    .toc-list{list-style:none;font-size:14px}
+    .toc-list li{padding:5px 0;border-bottom:1px dotted var(--gray-300)}
+    .toc-list li a{color:var(--text);text-decoration:none;display:flex;justify-content:space-between}
+    .toc-list li a:hover{color:var(--primary)}
+    .toc-list .toc-section{font-weight:700;color:var(--primary-dark);font-size:15px;padding-top:10px}
+    .toc-list .toc-sub{padding-left:24px;font-size:12px}
+    .section-header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:var(--white);padding:24px 32px;margin-bottom:0}
+    .section-header h2{font-size:24px;font-weight:700;margin-bottom:3px}
+    .section-header p{font-size:13px;opacity:.9}
+    .content{max-width:900px;margin:0 auto;padding:20px 32px}
+    .figure-block{margin-bottom:24px;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:var(--white);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .figure-block .figure-title{background:var(--primary-bg);padding:8px 14px;font-weight:700;font-size:13px;color:var(--primary-dark);border-bottom:1px solid var(--border)}
+    .figure-block .figure-desc{padding:6px 14px;font-size:12px;color:var(--text-secondary);border-bottom:1px solid var(--gray-200)}
+    .figure-block .figure-img{padding:10px;text-align:center;background:var(--gray-50)}
+    .figure-block .figure-img img{max-width:100%;height:auto;border:1px solid var(--gray-200);border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .figure-block .figure-caption{padding:4px 14px 6px;font-size:11px;color:#1565c0;text-align:center;font-style:italic;font-weight:500}
+    .subsection{font-size:17px;font-weight:700;color:var(--primary-dark);margin:24px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--border)}
+    .req-check{background:var(--primary-bg);border-left:4px solid var(--primary);padding:8px 14px;margin-bottom:14px;border-radius:0 4px 4px 0;font-size:12px}
+    .req-check strong{color:var(--primary-dark)}
+  </style>
+</head>
+<body>
+
+<div class="screen-header"><h1>HealthWithSevgi &mdash; Sprint 2 Screenshot Report</h1></div>
+
+<div class="cover-page" id="cover">
+  <div class="cover-logo"><span>H</span></div>
+  <div class="cover-title">HealthWithSevgi</div>
+  <div class="cover-subtitle">Sprint 2 &mdash; Screenshot-Based Demonstration Report</div>
+  <div class="cover-org">Cankaya University &middot; SENG 430 &middot; Software Quality Assurance &middot; Spring 2025-2026</div>
+  <div class="cover-group" style="margin-bottom:12px">Group X &nbsp;|&nbsp; Instructor: Dr. Sevgi Koyuncu Tun&ccedil;</div>
+  <table class="cover-table">
+    <thead><tr><th>Role</th><th>Name</th><th>Student ID</th></tr></thead>
+    <tbody>
+      <tr><td>Product Owner + Developer</td><td>Efe &Ccedil;elik</td><td>202128016</td></tr>
+      <tr><td>UX Designer</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>202128028</td></tr>
+      <tr><td>Lead Developer + Scrum Master</td><td>Batuhan Bayaz&inodot;t</td><td>202228008</td></tr>
+      <tr><td>Developer</td><td>Berat Mert G&ouml;kkaya</td><td>202228019</td></tr>
+      <tr><td>QA / Documentation Lead</td><td>Berfin Duru Alkan</td><td>202228005</td></tr>
+    </tbody>
+  </table>
+  <div class="cover-meta">
+    <strong>Date:</strong> March 17, 2026<br>
+    <strong>GitHub:</strong> <a href="https://github.com/EudaLabs/HealthWithSevgi">github.com/EudaLabs/HealthWithSevgi</a><br>
+    <strong>Live Demo:</strong> <a href="https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi">huggingface.co/spaces/0xBatuhan4/HealthWithSevgi</a>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-page" id="toc">
+  <h2>Table of Contents</h2>
+  <ol class="toc-list">
+    <li class="toc-section"><a href="#step1">1. Step 1 &mdash; Clinical Context &amp; Multi-Domain Evidence</a></li>
+    <li class="toc-sub"><a href="#s1-cardiology">1.1 Cardiology (Default Domain)</a></li>
+    <li class="toc-sub"><a href="#s1-radiology">1.2 Radiology &mdash; Full Pipeline</a></li>
+    <li class="toc-sub"><a href="#s1-nephrology">1.3 Nephrology &mdash; Full Pipeline</a></li>
+    <li class="toc-sub"><a href="#s1-oncology">1.4 Oncology-Breast &mdash; Full Pipeline</a></li>
+    <li class="toc-sub"><a href="#s1-neurology">1.5 Neurology-Parkinsons &mdash; Full Pipeline</a></li>
+    <li class="toc-section"><a href="#step2">2. Step 2 &mdash; Data Exploration &amp; Column Mapper</a></li>
+    <li class="toc-sub"><a href="#s2-data">2.1 Default Dataset, CSV Upload &amp; Error Handling</a></li>
+    <li class="toc-sub"><a href="#s2-mapper">2.2 Column Mapper, Schema Save &amp; Class Balance</a></li>
+    <li class="toc-section"><a href="#step3">3. Step 3 &mdash; Data Preparation</a></li>
+    <li class="toc-sub"><a href="#s3-controls">3.1 Preprocessing Controls</a></li>
+    <li class="toc-sub"><a href="#s3-results">3.2 Z-Score, Min-Max &amp; SMOTE Results</a></li>
+  </ol>
+</div>
+
+
+<!-- ═══ STEP 1 — CLINICAL CONTEXT & MULTI-DOMAIN EVIDENCE ═══ -->
+<div class="section-header step-break" id="step1">
+  <h2>1. Step 1 &mdash; Clinical Context &amp; Multi-Domain Evidence</h2>
+  <p>5 different medical specialties demonstrated end-to-end: Clinical Context &rarr; Data Exploration &rarr; Data Preparation. Proves the application handles diverse clinical domains correctly.</p>
+</div>
+
+<div class="content">
+
+  <!-- 1.1 Cardiology -->
+  <h3 class="subsection" id="s1-cardiology">1.1 Cardiology (Default Domain)</h3>
+  <div class="req-check"><strong>Domain:</strong> 30-day mortality after heart failure discharge (UCI Heart Failure Clinical Records, Binary Classification, target: DEATH_EVENT).</div>
+  <div class="figure-block">
+    <div class="figure-title">Figure 1: Cardiology &mdash; Clinical Context</div>
+    <div class="figure-desc">Clinical scenario with &ldquo;What ML Cannot Do,&rdquo; step-by-step pipeline checklist, and recommendations.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step1-Clinical-Context.png" alt="Cardiology Step 1"></div>
+    <div class="figure-caption">Cardiology &mdash; Default domain, heart failure clinical context.</div>
+  </div>
+
+  <!-- 1.2 Radiology Full Pipeline -->
+  <h3 class="subsection" id="s1-radiology">1.2 Radiology &mdash; Full Pipeline</h3>
+  <div class="req-check"><strong>Domain:</strong> Normal vs. Pneumonia from chest X-ray metadata (NIH, Binary Classification, target: Finding Label). Full Step 1&rarr;2&rarr;3 demonstrated.</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 2: Radiology &mdash; Step 1 Clinical Context</div>
+    <div class="figure-img"><img src="media/Radiology-Step1-Clinical-Context.png" alt="Radiology Step 1"></div>
+    <div class="figure-caption">Radiology &mdash; Pneumonia detection clinical scenario.</div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 3: Step 2 Initial</div>
+      <div class="figure-img"><img src="media/Radiology-Step2-Initial.png" alt="Radiology Step 2 init"></div>
+      <div class="figure-caption">Data source buttons, Steps 3&ndash;7 locked.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 4: Step 2 Initial (Alt)</div>
+      <div class="figure-img"><img src="media/Radiology-Step2-Initial-Alt.png" alt="Radiology Step 2 alt"></div>
+      <div class="figure-caption">Alternative initial view.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 5: CSV Uploaded (70 rows)</div>
+      <div class="figure-img"><img src="media/Radiology-Step2-CSV-Uploaded.png" alt="Radiology CSV"></div>
+      <div class="figure-caption">70 rows, 15 columns, 13 numeric.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 6: Column Mapper</div>
+      <div class="figure-img"><img src="media/Radiology-Step2-Column-Mapper.png" alt="Radiology mapper"></div>
+      <div class="figure-caption">Schema validated, Finding_Label as target.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 7: Column Mapper (Alt)</div>
+      <div class="figure-img"><img src="media/Radiology-Step2-Column-Mapper-Alt.png" alt="Radiology mapper alt"></div>
+      <div class="figure-caption">Modal overlay with scrolled content behind.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 8: Patient Measurements</div>
+      <div class="figure-img"><img src="media/Radiology-Step2-Patient-Measurements.png" alt="Radiology table"></div>
+      <div class="figure-caption">Missing values: temperature 5.71%, wbc 4.29%.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 9: Step 3 Before Apply</div>
+      <div class="figure-img"><img src="media/Radiology-Step3-Before-Apply.png" alt="Radiology Step 3 before"></div>
+      <div class="figure-caption">80/20 split, 56 train / 14 test.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 10: Step 3 After Apply</div>
+      <div class="figure-img"><img src="media/Radiology-Step3-After-Apply.png" alt="Radiology Step 3 after"></div>
+      <div class="figure-caption">Normalisation charts, class imbalance 1.92:1.</div>
+    </div>
+  </div>
+
+  <!-- 1.3 Nephrology Full Pipeline -->
+  <h3 class="subsection" id="s1-nephrology">1.3 Nephrology &mdash; Full Pipeline</h3>
+  <div class="req-check"><strong>Domain:</strong> Chronic kidney disease (ckd vs. notckd) from lab values (UCI CKD, Binary Classification, target: classification).</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 11: Nephrology &mdash; Step 1 Clinical Context</div>
+    <div class="figure-img"><img src="media/Nephrology-Step1-Clinical-Context.png" alt="Nephrology Step 1"></div>
+    <div class="figure-caption">Nephrology &mdash; CKD detection from blood/urine tests.</div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 12: Step 2 Initial</div>
+      <div class="figure-img"><img src="media/Nephrology-Step2-Initial.png" alt="Nephrology Step 2 init"></div>
+      <div class="figure-caption">Step 1 completed, data source ready.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 13: CSV Uploaded (70 rows)</div>
+      <div class="figure-img"><img src="media/Nephrology-Step2-CSV-Uploaded.png" alt="Nephrology CSV"></div>
+      <div class="figure-caption">70 rows, 24 columns, 15 numeric.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 14: Column Mapper</div>
+      <div class="figure-img"><img src="media/Nephrology-Step2-Column-Mapper.png" alt="Nephrology mapper"></div>
+      <div class="figure-caption">Schema validated, classification as target.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 15: Step 3 Before Apply</div>
+      <div class="figure-img"><img src="media/Nephrology-Step3-Before-Apply.png" alt="Nephrology Step 3 before"></div>
+      <div class="figure-caption">80/20 split, 56 train / 14 test.</div>
+    </div>
+  </div>
+  <div class="figure-block">
+    <div class="figure-title">Figure 16: Nephrology &mdash; Step 3 After Apply</div>
+    <div class="figure-desc">Normalisation charts for kidney function values. Class Balance ckd/notckd. Green banner: 56 training, 14 test, 14 features.</div>
+    <div class="figure-img"><img src="media/Nephrology-Step3-After-Apply.png" alt="Nephrology Step 3 after"></div>
+    <div class="figure-caption">Nephrology &mdash; Normalisation and class balance charts.</div>
+  </div>
+
+  <!-- 1.4 Oncology-Breast Full Pipeline -->
+  <h3 class="subsection" id="s1-oncology">1.4 Oncology-Breast &mdash; Full Pipeline</h3>
+  <div class="req-check"><strong>Domain:</strong> Benign vs. malignant from FNA cell measurements (Wisconsin Breast Cancer, Binary Classification, target: diagnosis).</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 17: Oncology-Breast &mdash; Step 1 Clinical Context</div>
+    <div class="figure-img"><img src="media/Oncology-Breast-Step1-Clinical-Context.png" alt="Oncology Step 1"></div>
+    <div class="figure-caption">Oncology-Breast &mdash; Biopsy cell measurement scenario.</div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 18: Step 2 Initial</div>
+      <div class="figure-img"><img src="media/Oncology-Breast-Step2-Initial.png" alt="Oncology Step 2 init"></div>
+      <div class="figure-caption">Initial state, no dataset loaded.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 19: CSV Uploaded (75 rows)</div>
+      <div class="figure-img"><img src="media/Oncology-Breast-Step2-CSV-Uploaded.png" alt="Oncology CSV"></div>
+      <div class="figure-caption">75 rows, 22 columns, 20 numeric.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 20: Column Mapper</div>
+      <div class="figure-img"><img src="media/Oncology-Breast-Step2-Column-Mapper.png" alt="Oncology mapper"></div>
+      <div class="figure-caption">Schema validated, diagnosis as target.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 21: Data Table Detail</div>
+      <div class="figure-img"><img src="media/Oncology-Breast-Step2-Data-Table.png" alt="Oncology table"></div>
+      <div class="figure-caption">Missing: radius_se 4%, area_se 2.67%.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 22: Step 3 Before Apply</div>
+      <div class="figure-img"><img src="media/Oncology-Breast-Step3-Before-Apply.png" alt="Oncology Step 3 before"></div>
+      <div class="figure-caption">80/20 split, 60 train / 15 test.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 23: Step 3 After Apply</div>
+      <div class="figure-img"><img src="media/Oncology-Breast-Step3-After-Apply.png" alt="Oncology Step 3 after"></div>
+      <div class="figure-caption">B/M class balance, imbalance 1.68:1.</div>
+    </div>
+  </div>
+
+  <!-- 1.5 Neurology-Parkinsons Full Pipeline -->
+  <h3 class="subsection" id="s1-neurology">1.5 Neurology-Parkinsons &mdash; Full Pipeline</h3>
+  <div class="req-check"><strong>Domain:</strong> Parkinson&rsquo;s prognosis from voice biomarkers (UCI Parkinson&rsquo;s, Binary Classification, target: status).</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 24: Neurology-Parkinsons &mdash; Step 1 Clinical Context</div>
+    <div class="figure-img"><img src="media/Neurology-Parkinsons-Step1-Clinical-Context.png" alt="Neurology Step 1"></div>
+    <div class="figure-caption">Neurology &mdash; Voice biomarker clinical scenario.</div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 25: Step 2 Initial</div>
+      <div class="figure-img"><img src="media/Neurology-Parkinsons-Step2-Initial.png" alt="Neurology Step 2 init"></div>
+      <div class="figure-caption">Step 1 completed, no data loaded.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 26: CSV Uploaded (72 rows)</div>
+      <div class="figure-img"><img src="media/Neurology-Parkinsons-Step2-CSV-Uploaded.png" alt="Neurology CSV"></div>
+      <div class="figure-caption">72 rows, 24 columns, 23 numeric.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 27: Column Mapper</div>
+      <div class="figure-img"><img src="media/Neurology-Parkinsons-Step2-Column-Mapper.png" alt="Neurology mapper"></div>
+      <div class="figure-caption">Schema validated, status as target.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 28: Data Table Detail</div>
+      <div class="figure-img"><img src="media/Neurology-Parkinsons-Step2-Data-Table.png" alt="Neurology table"></div>
+      <div class="figure-caption">MDVP voice features with statistics.</div>
+    </div>
+  </div>
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 29: Step 3 Before Apply</div>
+      <div class="figure-img"><img src="media/Neurology-Parkinsons-Step3-Before-Apply.png" alt="Neurology Step 3 before"></div>
+      <div class="figure-caption">80/20 split, 58 train / 14 test.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 30: Step 3 After Apply</div>
+      <div class="figure-img"><img src="media/Neurology-Parkinsons-Step3-After-Apply.png" alt="Neurology Step 3 after"></div>
+      <div class="figure-caption">3:1 class imbalance detected.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ STEP 2 — DATA EXPLORATION (Cardiology) ═══ -->
+<div class="section-header step-break" id="step2">
+  <h2>2. Step 2 &mdash; Data Exploration &amp; Column Mapper</h2>
+  <p>Detailed feature demonstration using Cardiology: default dataset, CSV upload, drag-and-drop, error handling, Column Mapper, schema save, and class balance.</p>
+</div>
+
+<div class="content">
+
+  <h3 class="subsection" id="s2-data">2.1 Default Dataset, CSV Upload &amp; Error Handling</h3>
+  <div class="req-check"><strong>Requirement:</strong> Built-in dataset loads, custom CSV upload works, drag-and-drop supported, invalid files rejected with clear error messages.</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 31: Step 2 Initial State</div>
+    <div class="figure-desc">Step 2 before data loading. &ldquo;Use Default Dataset&rdquo; and &ldquo;Upload Your CSV&rdquo; buttons visible. Steps 3&ndash;7 locked.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-Initial.png" alt="Step 2 initial"></div>
+    <div class="figure-caption">Cardiology &mdash; Step 2 initial state with data source options.</div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 32: Built-in Default Dataset Loaded (299 rows, 13 columns)</div>
+    <div class="figure-desc">Default dataset auto-loaded: 299 patients, 13 features, 0.0% missing, 68:32 class balance. Preview and summary cards shown.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-Default-Dataset.png" alt="Default dataset"></div>
+    <div class="figure-caption">Cardiology &mdash; Built-in default dataset loaded with 299 patients.</div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 33: Custom CSV Upload Success (299 rows)</div>
+    <div class="figure-desc">File: heart_failure_clinical_records_dataset.csv &mdash; 12 KB. Dataset preview, summary cards, and yellow Column Mapper lock banner.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-CSV-Uploaded.png" alt="CSV uploaded"></div>
+    <div class="figure-caption">Cardiology &mdash; Custom CSV uploaded with full dataset preview.</div>
+  </div>
+
+  <div class="figure-row">
+    <div class="figure-block">
+      <div class="figure-title">Figure 34: Drag-and-Drop Upload</div>
+      <div class="figure-desc">CSV file being dragged onto the drop zone area.</div>
+      <div class="figure-img"><img src="media/Cardiology-Step2-Drag-Drop.png" alt="Drag drop"></div>
+      <div class="figure-caption">Drag-and-drop upload in action.</div>
+    </div>
+    <div class="figure-block">
+      <div class="figure-title">Figure 35: Error &mdash; Empty File Rejected</div>
+      <div class="figure-desc">Error modal: &ldquo;The uploaded file contains no data.&rdquo; Requirements listed: CSV format, max 50 MB, &ge;10 rows, &ge;1 numeric column.</div>
+      <div class="figure-img"><img src="media/Cardiology-Step2-Error-Empty-File.png" alt="Error modal"></div>
+      <div class="figure-caption">Empty file rejected with clear requirements.</div>
+    </div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 36: Smaller Custom CSV (75 rows, 14 columns)</div>
+    <div class="figure-desc">File: test_heart_failure_upload.csv &mdash; 4 KB, 75 rows, 1.1% missing. Demonstrates smaller dataset variant with missing values.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-Custom-CSV-Small.png" alt="Small CSV"></div>
+    <div class="figure-caption">Smaller CSV uploaded &mdash; 1.1% missing values detected.</div>
+  </div>
+
+  <h3 class="subsection" id="s2-mapper">2.2 Column Mapper, Schema Save &amp; Class Balance</h3>
+  <div class="req-check"><strong>Requirement:</strong> Column Mapper opens, target column auto-detected, schema validated, mapping saved with success banner. Class balance chart with imbalance warning shown.</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 37: Column Mapper &amp; Schema Validator</div>
+    <div class="figure-desc">Model Settings: Binary Classification, DEATH_EVENT target. 13 columns with types/roles. Schema Validated badge, Save Mapping enabled.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-Column-Mapper.png" alt="Column Mapper"></div>
+    <div class="figure-caption">Column Mapper &mdash; DEATH_EVENT validated as target column.</div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 38: Schema Saved &amp; Step 3 Unlocked</div>
+    <div class="figure-desc">Green banner: &ldquo;Schema mapping saved &mdash; Target: DEATH_EVENT.&rdquo; Step 3 now unlocked. Class Balance chart: Negative ~203, Positive ~96.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-Schema-Saved.png" alt="Schema saved"></div>
+    <div class="figure-caption">Schema saved, Step 3 unlocked, 2.11:1 class imbalance warning.</div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 39: Class Balance &amp; Patient Measurements Table</div>
+    <div class="figure-desc">Class Balance chart (2.11:1 imbalance), full Patient Measurements table with 13 columns, all 0% missing. DEATH_EVENT tagged as target.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step2-Class-Balance.png" alt="Class balance"></div>
+    <div class="figure-caption">Class balance chart and complete patient measurements table.</div>
+  </div>
+
+</div>
+
+<!-- ═══ STEP 3 — DATA PREPARATION (Cardiology) ═══ -->
+<div class="section-header step-break" id="step3">
+  <h2>3. Step 3 &mdash; Data Preparation</h2>
+  <p>Preprocessing controls demonstration using Cardiology: slider + 4 dropdowns, three normalisation methods compared, and SMOTE oversampling effect.</p>
+</div>
+
+<div class="content">
+
+  <h3 class="subsection" id="s3-controls">3.1 Preprocessing Controls</h3>
+  <div class="req-check"><strong>Requirement:</strong> Train/Test split slider (60&ndash;90%), Missing Values dropdown, Normalisation dropdown, SMOTE toggle, Outlier Handling dropdown. All controls functional.</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 40: Step 3 Before Apply &mdash; All Controls Visible</div>
+    <div class="figure-desc">80/20 split (239/60 patients). Median Imputation, Z-Score, SMOTE Disabled, Outlier None. Chart placeholders await &ldquo;Apply.&rdquo; Yellow warning: class imbalance 2.11:1.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step3-Before-Apply.png" alt="Step 3 before"></div>
+    <div class="figure-caption">All 5 preprocessing controls visible &mdash; 239 training / 60 test patients.</div>
+  </div>
+
+  <h3 class="subsection" id="s3-results">3.2 Z-Score, Min-Max &amp; SMOTE Results</h3>
+  <div class="req-check"><strong>Requirement:</strong> Before/after normalisation bar charts, SMOTE class balance charts, class imbalance warning, green success banner. Multiple normalisation methods demonstrated.</div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 41: After Apply &mdash; Z-Score Standardisation</div>
+    <div class="figure-desc">Z-Score applied. Before/after charts for age, anaemia, creatinine_phosphokinase, diabetes, ejection_fraction. Class Balance unchanged (SMOTE disabled). Step 4 unlocked.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step3-After-Apply-ZScore.png" alt="Z-Score"></div>
+    <div class="figure-caption">Z-Score standardisation &mdash; features centred around zero.</div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 42: After Apply &mdash; Min-Max Scaling (0&ndash;1)</div>
+    <div class="figure-desc">Min-Max scaling with Mode imputation. Features scaled to 0&ndash;1 range. Green banner: 239 training, 60 test, 12 features.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step3-After-Apply-MinMax.png" alt="Min-Max"></div>
+    <div class="figure-caption">Min-Max scaling &mdash; alternative normalisation method demonstrated.</div>
+  </div>
+
+  <div class="figure-block">
+    <div class="figure-title">Figure 43: After Apply &mdash; SMOTE Oversampling Enabled</div>
+    <div class="figure-desc">SMOTE enabled on smaller dataset (82 train / 15 test). SMOTE Effect chart: minority class grows from ~25 to ~45. Green banner: 82 training, 15 test, 13 features, SMOTE applied.</div>
+    <div class="figure-img"><img src="media/Cardiology-Step3-After-Apply-SMOTE.png" alt="SMOTE"></div>
+    <div class="figure-caption">SMOTE enabled &mdash; minority class oversampled to balance training data.</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="screen-footer" style="text-align:center;padding:30px 20px;color:#999;font-size:12px;border-top:1px solid #eee;margin-top:30px">
+  HealthWithSevgi &middot; Sprint 2 Screenshot Report &middot; March 17, 2026<br>
+  SENG 430 &middot; Software Quality Assurance &middot; &Ccedil;ankaya University
+</div>
+
+</body>
+</html>

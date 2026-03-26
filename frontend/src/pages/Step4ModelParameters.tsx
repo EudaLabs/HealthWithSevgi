@@ -198,7 +198,7 @@ export default function Step4ModelParameters({
       if (debounceRef.current) clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => {
         fireAutoRetrain(selectedType, newParams)
-      }, 500)
+      }, 300)
     }
   }
 
