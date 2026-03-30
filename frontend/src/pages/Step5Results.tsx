@@ -389,6 +389,12 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
         </div>
       </div>
 
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
+        <button className="btn btn-primary" onClick={onNext} style={{ fontSize: '1rem', padding: '0.75rem 2rem' }}>
+          Continue to Explainability →
+        </button>
+      </div>
+
     </div>
   )
 }
