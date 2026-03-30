@@ -218,10 +218,23 @@ def main():
          "5 sprints with competing coursework. Mitigated by progressive delivery: Sprint 1 "
          "(Steps 1–2), Sprint 2 (Steps 3–4), Sprint 3 (Steps 5–6), Sprint 4 (Step 7 + "
          "Docker), Sprint 5 (user testing + ISO report + presentation)."),
+
+        ("Internal: Resource — In-memory architecture",
+         "No external database simplifies privacy compliance but limits capacity. MLService "
+         "uses OrderedDict LRU eviction (max 50 sessions/models). DataService uses unbounded "
+         "dict, mitigated by sessions being transferred to MLService's LRU store; orphaned "
+         "DataService entries are garbage-collected. Production would require LRU cap on "
+         "DataService (identified as risk item for Ch. 4)."),
     ]
+    # Fill existing rows, add extra if needed
     for i, (issue, desc) in enumerate(issues):
-        set_cell_text(t.rows[i + 1].cells[0], issue, bold=True)
-        set_cell_text(t.rows[i + 1].cells[1], desc)
+        if i + 1 < len(t.rows):
+            row = t.rows[i + 1]
+        else:
+            row = add_table_row(t, ["", ""])
+            copy_row_style(t.rows[1], row)
+        set_cell_text(row.cells[0], issue, bold=True)
+        set_cell_text(row.cells[1], desc)
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     # T08: 1.4 Stakeholder Register (8x5)
@@ -263,6 +276,9 @@ def main():
          "embedded throughout; fairness analysis promotes equity",
          "Low"),
     ]
+    # Template has 7 data rows; if we need 8th, add extra row
+    if len(stakeholders) >= len(t.rows) - 1:
+        pass  # 7 stakeholders fit in 7 data rows
     for i, (name, role, needs, response, influence) in enumerate(stakeholders):
         set_cell_text(t.rows[i + 1].cells[0], name)
         set_cell_text(t.rows[i + 1].cells[1], role)
