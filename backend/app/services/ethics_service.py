@@ -85,6 +85,7 @@ CASE_STUDIES = [
             "Validate AI outputs against gold-standard measurements, not proxy measures with "
             "known systematic biases."
         ),
+        "severity": "failure",
     },
     {
         "id": "sepsis_alert",
@@ -106,6 +107,7 @@ CASE_STUDIES = [
             "Optimise the decision threshold for your specific clinical setting, "
             "and test AI tools under real workflow conditions before deployment."
         ),
+        "severity": "near_miss",
     },
     {
         "id": "dermatology_bias",
@@ -127,6 +129,7 @@ CASE_STUDIES = [
             "Subgroup-specific AUC must be reported and verified alongside the overall figure. "
             "Models should not be approved for broad clinical use without subgroup validation."
         ),
+        "severity": "failure",
     },
 ]
 

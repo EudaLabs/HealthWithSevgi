@@ -61,6 +61,17 @@ class BiasWarning(BaseModel):
     gap: float
 
 
+class CaseStudy(BaseModel):
+    id: str
+    title: str
+    specialty: str
+    year: int
+    what_happened: str
+    impact: str
+    lesson: str
+    severity: Literal["failure", "near_miss", "prevention"]
+
+
 class EthicsResponse(BaseModel):
     model_id: str
     subgroup_metrics: list[SubgroupMetrics]
@@ -68,7 +79,7 @@ class EthicsResponse(BaseModel):
     training_representation: dict
     overall_sensitivity: float
     eu_ai_act_items: list[dict]
-    case_studies: list[dict]
+    case_studies: list[CaseStudy]
     demographics_available: bool = True
     demographics_note: str = ""
 
