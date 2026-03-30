@@ -110,7 +110,7 @@ export default function Step4ModelParameters({
 }: Props) {
   const [selectedType, setSelectedType] = useState<ModelType>('random_forest')
   const [params, setParams] = useState<Record<string, number | string>>(DEFAULT_PARAMS['random_forest'])
-  const [autoRetrain, setAutoRetrain] = useState(true)
+  const [autoRetrain, setAutoRetrain] = useState(false)
   const [tune, setTune] = useState(false)
   const [useFeatureSelection, setUseFeatureSelection] = useState(false)
   const [loading, setLoading] = useState(false)
