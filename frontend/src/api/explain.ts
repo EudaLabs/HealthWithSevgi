@@ -23,7 +23,7 @@ export const downloadCertificate = async (payload: {
   clinician_name: string
   institution: string
 }): Promise<void> => {
-  const response = await api.post('/certificate', payload, { responseType: 'blob' })
+  const response = await api.post('/generate-certificate', payload, { responseType: 'blob' })
   const blob = new Blob([response.data as BlobPart], { type: 'application/pdf' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')

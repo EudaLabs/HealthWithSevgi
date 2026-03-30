@@ -107,7 +107,7 @@ def update_checklist(request: Request, body: ChecklistUpdate) -> dict:
     return ethics.update_checklist(body.model_id, body.item_id, body.checked)
 
 
-@router.post("/certificate")
+@router.post("/generate-certificate")
 def generate_certificate(request: Request, body: CertificateRequest) -> StreamingResponse:
     ml, _, ethics, cert_svc = _get_services(request)
     data = _get_model_data(ml, body.model_id)
