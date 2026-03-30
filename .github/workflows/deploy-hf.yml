@@ -50,12 +50,15 @@ jobs:
       - name: Smoke-test container
         run: |
           docker run -d --name hws-test -p 7860:7860 healthwithsevgi:ci
-          sleep 5
-          HEALTH=$(curl -sf http://localhost:7860/health || echo '{"status":"unreachable"}')
-          echo "Health response: $HEALTH"
+          for i in 1 2 3 4 5 6; do
+            sleep 5
+            HEALTH=$(curl -sf http://localhost:7860/health 2>&1) && break
+            echo "Attempt $i: not ready yet..."
+          done
+          echo "Health response: ${HEALTH:-unreachable}"
           docker logs hws-test
           docker rm -f hws-test
-          echo "$HEALTH" | grep -q '"status":"healthy"' || { echo "::error::Health check failed"; exit 1; }
+          echo "${HEALTH}" | grep -q '"status":"healthy"' || { echo "::error::Health check failed"; exit 1; }
 
       - name: Push to HuggingFace Space
         env:
