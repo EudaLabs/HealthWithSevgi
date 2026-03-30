@@ -16,6 +16,7 @@ from sklearn.metrics import (
 from app.models.explain_schemas import (
     BiasWarning,
     EthicsResponse,
+    RepresentationWarning,
     SubgroupMetrics,
 )
 
@@ -135,6 +136,15 @@ CASE_STUDIES = [
 
 BIAS_SENSITIVITY_GAP_THRESHOLD = 0.10
 
+# Population norms for representation gap detection (percentages).
+POPULATION_NORMS: dict[str, dict[str, float]] = {
+    "sex": {"Male": 50.0, "Female": 50.0},
+    "age_group": {"18-60": 55.0, "61-75": 30.0, "76+": 15.0},
+}
+
+# Threshold in percentage points for flagging representation gaps.
+REPRESENTATION_GAP_THRESHOLD_PP = 15.0
+
 
 class EthicsService:
     def __init__(self) -> None:
@@ -233,7 +243,9 @@ class EthicsService:
 
         # Training representation
         rng = np.random.default_rng(42)
-        training_representation = self._training_representation(X_train, feature_names, rng)
+        training_representation, representation_warnings = self._training_representation(
+            X_train, feature_names, rng, scaler=scaler,
+        )
 
         # Checklist state
         items = [dict(item) for item in EU_AI_ACT_ITEMS]
@@ -249,6 +261,7 @@ class EthicsService:
             subgroup_metrics=subgroup_metrics,
             bias_warnings=bias_warnings,
             training_representation=training_representation,
+            representation_warnings=representation_warnings,
             overall_sensitivity=round(overall_sensitivity, 4),
             eu_ai_act_items=items,
             case_studies=CASE_STUDIES,
@@ -336,8 +349,12 @@ class EthicsService:
         X_train: np.ndarray,
         feature_names: list[str],
         rng: np.random.Generator,
-    ) -> dict:
-        # Try to derive from actual features
+        scaler: Any = None,
+    ) -> tuple[dict, list[RepresentationWarning]]:
+        """Compute training-data demographic breakdown and flag >15pp gaps."""
+        warnings: list[RepresentationWarning] = []
+
+        # --- Sex / gender ---
         sex_col = None
         for c in ("sex", "gender"):
             if c in feature_names:
@@ -349,16 +366,93 @@ class EthicsService:
             female_pct = float(rng.uniform(40, 60))
         male_pct = 100 - female_pct
 
-        return {
+        sex_dataset = {"Male": round(male_pct, 1), "Female": round(female_pct, 1)}
+        sex_norms = POPULATION_NORMS["sex"]
+
+        for group_label, dataset_pct in sex_dataset.items():
+            norm_pct = sex_norms.get(group_label)
+            if norm_pct is None:
+                continue
+            gap_pp = round(abs(dataset_pct - norm_pct), 1)
+            if gap_pp > REPRESENTATION_GAP_THRESHOLD_PP:
+                warnings.append(RepresentationWarning(
+                    group=group_label,
+                    attribute="sex",
+                    dataset_pct=dataset_pct,
+                    population_pct=norm_pct,
+                    gap_pp=gap_pp,
+                    message=(
+                        f"{group_label} representation ({dataset_pct}%) deviates from "
+                        f"population norm ({norm_pct}%) by {gap_pp}pp"
+                    ),
+                ))
+
+        # --- Age groups ---
+        age_col = None
+        for c in ("age", "Age"):
+            if c in feature_names:
+                age_col = feature_names.index(c)
+                break
+
+        if age_col is not None:
+            raw_ages = X_train[:, age_col].copy()
+            if scaler is not None:
+                try:
+                    if hasattr(scaler, "mean_") and scaler.mean_ is not None:
+                        raw_ages = raw_ages * scaler.scale_[age_col] + scaler.mean_[age_col]
+                    elif hasattr(scaler, "data_min_") and scaler.data_min_ is not None:
+                        raw_ages = (
+                            raw_ages * (scaler.data_max_[age_col] - scaler.data_min_[age_col])
+                            + scaler.data_min_[age_col]
+                        )
+                except Exception as exc:
+                    logger.warning(
+                        "Age inverse-transform failed in representation: %s — using scaled values",
+                        exc,
+                    )
+
+            age_groups = np.digitize(raw_ages, bins=[60, 75])
+            n_train = len(X_train)
+            age_dataset = {
+                "18-60": round(float(np.sum(age_groups == 0)) / n_train * 100, 1),
+                "61-75": round(float(np.sum(age_groups == 1)) / n_train * 100, 1),
+                "76+": round(float(np.sum(age_groups == 2)) / n_train * 100, 1),
+            }
+        else:
+            age_dataset = {"18-60": 55.0, "61-75": 30.0, "76+": 15.0}
+
+        age_norms = POPULATION_NORMS["age_group"]
+
+        for group_label, dataset_pct in age_dataset.items():
+            norm_pct = age_norms.get(group_label)
+            if norm_pct is None:
+                continue
+            gap_pp = round(abs(dataset_pct - norm_pct), 1)
+            if gap_pp > REPRESENTATION_GAP_THRESHOLD_PP:
+                warnings.append(RepresentationWarning(
+                    group=group_label,
+                    attribute="age_group",
+                    dataset_pct=dataset_pct,
+                    population_pct=norm_pct,
+                    gap_pp=gap_pp,
+                    message=(
+                        f"{group_label} representation ({dataset_pct}%) deviates from "
+                        f"population norm ({norm_pct}%) by {gap_pp}pp"
+                    ),
+                ))
+
+        representation = {
             "gender": {
-                "dataset": {"Male": round(male_pct, 1), "Female": round(female_pct, 1)},
-                "population_norm": {"Male": 50.0, "Female": 50.0},
+                "dataset": sex_dataset,
+                "population_norm": sex_norms,
             },
             "age_group": {
-                "dataset": {"18–60": 55.0, "61–75": 30.0, "76+": 15.0},
-                "population_norm": {"18–60": 60.0, "61–75": 27.0, "76+": 13.0},
+                "dataset": age_dataset,
+                "population_norm": age_norms,
             },
         }
+
+        return representation, warnings
 
     def update_checklist(self, model_id: str, item_id: str, checked: bool) -> dict:
         if model_id not in self._checklist_store:

@@ -72,11 +72,24 @@ class CaseStudy(BaseModel):
     severity: Literal["failure", "near_miss", "prevention"]
 
 
+class RepresentationWarning(BaseModel):
+    """Flags a demographic group whose training-data proportion differs
+    from the population norm by more than the configured threshold."""
+
+    group: str
+    attribute: str
+    dataset_pct: float
+    population_pct: float
+    gap_pp: float
+    message: str
+
+
 class EthicsResponse(BaseModel):
     model_id: str
     subgroup_metrics: list[SubgroupMetrics]
     bias_warnings: list[BiasWarning]
     training_representation: dict
+    representation_warnings: list[RepresentationWarning] = Field(default_factory=list)
     overall_sensitivity: float
     eu_ai_act_items: list[dict]
     case_studies: list[CaseStudy]
