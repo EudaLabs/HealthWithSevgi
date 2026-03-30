@@ -277,6 +277,13 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
         </div>
       </div>
 
+      {/* Continue to Step 7 */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}>
+        <button className="btn btn-primary btn-lg" onClick={onNext}>
+          Continue to Step 7 — Ethics &amp; Bias →
+        </button>
+      </div>
+
     </div>
   )
 }

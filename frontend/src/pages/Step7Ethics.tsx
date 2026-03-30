@@ -162,7 +162,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                     <th>Specificity</th>
                     <th>Precision</th>
                     <th>F1</th>
-                    <th>Status</th>
+                    <th>Fairness</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -181,8 +181,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                           padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700,
                           color: statusColor(sm.status), background: statusBg(sm.status),
                         }}>
-                          {sm.status === 'acceptable' ? '✓' : sm.status === 'review' ? '⚠' : '✗'}{' '}
-                          {sm.status.replace('_', ' ')}
+                          {sm.status === 'acceptable' ? '✓ OK' : sm.status === 'review' ? '⚠ Review' : '✗ Action Needed'}
                         </span>
                       </td>
                     </tr>
