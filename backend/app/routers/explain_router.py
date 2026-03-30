@@ -12,6 +12,8 @@ from app.models.explain_schemas import (
     EthicsResponse,
     GlobalExplainabilityResponse,
     SinglePatientExplainResponse,
+    WhatIfRequest,
+    WhatIfResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -78,6 +80,39 @@ def single_patient_explain(
         )
     except Exception as exc:
         logger.exception("Single-patient explanation failed")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.post("/explain/what-if", response_model=WhatIfResponse)
+def what_if(request: Request, body: WhatIfRequest) -> WhatIfResponse:
+    ml, explain, *_ = _get_services(request)
+    data = _get_model_data(ml, body.model_id)
+
+    n_test = len(data["X_test"])
+    if body.patient_index < 0 or body.patient_index >= n_test:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Patient index {body.patient_index} out of range [0, {n_test - 1}]",
+        )
+    if body.feature_name not in data["feature_names"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Feature '{body.feature_name}' not found. Available: {data['feature_names']}",
+        )
+
+    try:
+        return explain.what_if(
+            model_id=body.model_id,
+            model=data["model"],
+            patient_index=body.patient_index,
+            feature_name=body.feature_name,
+            new_value=body.new_value,
+            X_test=data["X_test"],
+            feature_names=data["feature_names"],
+            scaler=data.get("scaler"),
+        )
+    except Exception as exc:
+        logger.exception("What-if analysis failed")
         raise HTTPException(status_code=500, detail=str(exc))
 
 

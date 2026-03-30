@@ -97,6 +97,23 @@ class EthicsResponse(BaseModel):
     demographics_note: str = ""
 
 
+class WhatIfRequest(BaseModel):
+    model_id: str
+    patient_index: int
+    feature_name: str
+    new_value: float
+
+
+class WhatIfResponse(BaseModel):
+    feature_name: str
+    original_value: float
+    new_value: float
+    original_prob: float
+    new_prob: float
+    shift: float
+    direction: Literal["increased_risk", "decreased_risk", "no_change"]
+
+
 class ChecklistUpdate(BaseModel):
     model_id: str
     item_id: str
