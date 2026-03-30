@@ -41,9 +41,17 @@ app.include_router(explain_router)
 
 STATIC_DIR = Path(__file__).parent / "static"
 
-# Health check
+# Health check — verify critical native libraries load correctly
 @app.get("/health")
 async def health_check() -> dict:
+    errors: list[str] = []
+    for lib in ("sklearn", "xgboost", "lightgbm", "shap", "scipy"):
+        try:
+            __import__(lib)
+        except Exception as exc:
+            errors.append(f"{lib}: {exc}")
+    if errors:
+        return {"status": "degraded", "errors": errors}
     return {"status": "healthy"}
 
 # Serve frontend static files

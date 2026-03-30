@@ -180,6 +180,8 @@ class MLService:
             except ImportError:
                 logger.warning("xgboost not installed, falling back to RandomForest")
                 return RandomForestClassifier(n_estimators=100, max_depth=5, class_weight="balanced", n_jobs=1, random_state=42)
+            except OSError as exc:
+                raise RuntimeError(f"XGBoost native library error: {exc}") from exc
         if model_type == ModelType.LIGHTGBM:
             try:
                 from lightgbm import LGBMClassifier
@@ -195,6 +197,8 @@ class MLService:
             except ImportError:
                 logger.warning("lightgbm not installed, falling back to RandomForest")
                 return RandomForestClassifier(n_estimators=100, max_depth=5, class_weight="balanced", n_jobs=1, random_state=42)
+            except OSError as exc:
+                raise RuntimeError(f"LightGBM native library error: {exc}") from exc
         raise ValueError(f"Unknown model type: {model_type}")
 
     # ------------------------------------------------------------------

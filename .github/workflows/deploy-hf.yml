@@ -44,6 +44,19 @@ jobs:
           echo "*.pyc" > deploy/.gitignore
           echo "__pycache__/" >> deploy/.gitignore
 
+      - name: Build Docker image
+        run: docker build -t healthwithsevgi:ci deploy
+
+      - name: Smoke-test container
+        run: |
+          docker run -d --name hws-test -p 7860:7860 healthwithsevgi:ci
+          sleep 5
+          HEALTH=$(curl -sf http://localhost:7860/health || echo '{"status":"unreachable"}')
+          echo "Health response: $HEALTH"
+          docker logs hws-test
+          docker rm -f hws-test
+          echo "$HEALTH" | grep -q '"status":"healthy"' || { echo "::error::Health check failed"; exit 1; }
+
       - name: Push to HuggingFace Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -63,11 +76,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: deploy
-          push: true
-          tags: |
-            ghcr.io/eudalabs/healthwithsevgi:${{ github.event.release.tag_name }}
-            ghcr.io/eudalabs/healthwithsevgi:latest
+      - name: Push Docker image to GHCR
+        run: |
+          docker tag healthwithsevgi:ci ghcr.io/eudalabs/healthwithsevgi:${{ github.event.release.tag_name }}
+          docker tag healthwithsevgi:ci ghcr.io/eudalabs/healthwithsevgi:latest
+          docker push ghcr.io/eudalabs/healthwithsevgi:${{ github.event.release.tag_name }}
+          docker push ghcr.io/eudalabs/healthwithsevgi:latest
