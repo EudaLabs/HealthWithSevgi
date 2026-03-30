@@ -6,6 +6,7 @@ import type { CompareEntry, ModelType, TrainResponse } from '../types'
 import ConfusionMatrixChart from '../components/charts/ConfusionMatrixChart'
 import ROCCurveChart from '../components/charts/ROCCurveChart'
 import PRCurveChart from '../components/charts/PRCurveChart'
+import KNNScatterCanvas from '../components/charts/KNNScatterCanvas'
 
 const MODEL_CONFIGS = [
   {
@@ -523,6 +524,14 @@ export default function Step4ModelParameters({
               })}
             </div>
 
+            {trainResponse.metrics.optimal_threshold !== undefined && trainResponse.metrics.optimal_threshold !== 0.5 && (
+              <div style={{ marginTop: '0.75rem', padding: '0.6rem 1rem', background: 'var(--surface)', borderRadius: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)', borderLeft: '3px solid var(--accent)' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>Threshold tuned:</strong>{' '}
+                Default 0.5 → <strong style={{ color: 'var(--accent)' }}>{trainResponse.metrics.optimal_threshold.toFixed(2)}</strong>
+                {' — adjusted to maximise F1 score for this class distribution.'}
+              </div>
+            )}
+
             {trainResponse.metrics.cross_val_scores.length > 0 && (
               <div className="cv-summary" style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'var(--surface)', borderRadius: '8px', fontSize: '0.85rem' }}>
                 <strong>Cross-Validation (AUC):</strong>{' '}
@@ -563,10 +572,21 @@ export default function Step4ModelParameters({
               </div>
               <div className="card-title" style={{ marginTop: '0.2rem' }}>Diagnostic Charts</div>
             </div>
-            <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
-              <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
-              <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
-              <PRCurveChart points={trainResponse.metrics.pr_curve} />
+            <div className="charts-grid">
+              <div className="chart-cell">
+                <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
+              </div>
+              <div className="chart-cell">
+                <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
+              </div>
+              <div className="chart-cell">
+                <PRCurveChart points={trainResponse.metrics.pr_curve} />
+              </div>
+              {trainResponse.knn_scatter && trainResponse.model_type === 'knn' && (
+                <div className="chart-cell" style={{ gridColumn: '1 / -1' }}>
+                  <KNNScatterCanvas data={trainResponse.knn_scatter} />
+                </div>
+              )}
             </div>
           </div>
 

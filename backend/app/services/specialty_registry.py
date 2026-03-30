@@ -102,10 +102,11 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         data_source="UCI Parkinson's Dataset — archive.ics.uci.edu/dataset/174/parkinsons",
         what_ai_predicts="Parkinson's disease presence from voice biomarkers",
         feature_names=[
-            "MDVP_Fo_Hz", "MDVP_Fhi_Hz", "MDVP_Flo_Hz", "MDVP_Jitter_pct",
-            "MDVP_Jitter_Abs", "MDVP_RAP", "MDVP_PPQ", "MDVP_Shimmer",
-            "MDVP_Shimmer_dB", "NHR", "HNR", "RPDE", "DFA", "spread1",
-            "spread2", "D2", "PPE",
+            "MDVP_Fo_Hz", "MDVP_Fhi_Hz", "MDVP_Flo_Hz",
+            "MDVP_Jitter_pct", "MDVP_Jitter_Abs", "MDVP_RAP", "MDVP_PPQ", "Jitter_DDP",
+            "MDVP_Shimmer", "MDVP_Shimmer_dB", "Shimmer_APQ3", "Shimmer_APQ5",
+            "MDVP_APQ", "Shimmer_DDA",
+            "NHR", "HNR", "RPDE", "DFA", "spread1", "spread2", "D2", "PPE",
         ],
         clinical_context=(
             "Parkinson's disease is a progressive neurodegenerative disorder affecting "
@@ -199,6 +200,7 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
             "alcohol_consumption", "physical_activity_level", "smoking_status",
             "employment_status", "history_substance_abuse",
             "family_history_depression", "chronic_medical_conditions",
+            "marital_status", "education_level",
         ],
         clinical_context=(
             "Depression is the leading cause of disability worldwide, affecting over 280 million "
@@ -237,23 +239,24 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
     "haematology_anaemia": SpecialtyInfo(
         id="haematology_anaemia",
         name="Haematology — Anaemia",
-        description="Classify type of anaemia from full blood count results.",
+        description="Detect anaemia from full blood count indices including haemoglobin, MCV, MCH, and MCHC.",
         target_variable="anemia_type",
-        target_type="multiclass",
-        data_source="Anaemia Classification Dataset — kaggle.com/datasets/biswaranjanrao/anemia-dataset",
-        what_ai_predicts="Type of anaemia from full blood count (iron deficiency / megaloblastic / normocytic / normal)",
+        target_type="binary",
+        data_source="Anaemia Detection Dataset — kaggle.com/datasets/biswaranjanrao/anemia-dataset",
+        what_ai_predicts="Anaemia presence (anemic vs not anemic) from full blood count indices",
         feature_names=[
-            "gender", "haemoglobin", "mchc", "mch", "mcv", "rdw",
-            "wbc", "platelets", "neutrophils", "lymphocytes",
+            "gender", "haemoglobin", "mch", "mchc", "mcv",
         ],
         clinical_context=(
-            "Anaemia affects approximately 1.62 billion people globally and can result from "
-            "diverse causes including iron deficiency, vitamin B12 deficiency, haemolysis, "
-            "and bone marrow failure. Distinguishing anaemia subtypes is critical for "
-            "correct treatment — iron supplementation for iron deficiency, B12 injections "
-            "for pernicious anaemia, or specialist referral for haemolytic conditions. "
-            "Full blood count parameters including MCV, MCH, and MCHC provide diagnostic "
-            "clues that this model uses to classify anaemia type into multiple categories."
+            "Anaemia affects approximately 1.62 billion people globally and is defined by "
+            "haemoglobin below 12 g/dL in women and 13 g/dL in men. Full blood count indices "
+            "including mean corpuscular volume (MCV), mean corpuscular haemoglobin (MCH), "
+            "and mean corpuscular haemoglobin concentration (MCHC) are routinely used to "
+            "screen for and characterise anaemia in primary care. Low MCV indicates "
+            "microcytic anaemia (typically iron deficiency), while elevated MCV suggests "
+            "macrocytic anaemia (B12 or folate deficiency). "
+            "This model classifies patients as anaemic or non-anaemic using five standard "
+            "full blood count parameters, supporting automated screening in high-volume settings."
         ),
     ),
     "dermatology": SpecialtyInfo(
@@ -386,7 +389,11 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         feature_names=[
             "age", "sex", "height", "weight", "QRS_duration",
             "PR_interval", "QT_interval", "T_interval", "P_interval",
-            "QRS_axis", "T_axis", "P_axis", "heart_rate",
+            "QRS_axis", "T_axis", "P_axis", "heart_rate", "J_point",
+            "heart_rate_2",
+            "DI_R", "DI_S", "DI_T", "DI_P", "DI_QRSA", "DI_QRSTA",
+            "DII_R", "DII_S", "DII_T", "DII_P", "DII_QRSA", "DII_QRSTA",
+            "V1_R", "V1_S", "V1_T", "V1_P", "V5_R", "V5_S",
         ],
         clinical_context=(
             "Cardiac arrhythmias encompass a diverse group of rhythm disorders ranging from "
@@ -405,12 +412,17 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_variable="Biopsy",
         target_type="binary",
         data_source="Cervical Cancer Dataset — archive.ics.uci.edu/dataset/383/cervical+cancer+risk+factors",
-        what_ai_predicts="Biopsy-confirmed cervical cancer from demographic and behavioural data",
+        what_ai_predicts="Biopsy-confirmed cervical cancer from screening test results and risk factors",
         feature_names=[
             "age", "number_of_sexual_partners", "first_sexual_intercourse_age",
-            "num_of_pregnancies", "smokes_years", "hormonal_contraceptives_years",
-            "iud_years", "stds_number", "stds_condylomatosis",
+            "num_of_pregnancies",
+            "smokes", "smokes_years",
+            "hormonal_contraceptives", "hormonal_contraceptives_years",
+            "iud", "iud_years",
+            "stds", "stds_number", "stds_condylomatosis",
             "stds_cervical_condylomatosis", "stds_hpv",
+            "dx_cancer", "dx_cin", "dx_hpv", "dx",
+            "hinselmann", "schiller", "citology",
         ],
         clinical_context=(
             "Cervical cancer is the fourth most common cancer in women globally, with "
@@ -459,6 +471,8 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
             "num_procedures", "num_medications", "number_outpatient",
             "number_emergency", "number_inpatient", "number_diagnoses",
             "max_glu_serum", "A1Cresult", "metformin", "insulin", "change",
+            "discharge_disposition_id", "admission_type_id",
+            "admission_source_id", "diag_1",
         ],
         clinical_context=(
             "Hospital readmission within 30 days is a key quality indicator and financial "

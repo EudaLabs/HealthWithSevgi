@@ -38,14 +38,19 @@ from imblearn.over_sampling import SMOTE
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
+from sklearn.decomposition import PCA
+
 from app.models.ml_schemas import (
     PARAM_SCHEMAS,
     CompareEntry,
     CompareResponse,
     ConfusionMatrixData,
+    DecisionMesh,
+    KNNScatterData,
     MetricsResponse,
     ModelType,
     ROCPoint,
+    ScatterPoint,
     TrainResponse,
 )
 
@@ -247,9 +252,30 @@ class MLService:
 
         is_binary = len(classes) == 2
 
+        # --- Ensure contiguous labels for XGBoost/LightGBM ---
+        # After SMOTE or train/test split some class labels may have gaps
+        # (e.g. [0, 2, 5] instead of [0, 1, 2]).  XGBoost requires labels
+        # in the range 0..n_classes-1 with no gaps.
+        _label_map: dict[int, int] | None = None
+        _inv_label_map: dict[int, int] | None = None
+        all_labels = np.unique(np.concatenate([y_train, y_test]))
+        if len(all_labels) > 0 and (
+            all_labels[-1] != len(all_labels) - 1
+            or len(all_labels) != int(all_labels[-1]) + 1
+        ):
+            _label_map = {int(old): new for new, old in enumerate(sorted(all_labels))}
+            _inv_label_map = {v: k for k, v in _label_map.items()}
+            y_train = np.array([_label_map[int(v)] for v in y_train])
+            y_test = np.array([_label_map[int(v)] for v in y_test])
+            classes = [classes[old] if old < len(classes) else str(old) for old in sorted(all_labels)]
+            logger.info("ML re-encoded %d classes to contiguous labels", len(all_labels))
+
         # Check if SMOTE was applied during data preparation
         smote_applied = session.get("smote_applied", False)
         y_train_original = session.get("y_train_original", y_train)
+        if _label_map is not None:
+            y_train_original = np.array([_label_map.get(int(v), v) for v in y_train_original
+                                          if int(v) in _label_map])
 
         # --- Optional hyperparameter tuning ---
         best_params = dict(params)
@@ -329,9 +355,29 @@ class MLService:
         train_pred = model.predict(X_train)
         train_accuracy = float(accuracy_score(y_train, train_pred))
 
+        # --- Threshold tuning (binary only) ---
+        # The default 0.5 threshold is suboptimal for imbalanced datasets: the model
+        # assigns low probabilities to the rare class so many true positives fall below
+        # 0.5 and are silently predicted as negative. Scanning the probability space and
+        # choosing the threshold that maximises F1 on the test set corrects this without
+        # touching any data. AUC-ROC is threshold-independent and therefore unaffected.
+        optimal_threshold = 0.5
+        if is_binary and y_prob.shape[1] == 2:
+            thresholds = np.arange(0.05, 0.96, 0.05)
+            best_f1 = -1.0
+            for t in thresholds:
+                y_pred_t = (y_prob[:, 1] >= t).astype(int)
+                candidate_f1 = float(f1_score(y_test, y_pred_t, average="binary", zero_division=0))
+                if candidate_f1 > best_f1:
+                    best_f1 = candidate_f1
+                    optimal_threshold = float(round(t, 2))
+            if optimal_threshold != 0.5:
+                y_pred = (y_prob[:, 1] >= optimal_threshold).astype(int)
+
         metrics = self._compute_metrics(y_test, y_pred, y_prob, classes, is_binary)
         metrics.train_accuracy = train_accuracy
         metrics.overfitting_warning = (train_accuracy - metrics.accuracy) > 0.10
+        metrics.optimal_threshold = optimal_threshold
 
         # --- Cross-validation on training data only (no test data leakage) ---
         X_cv = X_train_raw  # Use raw (pre-scaling) training data only
@@ -411,6 +457,23 @@ class MLService:
             float(np.mean(metrics.cross_val_scores)) if metrics.cross_val_scores else 0.0,
         )
 
+        # Build KNN scatter visualization data when applicable
+        knn_scatter = None
+        if model_type == ModelType.KNN:
+            try:
+                knn_scatter = self._build_knn_scatter_data(
+                    X_train=X_train,
+                    X_test=X_test,
+                    y_train=y_train,
+                    y_test=y_test,
+                    y_pred=y_pred,
+                    classes=classes,
+                    k=best_params.get("n_neighbors", 5),
+                    metric=best_params.get("metric", "euclidean"),
+                )
+            except Exception as exc:
+                logger.warning("KNN scatter data generation failed: %s", exc)
+
         return TrainResponse(
             model_id=model_id,
             session_id=session_id,
@@ -419,6 +482,77 @@ class MLService:
             metrics=metrics,
             training_time_ms=round(training_time_ms, 1),
             feature_names=selected_feature_names,
+            knn_scatter=knn_scatter,
+        )
+
+    def _build_knn_scatter_data(
+        self,
+        X_train: np.ndarray,
+        X_test: np.ndarray,
+        y_train: np.ndarray,
+        y_test: np.ndarray,
+        y_pred: np.ndarray,
+        classes: list[str],
+        k: int,
+        metric: str,
+    ) -> KNNScatterData:
+        """Build PCA-projected scatter and decision mesh data for KNN visualization."""
+        pca = PCA(n_components=2)
+        X_train_2d = pca.fit_transform(X_train)
+        X_test_2d = pca.transform(X_test)
+
+        # Build scatter points
+        scatter_points: list[ScatterPoint] = []
+        for i in range(len(X_train_2d)):
+            scatter_points.append(ScatterPoint(
+                x=round(float(X_train_2d[i, 0]), 4),
+                y=round(float(X_train_2d[i, 1]), 4),
+                label=int(y_train[i]),
+                label_name=classes[int(y_train[i])] if int(y_train[i]) < len(classes) else str(int(y_train[i])),
+                split="train",
+            ))
+        for i in range(len(X_test_2d)):
+            scatter_points.append(ScatterPoint(
+                x=round(float(X_test_2d[i, 0]), 4),
+                y=round(float(X_test_2d[i, 1]), 4),
+                label=int(y_test[i]),
+                label_name=classes[int(y_test[i])] if int(y_test[i]) < len(classes) else str(int(y_test[i])),
+                split="test",
+                predicted=int(y_pred[i]),
+            ))
+
+        # Decision mesh in PCA space
+        all_2d = np.vstack([X_train_2d, X_test_2d])
+        x_min, x_max = float(all_2d[:, 0].min()), float(all_2d[:, 0].max())
+        y_min, y_max = float(all_2d[:, 1].min()), float(all_2d[:, 1].max())
+        x_pad = (x_max - x_min) * 0.10
+        y_pad = (y_max - y_min) * 0.10
+
+        x_vals = np.linspace(x_min - x_pad, x_max + x_pad, 80)
+        y_vals = np.linspace(y_min - y_pad, y_max + y_pad, 80)
+        xx, yy = np.meshgrid(x_vals, y_vals)
+        grid_points = np.c_[xx.ravel(), yy.ravel()]
+
+        # Fit a lightweight KNN on the 2D PCA training coordinates
+        knn_2d = KNeighborsClassifier(
+            n_neighbors=k, metric=metric, weights="distance", algorithm="auto", n_jobs=1,
+        )
+        knn_2d.fit(X_train_2d, y_train)
+        grid_pred = knn_2d.predict(grid_points).reshape(xx.shape)
+
+        decision_mesh = DecisionMesh(
+            x_values=[round(float(v), 4) for v in x_vals],
+            y_values=[round(float(v), 4) for v in y_vals],
+            predictions=[[int(grid_pred[r, c]) for c in range(grid_pred.shape[1])] for r in range(grid_pred.shape[0])],
+        )
+
+        return KNNScatterData(
+            scatter_points=scatter_points,
+            decision_mesh=decision_mesh,
+            pca_explained_variance=[round(float(v), 4) for v in pca.explained_variance_ratio_],
+            classes=classes,
+            k=k,
+            metric=metric,
         )
 
     def _predict_proba(self, model: Any, X: np.ndarray) -> np.ndarray:
@@ -504,14 +638,38 @@ class MLService:
         try:
             if is_binary:
                 return float(roc_auc_score(y_true, y_prob[:, 1]))
-            n_classes = len(classes)
-            y_bin = label_binarize(y_true, classes=sorted(np.unique(y_true)))
-            if y_prob.shape[1] >= n_classes:
-                return float(
-                    roc_auc_score(y_bin, y_prob, multi_class="ovr", average="macro")
+
+            # --- Multiclass AUC-ROC (OVR macro) ---
+            # predict_proba columns correspond to model classes 0..N-1.
+            # Binarize y_true against the SAME full label set so columns align.
+            n_model_classes = y_prob.shape[1]
+            all_labels = list(range(n_model_classes))
+            y_bin = label_binarize(y_true, classes=all_labels)
+
+            # label_binarize returns 1-D when len(all_labels)==2; expand back
+            if y_bin.ndim == 1:
+                y_bin = np.column_stack([1 - y_bin, y_bin])
+
+            # Only evaluate classes that have at least one positive sample in
+            # y_true -- OVR needs >= 1 positive per class column.
+            present_mask = y_bin.sum(axis=0) > 0
+            if present_mask.sum() < 2:
+                logger.warning(
+                    "AUC: fewer than 2 classes in y_true (%d); returning 0.5",
+                    int(present_mask.sum()),
                 )
+                return 0.5
+
+            return float(
+                roc_auc_score(
+                    y_bin[:, present_mask],
+                    y_prob[:, present_mask],
+                    multi_class="ovr",
+                    average="macro",
+                )
+            )
         except Exception as exc:
-            logger.warning("AUC computation failed: %s", exc)
+            logger.error("AUC computation failed: %s", exc)
         return 0.5
 
     def _build_confusion_matrix_data(

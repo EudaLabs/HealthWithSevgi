@@ -20,7 +20,7 @@ const PRCurveChart: React.FC<Props> = ({ points }) => {
   }));
 
   return (
-    <div>
+    <div style={{ width: '100%', minWidth: 0 }}>
       <div className="chart-card-title">Precision-Recall Curve</div>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>

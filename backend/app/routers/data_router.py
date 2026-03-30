@@ -15,6 +15,7 @@ from app.models.schemas import (
     PrepSettings,
     SpecialtyInfo,
 )
+from app.services.data_service import DatasetUnavailableError
 from app.services.specialty_registry import get_specialty, list_specialties
 
 logger = logging.getLogger(__name__)
@@ -65,7 +66,13 @@ def _load_df(file: UploadFile | None, specialty_id: str, data_service) -> pd.Dat
                 detail=f"Dataset must have at least 2 columns (got {len(df.columns)})",
             )
         return df
-    return data_service.get_example_dataset(specialty_id)
+    try:
+        return data_service.get_example_dataset(specialty_id)
+    except DatasetUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        ) from exc
 
 
 # ------------------------------------------------------------------

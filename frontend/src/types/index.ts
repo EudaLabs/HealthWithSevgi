@@ -92,6 +92,31 @@ export interface MetricsResponse {
   low_sensitivity_warning: boolean
   mcc: number
   overfitting_warning: boolean
+  optimal_threshold?: number
+}
+
+export interface ScatterPoint {
+  x: number
+  y: number
+  label: number
+  label_name: string
+  split: 'train' | 'test'
+  predicted: number | null
+}
+
+export interface DecisionMesh {
+  x_values: number[]
+  y_values: number[]
+  predictions: number[][]
+}
+
+export interface KNNScatterData {
+  scatter_points: ScatterPoint[]
+  decision_mesh: DecisionMesh
+  pca_explained_variance: number[]
+  classes: string[]
+  k: number
+  metric: string
 }
 
 export interface TrainResponse {
@@ -102,6 +127,7 @@ export interface TrainResponse {
   metrics: MetricsResponse
   training_time_ms: number
   feature_names: string[]
+  knn_scatter?: KNNScatterData
 }
 
 export interface CompareEntry {

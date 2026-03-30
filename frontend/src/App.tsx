@@ -8,6 +8,7 @@ import Step2DataExploration from './pages/Step2DataExploration'
 import Step3DataPreparation from './pages/Step3DataPreparation'
 import Step4ModelParameters from './pages/Step4ModelParameters'
 const Step5Results = React.lazy(() => import('./pages/Step5Results'))
+const ArenaPage = React.lazy(() => import('../../local/model-arena/frontend/pages/ArenaPage'))
 const Step6Explainability = React.lazy(() => import('./pages/Step6Explainability'))
 import Step7Ethics from './pages/Step7Ethics'
 import type { WizardState, Specialty, CompareEntry } from './types'
@@ -62,6 +63,7 @@ const createDefaultState = (): WizardState => ({
 export default function App() {
   const [state, setState] = useState<WizardState>(createDefaultState)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const [showArena, setShowArena] = useState(false)
   const [confirmSwitch, setConfirmSwitch] = useState<Specialty | null>(null)
 
   const { data: specialties = [], isLoading: specialtiesLoading } = useQuery({
@@ -221,6 +223,8 @@ export default function App() {
         onGlossary={() => setGlossaryOpen(true)}
         glossaryOpen={glossaryOpen}
         onGlossaryClose={() => setGlossaryOpen(false)}
+        onArena={() => setShowArena(!showArena)}
+        arenaActive={showArena}
       />
       <WizardProgress
         currentStep={state.currentStep}
@@ -232,13 +236,20 @@ export default function App() {
       />
       <div className="main-content">
         <React.Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}><div className="skeleton" style={{ width: 200, height: 24, margin: '0 auto' }} /><p className="text-muted text-sm" style={{ marginTop: '0.5rem' }}>Loading...</p></div>}>
-          {renderStep()}
+          {showArena ? (
+            <ArenaPage
+              sessionId={state.prepResponse?.session_id ?? null}
+              onClose={() => setShowArena(false)}
+            />
+          ) : (
+            renderStep()
+          )}
         </React.Suspense>
         <div style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', padding: '1rem 0 0.5rem' }}>
           Patient data is processed locally within this session. No patient data is stored or transmitted.
         </div>
       </div>
-      <BottomNav
+      {!showArena && <BottomNav
         currentStep={state.currentStep}
         canAdvance={
           state.currentStep === 1 ? true :
@@ -264,7 +275,7 @@ export default function App() {
           completeStep(state.currentStep)
           goToStep(state.currentStep + 1)
         }}
-      />
+      />}
       {confirmSwitch && (
         <div className="modal-overlay" onClick={() => setConfirmSwitch(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
