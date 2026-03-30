@@ -15,7 +15,7 @@
 
 > **SENG 430 - Software Quality Assurance**
 > Cankaya University - Spring 2025-2026
-> Instructor: Dr. Sevgi Koyuncu Tunc
+> Instructor: Dr. Sevgi Koyuncu Tunç
 
 HealthWithSevgi guides clinicians through a complete ML pipeline in **7 steps** — from selecting a medical specialty to training a model, interpreting predictions with SHAP, and auditing fairness — all with **zero coding required**.
 
@@ -438,10 +438,10 @@ The production deployment runs on HuggingFace Spaces as a Docker container. The 
 
 | Role | Name | Student ID |
 |------|------|:----------:|
-| Product Owner + Developer | Efe Celik | 202128016 |
-| UX Designer | Burak Aydogmus | 202128028 |
-| Lead Developer + Scrum Master | Batuhan Bayazit | 202228008 |
-| Developer | Berat Mert Gokkaya | 202228019 |
+| Product Owner + Developer | Efe Çelik | 202128016 |
+| UX Designer | Burak Aydoğmuş | 202128028 |
+| Lead Developer + Scrum Master | Batuhan Bayazıt | 202228008 |
+| Developer | Berat Mert Gökkaya | 202228019 |
 | QA / Documentation Lead | Berfin Duru Alkan | 202228005 |
 
 ---
