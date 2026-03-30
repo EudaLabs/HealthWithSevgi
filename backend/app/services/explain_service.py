@@ -9,6 +9,8 @@ import numpy as np
 from app.models.explain_schemas import (
     FeatureImportanceItem,
     GlobalExplainabilityResponse,
+    SamplePatient,
+    SamplePatientsResponse,
     SHAPWaterfallPoint,
     SinglePatientExplainResponse,
     WhatIfResponse,
@@ -593,3 +595,64 @@ class ExplainService:
             shift=round(shift, 4),
             direction=direction,
         )
+
+    # ------------------------------------------------------------------
+    # Sample patients for dropdown picker
+    # ------------------------------------------------------------------
+    def sample_patients(
+        self,
+        model_id: str,
+        model: Any,
+        X_test: np.ndarray,
+    ) -> SamplePatientsResponse:
+        """Return up to 3 representative patients (low/medium/high risk)."""
+        n = len(X_test)
+        if n == 0:
+            return SamplePatientsResponse(model_id=model_id, patients=[])
+
+        probs = self._model_predict_proba(model, X_test)
+        # Use class-1 probability for binary; max probability otherwise
+        if probs.shape[1] == 2:
+            scores = probs[:, 1]
+        else:
+            scores = np.max(probs, axis=1)
+
+        sorted_indices = np.argsort(scores)
+
+        picks: list[tuple[int, str]] = []
+
+        # Low risk: lowest probability patient
+        low_idx = int(sorted_indices[0])
+        picks.append((low_idx, "low"))
+
+        if n >= 2:
+            # High risk: highest probability patient
+            high_idx = int(sorted_indices[-1])
+            picks.append((high_idx, "high"))
+
+        if n >= 3:
+            # Medium risk: patient closest to 0.5
+            diffs = np.abs(scores - 0.5)
+            med_idx = int(np.argmin(diffs))
+            # Avoid duplicating low or high pick
+            if med_idx in (low_idx, high_idx):
+                # Fall back to the median-ranked patient
+                med_idx = int(sorted_indices[n // 2])
+            picks.append((med_idx, "medium"))
+
+        patients: list[SamplePatient] = []
+        for idx, level in picks:
+            prob = float(scores[idx])
+            label = level.capitalize()
+            patients.append(SamplePatient(
+                index=idx,
+                risk_level=level,
+                probability=round(prob, 4),
+                summary=f"Patient #{idx} — {label} Risk ({prob:.0%})",
+            ))
+
+        # Sort by risk level order: low, medium, high
+        order = {"low": 0, "medium": 1, "high": 2}
+        patients.sort(key=lambda p: order[p.risk_level])
+
+        return SamplePatientsResponse(model_id=model_id, patients=patients)

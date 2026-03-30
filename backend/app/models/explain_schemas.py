@@ -120,6 +120,18 @@ class ChecklistUpdate(BaseModel):
     checked: bool
 
 
+class SamplePatient(BaseModel):
+    index: int
+    risk_level: Literal["low", "medium", "high"]
+    probability: float
+    summary: str
+
+
+class SamplePatientsResponse(BaseModel):
+    model_id: str
+    patients: list[SamplePatient]
+
+
 class CertificateRequest(BaseModel):
     model_id: str
     session_id: str

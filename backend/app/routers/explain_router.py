@@ -11,6 +11,7 @@ from app.models.explain_schemas import (
     ChecklistUpdate,
     EthicsResponse,
     GlobalExplainabilityResponse,
+    SamplePatientsResponse,
     SinglePatientExplainResponse,
     WhatIfRequest,
     WhatIfResponse,
@@ -113,6 +114,21 @@ def what_if(request: Request, body: WhatIfRequest) -> WhatIfResponse:
         )
     except Exception as exc:
         logger.exception("What-if analysis failed")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.get("/explain/sample-patients/{model_id}", response_model=SamplePatientsResponse)
+def sample_patients(request: Request, model_id: str) -> SamplePatientsResponse:
+    ml, explain, *_ = _get_services(request)
+    data = _get_model_data(ml, model_id)
+    try:
+        return explain.sample_patients(
+            model_id=model_id,
+            model=data["model"],
+            X_test=data["X_test"],
+        )
+    except Exception as exc:
+        logger.exception("Sample patients retrieval failed")
         raise HTTPException(status_code=500, detail=str(exc))
 
 
