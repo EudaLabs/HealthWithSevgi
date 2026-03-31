@@ -8,44 +8,13 @@ from __future__ import annotations
 
 import pytest
 
+from tests.conftest import train_example_model
+
 
 @pytest.fixture(scope="module")
 def trained_model(client) -> dict:
     """Explore → Prepare → Train; reusable across this module."""
-    resp = client.post(
-        "/api/explore",
-        data={"specialty_id": "endocrinology_diabetes", "target_col": "Outcome"},
-    )
-    assert resp.status_code == 200
-
-    resp = client.post(
-        "/api/prepare",
-        json={
-            "specialty_id": "endocrinology_diabetes",
-            "target_col": "Outcome",
-            "test_size": 0.3,
-            "missing_strategy": "median",
-            "normalization": "zscore",
-            "apply_smote": False,
-            "handle_outliers": False,
-        },
-    )
-    assert resp.status_code == 200
-    session_id = resp.json()["session_id"]
-
-    resp = client.post(
-        "/api/train",
-        json={
-            "session_id": session_id,
-            "model_type": "logistic_regression",
-            "params": {"C": 1.0, "max_iter": 200},
-            "tune": False,
-            "use_feature_selection": False,
-        },
-    )
-    assert resp.status_code == 200
-    body = resp.json()
-    return {"model_id": body["model_id"], "session_id": session_id}
+    return train_example_model(client)
 
 
 # ===================================================================
