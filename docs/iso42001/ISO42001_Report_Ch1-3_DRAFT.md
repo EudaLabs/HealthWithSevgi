@@ -15,8 +15,6 @@
 
 **ISO 42001 Reference:** Clause 4.1 (Internal/External Issues), Clause 4.2 (Interested Parties), Clause 4.3 (Scope), Clause 4.4 (AIMS)
 
-This chapter establishes the foundation of our AI Management System by defining what our AI system is, who it affects, and what boundaries apply.
-
 ## 1.1 AI System Description
 
 | Field | Content |
@@ -81,8 +79,6 @@ This chapter establishes the foundation of our AI Management System by defining 
 
 **ISO 42001 Reference:** Clause 5.1 (Leadership), Clause 5.2 (AI Policy), Clause 5.3 (Roles), Annex A.2.2 (AI Policy), A.3.2 (Roles & Responsibilities)
 
-This chapter presents our team's AI Policy and governance structure for the HealthWithSevgi ML Visualization Tool.
-
 ## 2.1 AI Policy Statement
 
 | Section | Content |
@@ -115,8 +111,6 @@ This chapter presents our team's AI Policy and governance structure for the Heal
 # Chapter 3 — Data Governance & Third-Party Management
 
 **ISO 42001 Reference:** Annex A.6.2 (Data Quality), A.6.3 (Data Provenance), A.6.4 (Data Preparation), Clause 8.2 (AI Risk Assessment)
-
-This chapter documents how our team manages the data lifecycle in the ML pipeline — from source selection through preparation to model consumption.
 
 ## 3.1 Data Source Inventory
 

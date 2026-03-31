@@ -267,6 +267,17 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                   <Bar dataKey="Population Norm" fill="var(--border)" radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
+              {ethics.representation_warnings && ethics.representation_warnings.length > 0 && (
+                <div className="alert alert-warning" style={{ marginTop: '0.75rem' }}>
+                  <span>⚠️</span>
+                  <div>
+                    <strong>Representation Gap Warning</strong>
+                    {ethics.representation_warnings.map((w, i) => (
+                      <div key={i} style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>{w.message}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -277,16 +288,22 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
               How AI tools have failed in clinical settings and what we can learn.
             </div>
             <div className="grid-3">
-              {ethics.case_studies.map(cs => (
+              {ethics.case_studies.map(cs => {
+                const severityColor = cs.severity === 'failure' ? 'var(--danger)' : cs.severity === 'near_miss' ? '#b36800' : 'var(--success)'
+                const severityBg = cs.severity === 'failure' ? 'var(--danger-light)' : cs.severity === 'near_miss' ? 'var(--warning-light)' : 'var(--success-light)'
+                const severityBadge = cs.severity === 'failure' ? 'badge-danger' : cs.severity === 'near_miss' ? 'badge-warning' : 'badge-success'
+                const severityLabel = cs.severity === 'failure' ? 'Failure' : cs.severity === 'near_miss' ? 'Near-Miss' : 'Prevention'
+                return (
                 <div key={cs.id} style={{
-                  borderLeft: '4px solid var(--danger)', borderRadius: '0 8px 8px 0',
+                  borderLeft: `4px solid ${severityColor}`, borderRadius: '0 8px 8px 0',
                   padding: '1rem', background: 'var(--background)',
                   display: 'flex', flexDirection: 'column', gap: '0.5rem',
                 }}>
                   <div>
                     <div className="font-semibold" style={{ fontSize: '0.9rem', lineHeight: 1.3 }}>{cs.title}</div>
                     <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
-                      <span className="badge badge-danger">{cs.specialty}</span>
+                      <span className={`badge ${severityBadge}`}>{severityLabel}</span>
+                      <span className="badge badge-neutral">{cs.specialty}</span>
                       <span className="badge badge-neutral">{cs.year}</span>
                     </div>
                   </div>
@@ -295,7 +312,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                   </div>
                   <button
                     className="btn btn-ghost btn-sm"
-                    style={{ alignSelf: 'flex-start', padding: '0.2rem 0', fontSize: '0.78rem', color: 'var(--danger)', fontWeight: 700 }}
+                    style={{ alignSelf: 'flex-start', padding: '0.2rem 0', fontSize: '0.78rem', color: severityColor, fontWeight: 700 }}
                     onClick={() => setExpandedStudy(expandedStudy === cs.id ? null : cs.id)}
                   >
                     {expandedStudy === cs.id ? (
@@ -321,7 +338,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                     </div>
                   )}
                 </div>
-              ))}
+              )})}
             </div>
           </div>
 

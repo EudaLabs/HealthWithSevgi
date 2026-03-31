@@ -4,8 +4,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   Cell, ReferenceLine, ComposedChart,
 } from 'recharts'
-import { fetchGlobalExplainability, fetchPatientExplanation } from '../api/explain'
-import type { GlobalExplainabilityResponse, SinglePatientExplainResponse, TrainResponse } from '../types'
+import { fetchGlobalExplainability, fetchPatientExplanation, fetchSamplePatients, fetchWhatIf } from '../api/explain'
+import type { GlobalExplainabilityResponse, SinglePatientExplainResponse, TrainResponse, SamplePatient, WhatIfResponse } from '../types'
 
 interface Props {
   trainResponse: TrainResponse
@@ -17,14 +17,18 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
   const [globalLoading, setGlobalLoading] = useState(true)
   const [globalError, setGlobalError] = useState<string | null>(null)
 
-  const [patientIdx, setPatientIdx] = useState(1)
+  const [patientIdx, setPatientIdx] = useState<number | null>(null)
   const [patient, setPatient] = useState<SinglePatientExplainResponse | null>(null)
   const [patientLoading, setPatientLoading] = useState(false)
   const [showAll, setShowAll] = useState(false)
 
-  const testSize = trainResponse.metrics.confusion_matrix.matrix.reduce(
-    (acc, row) => acc + row.reduce((a, b) => a + b, 0), 0
-  )
+  const [samplePatients, setSamplePatients] = useState<SamplePatient[]>([])
+
+  // What-If state
+  const [whatIfFeature, setWhatIfFeature] = useState('')
+  const [whatIfValue, setWhatIfValue] = useState('')
+  const [whatIfResult, setWhatIfResult] = useState<WhatIfResponse | null>(null)
+  const [whatIfLoading, setWhatIfLoading] = useState(false)
 
   useEffect(() => {
     setGlobalLoading(true)
@@ -32,17 +36,47 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
       .then(setGlobal)
       .catch((e) => setGlobalError(e.message))
       .finally(() => setGlobalLoading(false))
+
+    fetchSamplePatients(trainResponse.model_id)
+      .then((res) => {
+        setSamplePatients(res.patients)
+        if (res.patients.length > 0) {
+          setPatientIdx(res.patients[0].index)
+        }
+      })
+      .catch(() => { /* silent — dropdown will be empty */ })
   }, [trainResponse.model_id])
 
-  const handleExplainPatient = async () => {
+  const handleExplainPatient = async (idx?: number) => {
+    const targetIdx = idx ?? patientIdx
+    if (targetIdx === null) return
     setPatientLoading(true)
+    setWhatIfResult(null)
     try {
-      const data = await fetchPatientExplanation(trainResponse.model_id, patientIdx - 1)
+      const data = await fetchPatientExplanation(trainResponse.model_id, targetIdx)
       setPatient(data)
     } catch (e: unknown) {
       setGlobalError((e as Error).message)
     } finally {
       setPatientLoading(false)
+    }
+  }
+
+  const handleWhatIf = async () => {
+    if (patientIdx === null || !whatIfFeature || !whatIfValue) return
+    setWhatIfLoading(true)
+    try {
+      const res = await fetchWhatIf({
+        model_id: trainResponse.model_id,
+        patient_index: patientIdx,
+        feature_name: whatIfFeature,
+        new_value: Number(whatIfValue),
+      })
+      setWhatIfResult(res)
+    } catch (e: unknown) {
+      setGlobalError((e as Error).message)
+    } finally {
+      setWhatIfLoading(false)
     }
   }
 
@@ -60,6 +94,8 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
         direction: p.direction,
       }))
     : []
+
+  const top5Features = global ? global.feature_importances.slice(0, 5) : []
 
   // Build patient attribute badges from clinical_summary if available
   const patientBadges = patient ? [
@@ -220,17 +256,25 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
             )}
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end' }}>
               <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                <label className="form-label">Select test patient (1–{testSize})</label>
-                <input
-                  type="number"
+                <label className="form-label">Select test patient</label>
+                <select
                   className="form-input"
-                  min={1}
-                  max={testSize}
-                  value={patientIdx}
-                  onChange={e => setPatientIdx(Number(e.target.value))}
-                />
+                  value={patientIdx ?? ''}
+                  onChange={e => {
+                    const idx = Number(e.target.value)
+                    setPatientIdx(idx)
+                    handleExplainPatient(idx)
+                  }}
+                >
+                  <option value="" disabled>Choose a patient…</option>
+                  {samplePatients.map(sp => (
+                    <option key={sp.index} value={sp.index}>
+                      {sp.summary}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <button className="btn btn-danger" onClick={handleExplainPatient} disabled={patientLoading}>
+              <button className="btn btn-danger" onClick={() => handleExplainPatient()} disabled={patientLoading || patientIdx === null}>
                 {patientLoading ? 'Explaining…' : 'Explain This Patient'}
               </button>
             </div>
@@ -263,6 +307,68 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
           <button className="btn btn-ghost btn-sm mt-2" onClick={() => setShowAll(p => !p)}>
             {showAll ? 'Show Top 8' : 'Show All Features'}
           </button>
+        </div>
+      )}
+
+      {/* What-If Banner */}
+      {patient && top5Features.length > 0 && (
+        <div className="card" style={{ borderLeft: '4px solid var(--info, #2563eb)', background: 'var(--info-light, #eff6ff)' }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--info, #2563eb)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
+            🔍 What-If Analysis
+          </div>
+          <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
+            Simulate changing a single clinical measurement and see how the predicted probability shifts.
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <div className="form-group" style={{ flex: 1, minWidth: '180px', marginBottom: 0 }}>
+              <label className="form-label">Feature</label>
+              <select
+                className="form-input"
+                value={whatIfFeature}
+                onChange={e => { setWhatIfFeature(e.target.value); setWhatIfResult(null) }}
+              >
+                <option value="" disabled>Select a feature…</option>
+                {top5Features.map(f => (
+                  <option key={f.feature_name} value={f.feature_name}>{f.clinical_name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group" style={{ flex: 0.5, minWidth: '120px', marginBottom: 0 }}>
+              <label className="form-label">New Value</label>
+              <input
+                type="number"
+                className="form-input"
+                placeholder="e.g. 200"
+                value={whatIfValue}
+                onChange={e => { setWhatIfValue(e.target.value); setWhatIfResult(null) }}
+              />
+            </div>
+            <button
+              className="btn btn-primary"
+              onClick={handleWhatIf}
+              disabled={whatIfLoading || !whatIfFeature || !whatIfValue}
+            >
+              {whatIfLoading ? 'Simulating…' : 'Simulate'}
+            </button>
+          </div>
+          {whatIfResult && (
+            <div style={{
+              marginTop: '1rem', padding: '0.75rem 1rem', borderRadius: '8px',
+              background: whatIfResult.direction === 'no_change' ? 'var(--background)' : whatIfResult.direction === 'increased_risk' ? 'var(--danger-light)' : 'var(--success-light)',
+              border: `1px solid ${whatIfResult.direction === 'no_change' ? 'var(--border)' : whatIfResult.direction === 'increased_risk' ? 'var(--danger)' : 'var(--success)'}`,
+              fontSize: '0.9rem',
+            }}>
+              <strong>
+                {whatIfResult.direction === 'increased_risk' ? '▲ Risk Increased' : whatIfResult.direction === 'decreased_risk' ? '▼ Risk Decreased' : '— No Change'}
+              </strong>
+              <div style={{ marginTop: '0.3rem' }}>
+                If <strong>{top5Features.find(f => f.feature_name === whatIfResult.feature_name)?.clinical_name ?? whatIfResult.feature_name}</strong> changed
+                from <strong>{whatIfResult.original_value.toFixed(2)}</strong> to <strong>{whatIfResult.new_value.toFixed(2)}</strong>,
+                the predicted probability would shift
+                from <strong>{(whatIfResult.original_prob * 100).toFixed(1)}%</strong> to <strong>{(whatIfResult.new_prob * 100).toFixed(1)}%</strong> ({whatIfResult.shift > 0 ? '+' : ''}{(whatIfResult.shift * 100).toFixed(1)}pp).
+              </div>
+            </div>
+          )}
         </div>
       )}
 

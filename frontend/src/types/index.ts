@@ -208,6 +208,14 @@ export interface EthicsResponse {
     pre_checked: boolean
     checked?: boolean
   }[]
+  representation_warnings: {
+    group: string
+    attribute: string
+    dataset_pct: number
+    population_pct: number
+    gap_pp: number
+    message: string
+  }[]
   case_studies: {
     id: string
     title: string
@@ -216,7 +224,30 @@ export interface EthicsResponse {
     what_happened: string
     impact: string
     lesson: string
+    severity: 'failure' | 'near_miss' | 'prevention'
   }[]
+}
+
+export interface WhatIfResponse {
+  feature_name: string
+  original_value: number
+  new_value: number
+  original_prob: number
+  new_prob: number
+  shift: number
+  direction: 'increased_risk' | 'decreased_risk' | 'no_change'
+}
+
+export interface SamplePatient {
+  index: number
+  risk_level: 'low' | 'medium' | 'high'
+  probability: number
+  summary: string
+}
+
+export interface SamplePatientsResponse {
+  model_id: string
+  patients: SamplePatient[]
 }
 
 export interface WizardState {

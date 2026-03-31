@@ -130,7 +130,7 @@ CASE_STUDIES = [
             "Subgroup-specific AUC must be reported and verified alongside the overall figure. "
             "Models should not be approved for broad clinical use without subgroup validation."
         ),
-        "severity": "failure",
+        "severity": "prevention",
     },
 ]
 
