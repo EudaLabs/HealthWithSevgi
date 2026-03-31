@@ -140,3 +140,51 @@ def make_csv_upload(csv_bytes: bytes, filename: str = "upload.csv") -> dict:
                                files=make_csv_upload(csv_bytes))
     """
     return {"file": (filename, io.BytesIO(csv_bytes), "text/csv")}
+
+
+def train_example_model(
+    client: TestClient,
+    specialty_id: str = "endocrinology_diabetes",
+    target_col: str = "Outcome",
+) -> dict:
+    """Run the explore -> prepare -> train flow used by Step 6/7 tests."""
+    response = client.post(
+        "/api/explore",
+        data={"specialty_id": specialty_id, "target_col": target_col},
+    )
+    assert response.status_code == 200, (
+        f"Explore failed for {specialty_id}: {response.status_code} — {response.text}"
+    )
+
+    response = client.post(
+        "/api/prepare",
+        data={
+            "specialty_id": specialty_id,
+            "target_col": target_col,
+            "test_size": "0.3",
+            "missing_strategy": "median",
+            "normalization": "zscore",
+            "use_smote": "false",
+            "outlier_handling": "none",
+        },
+    )
+    assert response.status_code == 200, (
+        f"Prepare failed for {specialty_id}: {response.status_code} — {response.text}"
+    )
+    session_id = response.json()["session_id"]
+
+    response = client.post(
+        "/api/train",
+        json={
+            "session_id": session_id,
+            "model_type": "logistic_regression",
+            "params": {"C": 1.0, "max_iter": 200},
+            "tune": False,
+            "use_feature_selection": False,
+        },
+    )
+    assert response.status_code == 200, (
+        f"Train failed for {specialty_id}: {response.status_code} — {response.text}"
+    )
+    body = response.json()
+    return {"model_id": body["model_id"], "session_id": session_id}

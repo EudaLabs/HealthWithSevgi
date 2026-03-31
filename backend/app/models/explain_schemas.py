@@ -61,22 +61,75 @@ class BiasWarning(BaseModel):
     gap: float
 
 
+class CaseStudy(BaseModel):
+    id: str
+    title: str
+    specialty: str
+    year: int
+    what_happened: str
+    impact: str
+    lesson: str
+    severity: Literal["failure", "near_miss", "prevention"]
+
+
+class RepresentationWarning(BaseModel):
+    """Flags a demographic group whose training-data proportion differs
+    from the population norm by more than the configured threshold."""
+
+    group: str
+    attribute: str
+    dataset_pct: float
+    population_pct: float
+    gap_pp: float
+    message: str
+
+
 class EthicsResponse(BaseModel):
     model_id: str
     subgroup_metrics: list[SubgroupMetrics]
     bias_warnings: list[BiasWarning]
     training_representation: dict
+    representation_warnings: list[RepresentationWarning] = Field(default_factory=list)
     overall_sensitivity: float
     eu_ai_act_items: list[dict]
-    case_studies: list[dict]
+    case_studies: list[CaseStudy]
     demographics_available: bool = True
     demographics_note: str = ""
+
+
+class WhatIfRequest(BaseModel):
+    model_id: str
+    patient_index: int
+    feature_name: str
+    new_value: float
+
+
+class WhatIfResponse(BaseModel):
+    feature_name: str
+    original_value: float
+    new_value: float
+    original_prob: float
+    new_prob: float
+    shift: float
+    direction: Literal["increased_risk", "decreased_risk", "no_change"]
 
 
 class ChecklistUpdate(BaseModel):
     model_id: str
     item_id: str
     checked: bool
+
+
+class SamplePatient(BaseModel):
+    index: int
+    risk_level: Literal["low", "medium", "high"]
+    probability: float
+    summary: str
+
+
+class SamplePatientsResponse(BaseModel):
+    model_id: str
+    patients: list[SamplePatient]
 
 
 class CertificateRequest(BaseModel):

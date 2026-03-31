@@ -9,8 +9,11 @@ import numpy as np
 from app.models.explain_schemas import (
     FeatureImportanceItem,
     GlobalExplainabilityResponse,
+    SamplePatient,
+    SamplePatientsResponse,
     SHAPWaterfallPoint,
     SinglePatientExplainResponse,
+    WhatIfResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -510,3 +513,146 @@ class ExplainService:
                 p = 1 / (1 + np.exp(-scores))
                 return np.column_stack([1 - p, p])
         return np.array([[0.5, 0.5]])
+
+    # ------------------------------------------------------------------
+    # What-If analysis
+    # ------------------------------------------------------------------
+    def what_if(
+        self,
+        model_id: str,
+        model: Any,
+        patient_index: int,
+        feature_name: str,
+        new_value: float,
+        X_test: np.ndarray,
+        feature_names: list[str],
+        scaler: Any | None,
+    ) -> WhatIfResponse:
+        """Simulate changing a single feature and return the probability shift."""
+        if feature_name not in feature_names:
+            raise ValueError(f"Feature '{feature_name}' not found. Available: {feature_names}")
+
+        n_test = len(X_test)
+        if patient_index < 0 or patient_index >= n_test:
+            raise IndexError(f"Patient index {patient_index} out of range [0, {n_test - 1}]")
+
+        feat_idx = feature_names.index(feature_name)
+
+        # Original row (already scaled if scaler was applied during training)
+        original_row = X_test[patient_index : patient_index + 1].copy()
+
+        # Get original clinical value by inverse-transforming
+        if scaler is not None:
+            try:
+                original_clinical = scaler.inverse_transform(original_row)[0, feat_idx]
+            except Exception:
+                original_clinical = float(original_row[0, feat_idx])
+        else:
+            original_clinical = float(original_row[0, feat_idx])
+
+        # Build modified row: start from scaled original, replace the feature
+        modified_row = original_row.copy()
+        if scaler is not None:
+            # new_value is in clinical space; we need to scale only that feature.
+            # Build a full clinical row, replace the feature, then re-scale.
+            try:
+                clinical_row = scaler.inverse_transform(original_row)
+                clinical_row[0, feat_idx] = new_value
+                modified_row = scaler.transform(clinical_row)
+            except Exception:
+                # Fallback: inject raw value directly
+                modified_row[0, feat_idx] = new_value
+        else:
+            modified_row[0, feat_idx] = new_value
+
+        # Predict probabilities
+        original_probs = self._model_predict_proba(model, original_row)
+        modified_probs = self._model_predict_proba(model, modified_row)
+
+        # For binary: use class-1 probability; for multiclass: use max probability
+        if original_probs.shape[1] == 2:
+            original_prob = float(original_probs[0, 1])
+            new_prob = float(modified_probs[0, 1])
+        else:
+            original_prob = float(np.max(original_probs[0]))
+            new_prob = float(np.max(modified_probs[0]))
+
+        shift = new_prob - original_prob
+
+        if abs(shift) < 1e-6:
+            direction = "no_change"
+        elif shift > 0:
+            direction = "increased_risk"
+        else:
+            direction = "decreased_risk"
+
+        return WhatIfResponse(
+            feature_name=feature_name,
+            original_value=round(float(original_clinical), 4),
+            new_value=round(new_value, 4),
+            original_prob=round(original_prob, 4),
+            new_prob=round(new_prob, 4),
+            shift=round(shift, 4),
+            direction=direction,
+        )
+
+    # ------------------------------------------------------------------
+    # Sample patients for dropdown picker
+    # ------------------------------------------------------------------
+    def sample_patients(
+        self,
+        model_id: str,
+        model: Any,
+        X_test: np.ndarray,
+    ) -> SamplePatientsResponse:
+        """Return up to 3 representative patients (low/medium/high risk)."""
+        n = len(X_test)
+        if n == 0:
+            return SamplePatientsResponse(model_id=model_id, patients=[])
+
+        probs = self._model_predict_proba(model, X_test)
+        # Use class-1 probability for binary; max probability otherwise
+        if probs.shape[1] == 2:
+            scores = probs[:, 1]
+        else:
+            scores = np.max(probs, axis=1)
+
+        sorted_indices = np.argsort(scores)
+
+        picks: list[tuple[int, str]] = []
+
+        # Low risk: lowest probability patient
+        low_idx = int(sorted_indices[0])
+        picks.append((low_idx, "low"))
+
+        if n >= 2:
+            # High risk: highest probability patient
+            high_idx = int(sorted_indices[-1])
+            picks.append((high_idx, "high"))
+
+        if n >= 3:
+            # Medium risk: patient closest to 0.5
+            diffs = np.abs(scores - 0.5)
+            med_idx = int(np.argmin(diffs))
+            # Avoid duplicating low or high pick
+            if med_idx in (low_idx, high_idx):
+                # Fall back to the median-ranked patient
+                med_idx = int(sorted_indices[n // 2])
+            picks.append((med_idx, "medium"))
+
+        patients: list[SamplePatient] = []
+        for idx, level in picks:
+            prob = float(scores[idx])
+            label = level.capitalize()
+            patients.append(SamplePatient(
+                index=idx,
+                risk_level=level,
+                probability=round(prob, 4),
+                summary=f"Patient #{idx} — {label} Risk ({prob:.0%})",
+            ))
+
+        # Sort by risk level order: low, medium, high
+        order = {"low": 0, "medium": 1, "high": 2}
+        patients.sort(key=lambda p: order[p.risk_level])
+
+        return SamplePatientsResponse(model_id=model_id, patients=patients)
