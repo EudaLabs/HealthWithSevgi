@@ -8,6 +8,7 @@ export type UploadErrorType =
   | 'no_numeric_columns'
   | 'empty_file'
   | 'target_not_found'
+  | 'dataset_unavailable'
 
 interface Props {
   errorType: UploadErrorType
@@ -49,6 +50,11 @@ const ERROR_CONFIG: Record<UploadErrorType, {
     title: 'Target column not found',
     description: 'The expected target column was not found in your dataset.',
     detail: 'Upload your CSV and use the Column Mapper to select the correct target column.',
+  },
+  dataset_unavailable: {
+    title: 'Dataset not available',
+    description: 'The default dataset for this clinical domain has not been downloaded yet.',
+    detail: 'Upload your own CSV file, or ask your administrator to populate the data cache for this specialty.',
   },
 }
 

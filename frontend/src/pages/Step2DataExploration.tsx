@@ -83,7 +83,9 @@ export default function Step2DataExploration({
           setUploadError('dataset_too_small')
         } else if (msg.toLowerCase().includes('numeric')) {
           setUploadError('no_numeric_columns')
-        } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('target column')) {
+        } else if (msg.toLowerCase().includes('unavailable') || msg.toLowerCase().includes('data_cache')) {
+          setUploadError('dataset_unavailable')
+        } else if (msg.toLowerCase().includes('target column')) {
           setUploadError('target_not_found')
         } else if (msg.toLowerCase().includes('parse') || msg.toLowerCase().includes('empty') || msg.toLowerCase().includes('no columns')) {
           setUploadError('empty_file')
