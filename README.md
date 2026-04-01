@@ -194,7 +194,12 @@ HealthWithSevgi/
 |   |   |   +-- WizardProgress.tsx    # Step progress tracker
 |   |   |   +-- SpecialtySelector.tsx # 20-specialty grid
 |   |   |   +-- ColumnMapperModal.tsx # Target column confirmation
-|   |   |   +-- charts/              # ROC, PR-curve, confusion matrix
+|   |   |   +-- ErrorModal.tsx       # Error display modal
+|   |   |   +-- charts/              # Visualization components
+|   |   |       +-- ConfusionMatrixChart.tsx  # 2x2 confusion matrix
+|   |   |       +-- KNNScatterCanvas.tsx     # KNN decision boundary
+|   |   |       +-- PRCurveChart.tsx         # Precision-Recall curve
+|   |   |       +-- ROCCurveChart.tsx        # ROC curve with AUC badge
 |   |   +-- api/                      # API client layer
 |   |   |   +-- client.ts            # Axios instance + interceptors
 |   |   |   +-- specialties.ts       # Specialty endpoints
@@ -202,7 +207,7 @@ HealthWithSevgi/
 |   |   |   +-- ml.ts                # Train + Compare endpoints
 |   |   |   +-- explain.ts           # Explainability + Ethics + Certificate
 |   |   +-- types/index.ts           # Shared TypeScript interfaces
-|   |   +-- styles/                   # Global CSS + theme variables
+|   |   +-- styles/globals.css        # Global CSS + theme variables
 |   |   +-- App.tsx                   # Main wizard state manager
 |   |   +-- main.tsx                  # Application entry point
 |   +-- package.json
@@ -223,47 +228,104 @@ HealthWithSevgi/
 |   |   |   +-- certificate_service.py # PDF certificate generation
 |   |   |   +-- specialty_registry.py # 20 specialty definitions + datasets
 |   |   +-- models/
-|   |       +-- schemas.py            # Data exploration/preparation DTOs
-|   |       +-- ml_schemas.py         # Training/evaluation DTOs
-|   |       +-- explain_schemas.py    # Explainability/ethics DTOs
-|   +-- datasets/                     # Built-in clinical CSV files
-|   +-- tests/                        # pytest test suite
+|   |   |   +-- schemas.py            # Data exploration/preparation DTOs
+|   |   |   +-- ml_schemas.py         # Training/evaluation DTOs
+|   |   |   +-- explain_schemas.py    # Explainability/ethics DTOs
+|   |   +-- utils/                    # Utility modules
+|   +-- data_cache/                   # Cached clinical CSV datasets
+|   +-- datasets/                     # Additional dataset storage
+|   +-- tests/                        # pytest test suite (178 tests)
 |   |   +-- conftest.py              # Shared fixtures
 |   |   +-- test_step1_clinical_context.py
 |   |   +-- test_step2_data_exploration.py
 |   |   +-- test_step3_data_preparation.py
+|   |   +-- test_step6_explainability.py
+|   |   +-- test_step7_ethics.py
+|   |   +-- test_certificate.py
+|   +-- pytest.ini
 |   +-- requirements.txt
 |
-+-- hf-space/
-|   +-- main_hf.py                    # HuggingFace Spaces entrypoint (API + SPA)
++-- hf-space/                         # HuggingFace Spaces deployment
+|   +-- main_hf.py                    # Combined API + SPA entrypoint
+|   +-- Dockerfile                    # HF-specific Docker build
+|   +-- README.md                     # HF Space metadata
 |
 +-- docs/                             # Documentation & design specs
-|   +-- ML_Tool_User_Guide.md
-|   +-- Sprint_1_Assignment.md
+|   +-- ML_Tool_User_Guide.md         # Course user manual
+|   +-- Sprint_1_Assignment.md        # Sprint 1 requirements
 |   +-- Clinical_Specialties_Dataset_Collection.pdf
+|   +-- diagrams/                     # C4 architecture + toolchain PDFs
+|   +-- drawio/                       # Editable draw.io source files
+|   +-- mermaid/                      # C4 architecture (Mermaid source)
+|   +-- iso42001/                     # ISO 42001 AI governance report
+|   +-- seng430-sprints/              # Sprint requirements from instructor
+|   +-- qa/                           # QA test reports (PDF)
+|   +-- reports/                      # Progress reports + screenshots
+|
++-- jira/                             # Jira backlog documentation
+|   +-- JIRA.md                       # Product backlog report
+|   +-- SPRINT_1_TASK_BOARD.md        # Sprint 1 task breakdown
+|
++-- local/                            # Local-only extensions
+|   +-- model-arena/                  # Model Arena comparison feature
+|       +-- arena/                    # Backend (router, service, schemas)
+|       +-- frontend/                 # Frontend (ArenaPage, charts, hooks)
 |
 +-- .github/
-|   +-- pull_request_template.md
+|   +-- pull_request_template.md      # PR template linked to Jira
+|   +-- workflows/deploy-hf.yml      # Auto-deploy to HuggingFace on release
 |
 +-- Dockerfile                        # Multi-stage build (Node + Python)
-+-- docker-compose.yml
++-- docker-compose.yml                # Local development orchestration
++-- .dockerignore
++-- .gitignore
++-- CLAUDE.md                         # AI coding assistant context
 +-- SETUP.md                          # Local development setup guide
 +-- README.md
 ```
 
 ---
 
-## Quick Start
+## Live Demo & Docker
 
-### Quick Start (Docker — single command)
+### 🌐 Live Demo
 
-> **Prerequisite:** [Docker](https://docs.docker.com/get-docker/) must be installed.
+The application is deployed on HuggingFace Spaces — no installation required:
+
+**➡️ [huggingface.co/spaces/0xBatuhan4/HealthWithSevgi](https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi)**
+
+### 🐳 Docker (single command)
+
+Pull and run the pre-built container image from GitHub Container Registry:
 
 ```bash
-git clone https://github.com/EudaLabs/HealthWithSevgi.git && cd HealthWithSevgi && docker build -t healthwithsevgi . && docker run -p 7860:7860 healthwithsevgi
+docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest
 ```
 
 Open **http://localhost:7860** — that's it.
+
+Alternatively, build from source:
+
+```bash
+git clone https://github.com/EudaLabs/HealthWithSevgi.git
+cd HealthWithSevgi
+docker build -t healthwithsevgi .
+docker run -p 7860:7860 healthwithsevgi
+```
+
+### Docker Compose (local development)
+
+```bash
+git clone https://github.com/EudaLabs/HealthWithSevgi.git
+cd HealthWithSevgi
+docker-compose up --build
+```
+
+This starts both the backend API and frontend dev server with hot-reload.
+
+---
+
+## Quick Start
 
 ### Prerequisites (for local development)
 
@@ -377,7 +439,7 @@ All endpoints are prefixed with `/api`. Full interactive documentation is availa
 
 ## Testing
 
-The project includes a pytest suite covering Steps 1-3 of the pipeline.
+The project includes a comprehensive pytest suite covering all 7 steps of the pipeline — **178 tests** across 6 test files.
 
 ```bash
 cd backend
@@ -399,6 +461,11 @@ pytest -v -m slow
 | `test_step1_clinical_context.py` | Specialty registry | All 20 specialties present, required fields non-empty, clinical context > 50 chars, 404 handling |
 | `test_step2_data_exploration.py` | Data exploration | CSV upload validation, missing value detection, class distribution, imbalance warnings |
 | `test_step3_data_preparation.py` | Preprocessing | Missing strategies (median/mode/drop), normalization, train/test split, SMOTE, data leakage prevention |
+| `test_step6_explainability.py` | SHAP explanations | Global importance, patient explanation, What-If analysis, sample patient selection |
+| `test_step7_ethics.py` | Fairness audit | Ethics endpoint, case study severity, checklist toggle, bias detection thresholds |
+| `test_certificate.py` | PDF generation | Certificate content type, PDF magic bytes, checklist state persistence |
+
+**Total: 178 tests — all passing.**
 
 ---
 
