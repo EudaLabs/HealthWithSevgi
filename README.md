@@ -140,6 +140,8 @@ All models are trained with balanced class weights where supported. Optional hyp
 
 ## Architecture
 
+📐 **[Full Architecture Diagrams (Google Drive)](https://drive.google.com/drive/folders/1AkMxaaPLizfPlfJDjkP7YISSiOEiL9tV?usp=sharing)** — C4 model diagrams (System Context, Container, Component, Code levels), toolchain diagrams, and data flow sequences.
+
 ```
                           +---------------------+
                           |   Browser (React)   |
