@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
-from app.models.ml_schemas import MetricsResponse, ModelType
+from app.models.ml_schemas import KNNScatterData, MetricsResponse, ModelType
 
 
 class ArenaModelConfig(BaseModel):
@@ -31,6 +31,7 @@ class ArenaRun(BaseModel):
     metrics: MetricsResponse | None = None  # None for failed runs
     training_time_ms: float
     feature_names: list[str]
+    knn_scatter: KNNScatterData | None = None
     status: Literal["completed", "failed"] = "completed"
     error: str | None = None
 
