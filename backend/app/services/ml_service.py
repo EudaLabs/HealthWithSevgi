@@ -319,7 +319,7 @@ class MLService:
                         n_iter=20,
                         cv=StratifiedKFold(n_splits=3, shuffle=True, random_state=42),
                         scoring=scoring,
-                        n_jobs=-1,
+                        n_jobs=1,
                         random_state=42,
                         error_score=0.0,
                     )
@@ -430,7 +430,7 @@ class MLService:
         try:
             cv_scores = cross_val_score(
                 cv_pipe, X_cv, y_cv, cv=cv_splitter,
-                scoring=cv_scoring, n_jobs=-1, error_score=0.0,
+                scoring=cv_scoring, n_jobs=1, error_score=0.0,
             )
             metrics.cross_val_scores = cv_scores.tolist()
         except Exception as exc:
@@ -701,6 +701,7 @@ class MLService:
             if is_binary:
                 fpr, tpr, thresholds = roc_curve(y_true, y_prob[:, 1])
                 idx = np.linspace(0, len(fpr) - 1, min(200, len(fpr)), dtype=int)
+                thresholds = np.where(np.isinf(thresholds), 1.0, thresholds)
                 return [
                     ROCPoint(fpr=round(float(fpr[i]), 4), tpr=round(float(tpr[i]), 4),
                              threshold=round(float(thresholds[min(i, len(thresholds)-1)]), 4))
@@ -714,6 +715,7 @@ class MLService:
                     fpr_micro, tpr_micro, thresholds = roc_curve(
                         y_bin.ravel(), y_prob[:, :len(classes)].ravel()
                     )
+                    thresholds = np.where(np.isinf(thresholds), 1.0, thresholds)
                     idx = np.linspace(0, len(fpr_micro) - 1, min(200, len(fpr_micro)), dtype=int)
                     return [
                         ROCPoint(fpr=round(float(fpr_micro[i]), 4), tpr=round(float(tpr_micro[i]), 4),
