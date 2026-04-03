@@ -25,42 +25,58 @@ logger = logging.getLogger(__name__)
 EU_AI_ACT_ITEMS = [
     {
         "id": "explainability",
-        "text": "Model outputs include explanations (completed in Step 6)",
+        "text": "Model Explainability",
+        "description": "Model outputs include explanations so clinicians can understand why a prediction was made. Completed automatically via SHAP analysis in Step 6.",
+        "article": "Art. 13",
         "pre_checked": True,
     },
     {
         "id": "data_source",
-        "text": "Training data source is documented (shown in Step 2)",
+        "text": "Data Transparency",
+        "description": "Training data source, size, and feature set are documented and reviewable. Completed automatically — dataset details shown in Step 2.",
+        "article": "Art. 10",
         "pre_checked": True,
     },
     {
         "id": "bias_audit",
-        "text": "Subgroup bias audit completed",
+        "text": "Subgroup Bias Audit",
+        "description": "Model performance has been evaluated across demographic subgroups (gender, age) to identify disparities in accuracy or sensitivity.",
+        "article": "Art. 10(2f)",
         "pre_checked": False,
     },
     {
         "id": "human_oversight",
-        "text": "Human oversight plan defined — a clinician will review all AI predictions",
+        "text": "Human Oversight Plan",
+        "description": "A qualified clinician will review all AI-generated predictions before any clinical action is taken. The AI serves as a decision-support tool, not a replacement.",
+        "article": "Art. 14",
         "pre_checked": False,
     },
     {
         "id": "gdpr",
-        "text": "Patient data privacy protected (GDPR)",
+        "text": "Patient Data Privacy (GDPR)",
+        "description": "Patient data is processed locally within this session. No personal health data is transmitted to external servers or stored permanently.",
+        "article": "Art. 10(5)",
         "pre_checked": False,
     },
     {
         "id": "monitoring",
-        "text": "Plan in place to monitor model performance over time",
+        "text": "Post-Deployment Monitoring",
+        "description": "A plan exists to continuously monitor model performance (accuracy drift, data distribution shift) after deployment and retrain when metrics degrade.",
+        "article": "Art. 72",
         "pre_checked": False,
     },
     {
         "id": "incident_reporting",
-        "text": "Pathway defined for reporting AI-related incidents",
+        "text": "Incident Reporting Pathway",
+        "description": "A clear process is defined for reporting AI-related adverse events, including who to notify, escalation steps, and documentation requirements.",
+        "article": "Art. 73",
         "pre_checked": False,
     },
     {
         "id": "clinical_validation",
-        "text": "Clinical validation completed before any real-world use",
+        "text": "Clinical Validation",
+        "description": "The model has been validated on an independent clinical dataset by domain experts before any real-world patient-facing use.",
+        "article": "Art. 9",
         "pre_checked": False,
     },
 ]
@@ -288,12 +304,27 @@ class EthicsService:
         spec = self._macro_specificity(cm)
         gap = overall_sensitivity - sens
 
-        if sens < 0.5 or gap > 0.2:
+        reasons: list[str] = []
+        if sens < 0.5:
+            reasons.append(f"Sensitivity ({sens*100:.1f}%) is below the 50% clinical minimum")
+        if gap > 0.2:
+            reasons.append(f"Sensitivity gap ({gap*100:.1f}pp) exceeds the 20pp action threshold vs. overall ({overall_sensitivity*100:.1f}%)")
+        if reasons:
             status = "action_needed"
-        elif min(acc, sens, spec, prec, f1) < 0.65 or gap > BIAS_SENSITIVITY_GAP_THRESHOLD:
-            status = "review"
         else:
-            status = "acceptable"
+            if gap > BIAS_SENSITIVITY_GAP_THRESHOLD:
+                reasons.append(f"Sensitivity gap ({gap*100:.1f}pp) exceeds the 10pp review threshold vs. overall ({overall_sensitivity*100:.1f}%)")
+            low_metric = min(acc, sens, spec, prec, f1)
+            if low_metric < 0.65:
+                metric_name = ["Accuracy", "Sensitivity", "Specificity", "Precision", "F1"][
+                    [acc, sens, spec, prec, f1].index(low_metric)
+                ]
+                reasons.append(f"{metric_name} ({low_metric*100:.1f}%) is below the 65% quality threshold")
+            if reasons:
+                status = "review"
+            else:
+                status = "acceptable"
+                reasons.append("All metrics meet clinical thresholds")
 
         return SubgroupMetrics(
             group_name=group_name,
@@ -305,6 +336,7 @@ class EthicsService:
             precision=round(prec, 4),
             f1_score=round(f1, 4),
             status=status,
+            status_reason="; ".join(reasons),
         )
 
     def _macro_specificity(self, cm: np.ndarray) -> float:
