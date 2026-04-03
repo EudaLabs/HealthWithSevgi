@@ -510,7 +510,12 @@ class DataService:
             "https://raw.githubusercontent.com/04-aditya/Stroke-Prediction-using-R/main/healthcare-dataset-stroke-data.csv",
         )
         if "stroke" not in df.columns:
-            raise DatasetUnavailableError("cardiology_stroke", "Missing required column 'stroke'")
+            raise DatasetUnavailableError(
+                "cardiology_stroke",
+                "Missing required column 'stroke'. "
+                "This dataset has no formal open license and cannot be bundled. "
+                "It will be downloaded at runtime for educational use only.",
+            )
         if "id" in df.columns:
             df = df.drop(columns=["id"])
         cat_encodings: dict[str, dict] = {
@@ -530,7 +535,12 @@ class DataService:
         df["stroke"] = pd.to_numeric(df["stroke"], errors="coerce")
         df = df.dropna(subset=["stroke"])
         if len(df) < 100:
-            raise DatasetUnavailableError("cardiology_stroke", f"Dataset too small ({len(df)} rows)")
+            raise DatasetUnavailableError(
+                "cardiology_stroke",
+                f"Dataset too small ({len(df)} rows). "
+                "This dataset has no formal open license and cannot be bundled. "
+                "It will be downloaded at runtime for educational use only.",
+            )
         return df
 
     def _mental_health(self) -> pd.DataFrame:
@@ -664,7 +674,12 @@ class DataService:
         if "gender" in df.columns and df["gender"].dtype == object:
             df["gender"] = (df["gender"] == "Male").astype(int)
         if "anemia_type" not in df.columns:
-            raise DatasetUnavailableError("haematology_anaemia", "Missing required column 'anemia_type'")
+            raise DatasetUnavailableError(
+                "haematology_anaemia",
+                "Missing required column 'anemia_type'. "
+                "This dataset has an unknown license and cannot be bundled. "
+                "It will be downloaded at runtime for educational use only.",
+            )
         return df
 
     def _dermatology(self) -> pd.DataFrame:
