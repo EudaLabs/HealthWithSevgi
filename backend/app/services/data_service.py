@@ -505,10 +505,18 @@ class DataService:
         return df
 
     def _stroke(self) -> pd.DataFrame:
-        df = self._fetch_cached(
-            "cardiology_stroke",
-            "https://raw.githubusercontent.com/04-aditya/Stroke-Prediction-using-R/main/healthcare-dataset-stroke-data.csv",
-        )
+        try:
+            df = self._fetch_cached(
+                "cardiology_stroke",
+                "https://raw.githubusercontent.com/04-aditya/Stroke-Prediction-using-R/main/healthcare-dataset-stroke-data.csv",
+            )
+        except DatasetUnavailableError:
+            raise DatasetUnavailableError(
+                "cardiology_stroke",
+                "This dataset has no formal open license and cannot be bundled. "
+                "It must be downloaded at runtime for educational use only, "
+                "but the download failed. Check your network connection.",
+            )
         if "stroke" not in df.columns:
             raise DatasetUnavailableError(
                 "cardiology_stroke",
@@ -661,10 +669,18 @@ class DataService:
         return df
 
     def _anaemia(self) -> pd.DataFrame:
-        df = self._fetch_cached(
-            "haematology_anaemia",
-            "https://raw.githubusercontent.com/maladeep/anemia-detection-with-machine-learning/master/anemia%20data%20from%20Kaggle.csv",
-        )
+        try:
+            df = self._fetch_cached(
+                "haematology_anaemia",
+                "https://raw.githubusercontent.com/maladeep/anemia-detection-with-machine-learning/master/anemia%20data%20from%20Kaggle.csv",
+            )
+        except DatasetUnavailableError:
+            raise DatasetUnavailableError(
+                "haematology_anaemia",
+                "This dataset has an unknown license and cannot be bundled. "
+                "It must be downloaded at runtime for educational use only, "
+                "but the download failed. Check your network connection.",
+            )
         rename_map = {
             "Gender": "gender", "Hemoglobin": "haemoglobin",
             "MCH": "mch", "MCHC": "mchc", "MCV": "mcv",
