@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { ChevronDown, ChevronUp, Download, Shield } from 'lucide-react'
+import Markdown from 'react-markdown'
+import { BookOpen, Brain, ChevronDown, ChevronUp, ClipboardCheck, Download, Shield, X } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
-import { fetchEthics, updateChecklist, downloadCertificate } from '../api/explain'
+import { fetchEthics, fetchInsights, updateChecklist, downloadCertificate } from '../api/explain'
+import type { InsightResponse, CaseStudyData } from '../api/explain'
 import type { EthicsResponse, Specialty, TrainResponse } from '../types'
 
 function pct(v: number) { return `${(v * 100).toFixed(1)}%` }
@@ -35,11 +37,15 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
   const [ethics, setEthics] = useState<EthicsResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [expandedStudy, setExpandedStudy] = useState<string | null>(null)
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>({})
   const [clinicianName, setClinicianName] = useState('')
   const [institution, setInstitution] = useState('')
   const [certLoading, setCertLoading] = useState(false)
+  const [showChecklist, setShowChecklist] = useState(false)
+  const [showCaseStudies, setShowCaseStudies] = useState(false)
+  const [expandedStudy, setExpandedStudy] = useState<string | null>(null)
+  const [insights, setInsights] = useState<InsightResponse | null>(null)
+  const [insightsLoading, setInsightsLoading] = useState(false)
 
   useEffect(() => {
     if (!trainResponse) return
@@ -48,6 +54,13 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
       .then(setEthics)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
+
+    // Fetch LLM insights in parallel (non-blocking)
+    setInsightsLoading(true)
+    fetchInsights(trainResponse.model_id)
+      .then(setInsights)
+      .catch(() => {}) // silent — insights are optional
+      .finally(() => setInsightsLoading(false))
   }, [trainResponse?.model_id])
 
   const handleChecklistToggle = async (itemId: string, checked: boolean) => {
@@ -145,12 +158,58 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
             )
           }
 
+          {/* AI Clinical Insight */}
+          {insightsLoading && (
+            <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{
+                width: 18, height: 18, border: '2px solid var(--primary)', borderTopColor: 'transparent',
+                borderRadius: '50%', animation: 'spin 0.8s linear infinite',
+              }} />
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Generating AI clinical assessment...</span>
+            </div>
+          )}
+          {insights?.ethics_insight?.text && !insightsLoading && (
+            <div className="card ai-insight-card" style={{ borderLeft: '4px solid var(--primary)', padding: 0, overflow: 'hidden' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                padding: '0.75rem 1.25rem',
+                background: 'var(--primary-light)', borderBottom: '1px solid var(--border)',
+              }}>
+                <Brain size={16} color="var(--primary)" />
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  AI Clinical Assessment
+                </span>
+                <span style={{
+                  fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)',
+                  background: 'var(--surface)', padding: '0.1rem 0.4rem', borderRadius: 4, marginLeft: 'auto',
+                }}>
+                  {insights.ethics_insight.source === 'medgemma' ? 'MedGemma' : 'Gemini 2.5 Flash'}
+                </span>
+              </div>
+              <div className="ai-insight-content" style={{ padding: '1rem 1.25rem' }}>
+                <Markdown>{insights.ethics_insight.text}</Markdown>
+              </div>
+            </div>
+          )}
+
           {/* Subgroup Performance Table */}
           <div className="card">
             <div className="card-title">Subgroup Performance Table</div>
-            <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
-              Overall sensitivity: <strong>{pct(ethics.overall_sensitivity)}</strong> — colour coding indicates performance relative to clinical thresholds.
+            <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
+              Overall sensitivity: <strong>{pct(ethics.overall_sensitivity)}</strong>
             </div>
+
+            {/* Threshold legend */}
+            <div style={{
+              display: 'flex', gap: '1.25rem', flexWrap: 'wrap',
+              padding: '0.6rem 0.85rem', background: 'var(--background)', borderRadius: 6,
+              fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '1rem',
+            }}>
+              <span><span style={{ color: 'var(--success)', fontWeight: 700 }}>✓ OK</span> — all metrics above 65%, sensitivity gap &le; 10pp</span>
+              <span><span style={{ color: '#b36800', fontWeight: 700 }}>⚠ Review</span> — any metric below 65% or sensitivity gap &gt; 10pp</span>
+              <span><span style={{ color: 'var(--danger)', fontWeight: 700 }}>✗ Action Needed</span> — sensitivity below 50% or gap &gt; 20pp</span>
+            </div>
+
             <div className="data-table-wrapper">
               <table className="data-table">
                 <thead>
@@ -176,13 +235,20 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                       {metricCell(sm.precision)}
                       {metricCell(sm.f1_score)}
                       <td>
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
-                          padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700,
-                          color: statusColor(sm.status), background: statusBg(sm.status),
-                        }}>
-                          {sm.status === 'acceptable' ? '✓ OK' : sm.status === 'review' ? '⚠ Review' : '✗ Action Needed'}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                            padding: '0.15rem 0.5rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700,
+                            color: statusColor(sm.status), background: statusBg(sm.status),
+                          }}>
+                            {sm.status === 'acceptable' ? '✓ OK' : sm.status === 'review' ? '⚠ Review' : '✗ Action Needed'}
+                          </span>
+                          {sm.status !== 'acceptable' && sm.status_reason && (
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.3, maxWidth: 200 }}>
+                              {sm.status_reason}
+                            </span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -191,66 +257,8 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
             </div>
           </div>
 
-          {/* Two-column: EU AI Act + Training Data Representation */}
+          {/* Training Data Representation + Action Buttons row */}
           <div className="grid-2">
-            {/* EU AI Act Compliance */}
-            <div className="card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div>
-                  <div className="card-title">EU AI Act Compliance</div>
-                  <div className="card-subtitle">{checkedCount} / {ethics.eu_ai_act_items.length} items completed</div>
-                </div>
-                {checkedCount === ethics.eu_ai_act_items.length && (
-                  <span className="badge badge-success">All complete</span>
-                )}
-              </div>
-
-              {/* Progress bar */}
-              <div style={{ width: '100%', background: 'var(--border)', borderRadius: 4, height: 8, marginBottom: '1.25rem' }}>
-                <div style={{
-                  width: `${(checkedCount / ethics.eu_ai_act_items.length) * 100}%`,
-                  background: 'var(--success)', borderRadius: 4, height: '100%', transition: 'width 0.3s',
-                }} />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {ethics.eu_ai_act_items.map((item, idx) => {
-                  const isChecked = item.pre_checked || !!checklistState[item.id]
-                  return (
-                    <div key={item.id} style={{
-                      display: 'flex', gap: '0.875rem', padding: '0.75rem 0',
-                      borderBottom: '1px solid var(--border)', alignItems: 'flex-start',
-                    }}>
-                      <div style={{
-                        width: 22, height: 22, borderRadius: '50%', border: `2px solid ${isChecked ? 'var(--success)' : 'var(--border)'}`,
-                        background: isChecked ? 'var(--success)' : 'transparent',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0, marginTop: 1, fontSize: '0.7rem', color: 'white', fontWeight: 700,
-                      }}>
-                        {isChecked ? '✓' : <span style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>{idx + 1}</span>}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.875rem' }}>{item.text}</div>
-                        {item.pre_checked && (
-                          <span className="badge badge-success" style={{ marginTop: '0.25rem', fontSize: '0.7rem' }}>
-                            Auto-completed
-                          </span>
-                        )}
-                      </div>
-                      {!item.pre_checked && (
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={e => handleChecklistToggle(item.id, e.target.checked)}
-                          style={{ accentColor: 'var(--primary)', width: 16, height: 16, marginTop: 2, cursor: 'pointer' }}
-                        />
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
             {/* Training Data Representation */}
             <div className="card">
               <div className="card-title">Training Data Representation</div>
@@ -279,66 +287,45 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Real-World AI Failure Case Studies */}
-          <div className="card">
-            <div className="card-title">Real-World AI Failure Case Studies</div>
-            <div className="card-subtitle" style={{ marginBottom: '1.25rem' }}>
-              How AI tools have failed in clinical settings and what we can learn.
-            </div>
-            <div className="grid-3">
-              {ethics.case_studies.map(cs => {
-                const severityColor = cs.severity === 'failure' ? 'var(--danger)' : cs.severity === 'near_miss' ? '#b36800' : 'var(--success)'
-                const severityBg = cs.severity === 'failure' ? 'var(--danger-light)' : cs.severity === 'near_miss' ? 'var(--warning-light)' : 'var(--success-light)'
-                const severityBadge = cs.severity === 'failure' ? 'badge-danger' : cs.severity === 'near_miss' ? 'badge-warning' : 'badge-success'
-                const severityLabel = cs.severity === 'failure' ? 'Failure' : cs.severity === 'near_miss' ? 'Near-Miss' : 'Prevention'
-                return (
-                <div key={cs.id} style={{
-                  borderLeft: `4px solid ${severityColor}`, borderRadius: '0 8px 8px 0',
-                  padding: '1rem', background: 'var(--background)',
-                  display: 'flex', flexDirection: 'column', gap: '0.5rem',
+            {/* Quick-access buttons for static content */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="card-title">Resources &amp; Compliance</div>
+              <div className="card-subtitle">
+                Review regulatory compliance and learn from real-world AI failures in healthcare.
+              </div>
+
+              {/* EU AI Act button */}
+              <button
+                className="btn btn-outline btn-lg"
+                style={{ width: '100%', justifyContent: 'space-between', padding: '1rem 1.25rem' }}
+                onClick={() => setShowChecklist(true)}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <ClipboardCheck size={18} />
+                  EU AI Act Compliance
+                </span>
+                <span className="badge" style={{
+                  background: checkedCount === ethics.eu_ai_act_items.length ? 'var(--success-light)' : 'var(--background)',
+                  color: checkedCount === ethics.eu_ai_act_items.length ? 'var(--success)' : 'var(--text-secondary)',
+                  fontWeight: 700,
                 }}>
-                  <div>
-                    <div className="font-semibold" style={{ fontSize: '0.9rem', lineHeight: 1.3 }}>{cs.title}</div>
-                    <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
-                      <span className={`badge ${severityBadge}`}>{severityLabel}</span>
-                      <span className="badge badge-neutral">{cs.specialty}</span>
-                      <span className="badge badge-neutral">{cs.year}</span>
-                    </div>
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: 1 }}>
-                    {cs.what_happened.length > 120 ? cs.what_happened.slice(0, 120) + '…' : cs.what_happened}
-                  </div>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    style={{ alignSelf: 'flex-start', padding: '0.2rem 0', fontSize: '0.78rem', color: severityColor, fontWeight: 700 }}
-                    onClick={() => setExpandedStudy(expandedStudy === cs.id ? null : cs.id)}
-                  >
-                    {expandedStudy === cs.id ? (
-                      <><ChevronUp size={14} /> HIDE DETAILS</>
-                    ) : (
-                      <><ChevronDown size={14} /> FULL DETAILS</>
-                    )}
-                  </button>
-                  {expandedStudy === cs.id && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
-                      <div>
-                        <div className="text-xs font-semibold" style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>What Happened</div>
-                        <div style={{ fontSize: '0.875rem' }}>{cs.what_happened}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold" style={{ color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Impact</div>
-                        <div style={{ fontSize: '0.875rem' }}>{cs.impact}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold" style={{ color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Lesson Learned</div>
-                        <div style={{ fontSize: '0.875rem' }}>{cs.lesson}</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )})}
+                  {checkedCount}/{ethics.eu_ai_act_items.length}
+                </span>
+              </button>
+
+              {/* Case Studies button */}
+              <button
+                className="btn btn-outline btn-lg"
+                style={{ width: '100%', justifyContent: 'space-between', padding: '1rem 1.25rem' }}
+                onClick={() => setShowCaseStudies(true)}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <BookOpen size={18} />
+                  AI Failure Case Studies
+                </span>
+                <span className="badge badge-neutral">{ethics.case_studies.length} cases</span>
+              </button>
             </div>
           </div>
 
@@ -387,6 +374,186 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
           </div>
         </>
       )}
+
+      {/* ── EU AI Act Checklist Modal ── */}
+      {showChecklist && ethics && (
+        <div className="modal-overlay" onClick={() => setShowChecklist(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 620 }}>
+            <div className="modal-header">
+              <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ClipboardCheck size={18} color="var(--primary)" />
+                EU AI Act Compliance Checklist
+              </div>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowChecklist(false)} style={{ padding: '0.25rem' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body">
+              {/* Summary bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '0.75rem 1rem', background: 'var(--background)', borderRadius: 8, marginBottom: '1.25rem',
+              }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                  {checkedCount} of {ethics.eu_ai_act_items.length} requirements met
+                </span>
+                <div style={{ width: 120, background: 'var(--border)', borderRadius: 4, height: 8 }}>
+                  <div style={{
+                    width: `${(checkedCount / ethics.eu_ai_act_items.length) * 100}%`,
+                    background: checkedCount === ethics.eu_ai_act_items.length ? 'var(--success)' : 'var(--primary)',
+                    borderRadius: 4, height: '100%', transition: 'width 0.3s',
+                  }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {ethics.eu_ai_act_items.map((item) => {
+                  const isChecked = item.pre_checked || !!checklistState[item.id]
+                  return (
+                    <div key={item.id} style={{
+                      display: 'flex', gap: '0.875rem',
+                      padding: '0.875rem 1rem', borderRadius: 8,
+                      background: isChecked ? 'var(--success-light)' : 'var(--background)',
+                      border: `1px solid ${isChecked ? 'var(--success)' : 'var(--border)'}`,
+                      alignItems: 'flex-start', transition: 'all 0.2s',
+                    }}>
+                      {item.pre_checked ? (
+                        <div style={{
+                          width: 22, height: 22, borderRadius: '50%', background: 'var(--success)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0, marginTop: 1, fontSize: '0.7rem', color: 'white', fontWeight: 700,
+                        }}>✓</div>
+                      ) : (
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={e => handleChecklistToggle(item.id, e.target.checked)}
+                          style={{ accentColor: 'var(--primary)', width: 18, height: 18, marginTop: 3, cursor: 'pointer', flexShrink: 0 }}
+                        />
+                      )}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{item.text}</span>
+                          {item.article && (
+                            <span style={{
+                              fontSize: '0.65rem', fontWeight: 700, color: 'var(--primary)',
+                              background: 'var(--primary-light)', padding: '0.1rem 0.4rem', borderRadius: 4,
+                            }}>{item.article}</span>
+                          )}
+                          {item.pre_checked && (
+                            <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Auto</span>
+                          )}
+                        </div>
+                        {item.description && (
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                            {item.description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Case Studies Modal ── */}
+      {showCaseStudies && ethics && (() => {
+        // Use LLM-generated case studies if available, otherwise fall back to static
+        const llmCases = insights?.case_studies?.case_studies
+        const hasLlmCases = llmCases && llmCases.length > 0
+        const displayCases: CaseStudyData[] = hasLlmCases
+          ? llmCases
+          : ethics.case_studies.map(cs => ({
+              title: cs.title,
+              specialty: cs.specialty,
+              year: cs.year,
+              severity: cs.severity,
+              what_happened: cs.what_happened,
+              impact: cs.impact,
+              lesson: cs.lesson,
+            }))
+
+        return (
+        <div className="modal-overlay" onClick={() => setShowCaseStudies(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 700 }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <BookOpen size={18} color="var(--primary)" />
+                <span className="modal-title">AI Failure Case Studies</span>
+                {hasLlmCases && (
+                  <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-light)', padding: '0.1rem 0.4rem', borderRadius: 4 }}>
+                    AI-Generated
+                  </span>
+                )}
+              </div>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowCaseStudies(false)} style={{ padding: '0.25rem' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+                {hasLlmCases
+                  ? 'Case studies generated by AI based on your model\'s specific weaknesses and clinical domain.'
+                  : 'How AI tools have failed in clinical settings and what we can learn.'}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {displayCases.map((cs, idx) => {
+                  const key = `cs-${idx}`
+                  const severityColor = cs.severity === 'failure' ? 'var(--danger)' : cs.severity === 'near_miss' ? '#b36800' : 'var(--success)'
+                  const severityBadge = cs.severity === 'failure' ? 'badge-danger' : cs.severity === 'near_miss' ? 'badge-warning' : 'badge-success'
+                  const severityLabel = cs.severity === 'failure' ? 'Failure' : cs.severity === 'near_miss' ? 'Near-Miss' : 'Prevention'
+                  return (
+                    <div key={key} style={{
+                      borderLeft: `4px solid ${severityColor}`, borderRadius: '0 8px 8px 0',
+                      padding: '1rem', background: 'var(--background)',
+                      display: 'flex', flexDirection: 'column', gap: '0.5rem',
+                    }}>
+                      <div>
+                        <div className="font-semibold" style={{ fontSize: '0.9rem', lineHeight: 1.3 }}>{cs.title}</div>
+                        <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+                          <span className={`badge ${severityBadge}`}>{severityLabel}</span>
+                          <span className="badge badge-neutral">{cs.specialty}</span>
+                          <span className="badge badge-neutral">{cs.year}</span>
+                        </div>
+                      </div>
+                      <button
+                        className="btn btn-ghost btn-sm"
+                        style={{ alignSelf: 'flex-start', padding: '0.2rem 0', fontSize: '0.78rem', color: severityColor, fontWeight: 700 }}
+                        onClick={() => setExpandedStudy(expandedStudy === key ? null : key)}
+                      >
+                        {expandedStudy === key ? (
+                          <><ChevronUp size={14} /> HIDE DETAILS</>
+                        ) : (
+                          <><ChevronDown size={14} /> VIEW DETAILS</>
+                        )}
+                      </button>
+                      {expandedStudy === key && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
+                          <div>
+                            <div className="text-xs font-semibold" style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>What Happened</div>
+                            <div style={{ fontSize: '0.875rem' }}>{cs.what_happened}</div>
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold" style={{ color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Impact</div>
+                            <div style={{ fontSize: '0.875rem' }}>{cs.impact}</div>
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold" style={{ color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>Lesson Learned</div>
+                            <div style={{ fontSize: '0.875rem' }}>{cs.lesson}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>)
+      })()}
     </div>
   )
 }
