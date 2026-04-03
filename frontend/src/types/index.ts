@@ -183,6 +183,7 @@ export interface SubgroupMetrics {
   precision: number
   f1_score: number
   status: 'acceptable' | 'review' | 'action_needed'
+  status_reason: string
 }
 
 export interface BiasWarning {
@@ -205,6 +206,8 @@ export interface EthicsResponse {
   eu_ai_act_items: {
     id: string
     text: string
+    description?: string
+    article?: string
     pre_checked: boolean
     checked?: boolean
   }[]
