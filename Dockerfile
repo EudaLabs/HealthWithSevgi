@@ -5,6 +5,7 @@ WORKDIR /frontend
 COPY frontend/package.json frontend/pnpm-lock.yaml* ./
 RUN npm i -g pnpm && pnpm install --frozen-lockfile || pnpm install
 COPY frontend/ .
+COPY local/model-arena/frontend/ /local/model-arena/frontend/
 RUN pnpm build
 
 # ── Stage 2: Install Python deps ─────────────────────────────
@@ -27,6 +28,8 @@ COPY --from=py-builder /build/deps /usr/local/lib/python3.12/site-packages
 # Backend source
 COPY backend/app ./app
 COPY backend/datasets ./datasets
+COPY backend/data_cache ./data_cache
+COPY local/model-arena/arena ./arena
 
 # HF entrypoint
 COPY hf-space/main_hf.py .

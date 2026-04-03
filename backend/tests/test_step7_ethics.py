@@ -42,10 +42,13 @@ class TestEthicsEndpoint:
             assert "severity" in cs, f"Case study '{cs.get('id')}' missing severity"
             assert cs["severity"] in ("failure", "near_miss", "prevention")
 
-    def test_eu_ai_act_checklist_has_eight_items(self, client, trained_model):
+    def test_eu_ai_act_checklist_has_nine_items(self, client, trained_model):
         r = client.get(f"/api/ethics/{trained_model['model_id']}")
         items = r.json()["eu_ai_act_items"]
-        assert len(items) == 8
+        assert len(items) == 9
+        data_lic = [i for i in items if i["id"] == "data_licensing"]
+        assert len(data_lic) == 1, "data_licensing item missing"
+        assert data_lic[0]["pre_checked"] is True
 
     def test_representation_warnings_field_present(self, client, trained_model):
         r = client.get(f"/api/ethics/{trained_model['model_id']}")
