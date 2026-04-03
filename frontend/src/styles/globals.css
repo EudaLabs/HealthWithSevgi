@@ -88,6 +88,8 @@ input, select, textarea { font-family: inherit; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover:not(:disabled) { background: #b92b09; }
 .btn-success { background: var(--success); color: #fff; }
+.btn-outline { background: transparent; color: var(--text-primary); border: 1.5px solid var(--border); }
+.btn-outline:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 .btn-lg { padding: 0.7rem 1.6rem; font-size: 1rem; }
 .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
 .btn-full { width: 100%; justify-content: center; }
@@ -1336,6 +1338,21 @@ input, select, textarea { font-family: inherit; }
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ---- AI Insight Card ---- */
+.ai-insight-content h2 {
+  font-size: 1rem; font-weight: 700; color: var(--text-primary);
+  margin: 1.25rem 0 0.4rem 0; padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+.ai-insight-content h2:first-child { margin-top: 0; }
+.ai-insight-content p { font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary); margin: 0.3rem 0; }
+.ai-insight-content ul, .ai-insight-content ol {
+  font-size: 0.875rem; line-height: 1.65; color: var(--text-secondary);
+  padding-left: 1.25rem; margin: 0.3rem 0;
+}
+.ai-insight-content li { margin-bottom: 0.25rem; }
+.ai-insight-content strong { color: var(--text-primary); font-weight: 700; }
 
 /* ---- Run List ---- */
 .arena-run-list {
