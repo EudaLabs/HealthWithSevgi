@@ -24,9 +24,15 @@ export const fetchWhatIf = (payload: {
 }): Promise<WhatIfResponse> =>
   api.post<WhatIfResponse>('/explain/what-if', payload).then((r) => r.data)
 
+export interface EuAiActEnrichedItem {
+  id: string
+  enriched_description: string
+}
+
 export interface InsightResponse {
   ethics_insight: { source: string; text: string }
   case_studies: { source: string; text: string; case_studies?: CaseStudyData[] }
+  eu_ai_act_insights?: { source: string; text: string; items?: EuAiActEnrichedItem[] }
 }
 
 export interface CaseStudyData {

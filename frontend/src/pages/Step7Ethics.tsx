@@ -444,11 +444,22 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                             <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Auto</span>
                           )}
                         </div>
-                        {item.description && (
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-                            {item.description}
-                          </div>
-                        )}
+                        {(() => {
+                          const enriched = insights?.eu_ai_act_insights?.items?.find(e => e.id === item.id)
+                          const desc = enriched?.enriched_description || item.description
+                          return desc ? (
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                              {desc}
+                              {enriched && (
+                                <span style={{
+                                  fontSize: '0.6rem', fontWeight: 600, color: 'var(--primary)',
+                                  background: 'var(--primary-light)', padding: '0.05rem 0.35rem',
+                                  borderRadius: 3, marginLeft: '0.4rem', verticalAlign: 'middle',
+                                }}>AI</span>
+                              )}
+                            </div>
+                          ) : null
+                        })()}
                       </div>
                     </div>
                   )
