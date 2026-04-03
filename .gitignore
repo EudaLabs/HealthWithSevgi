@@ -52,13 +52,21 @@ docs/media/*.png
 *.env
 .env.*
 !.env.example
+!backend/.env.example
 backend/.env
 secrets/
 *.key
 *.pem
+*.p12
+*.pfx
 service-account*.json
 *credentials*.json
 gcloud-*.json
+**/secret*
+!**/secret*.py
+**/token*.json
+.gcloud/
+application_default_credentials.json
 
 # ─── Data cache (auto-downloaded at runtime) ──────
 backend/data_cache/
