@@ -151,6 +151,8 @@ const ParallelCoordinatesChart: React.FC<ParallelCoordinatesChartProps> = ({
   onHover,
   onPin,
   pinnedIds = new Set<string>(),
+  onBrushChange,
+  resetBrushSignal,
   height = 420,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -360,29 +362,16 @@ const ParallelCoordinatesChart: React.FC<ParallelCoordinatesChartProps> = ({
       .attr('d', (d) => lineGenerator(d.values))
       .attr('fill', 'none')
       .attr('stroke', (d) => MODEL_COLORS[d.type] ?? '#888')
-      .attr('stroke-width', (d) => (pinnedIds.has(d.id) ? 2.5 : 2))
       .attr('stroke-linecap', 'round')
       .attr('stroke-linejoin', 'round')
-      .attr('opacity', (d) => {
-        if (!isRowBrushed(d.values)) return 0;
-        return pinnedIds.has(d.id) ? OPACITY_HIGHLIGHT : OPACITY_DEFAULT;
+      .style('stroke-width', (d) => (pinnedIds.has(d.id) ? 2.5 : 2))
+      .style('opacity', (d) => {
+        if (!isRowBrushed(d.values)) return '0';
+        return String(pinnedIds.has(d.id) ? OPACITY_HIGHLIGHT : OPACITY_DEFAULT);
       })
       .style('filter', (d) => (pinnedIds.has(d.id) ? 'url(#pc-glow)' : 'none'))
       .style('cursor', 'pointer')
       .style('pointer-events', 'stroke');
-
-    /* ---- invisible wider hit area for easier hover ---- */
-    const hitLines = linesGroup
-      .selectAll<SVGPathElement, (typeof rows)[number]>('.pc-line-hit')
-      .data(rows, (d) => d.id)
-      .enter()
-      .append('path')
-      .attr('class', 'pc-line-hit')
-      .attr('d', (d) => lineGenerator(d.values))
-      .attr('fill', 'none')
-      .attr('stroke', 'transparent')
-      .attr('stroke-width', 12)
-      .style('cursor', 'pointer');
 
     /* ---- tooltip helpers ---- */
     function showTooltip(event: MouseEvent, row: (typeof rows)[number]) {
@@ -427,15 +416,15 @@ const ParallelCoordinatesChart: React.FC<ParallelCoordinatesChartProps> = ({
         .transition()
         .duration(TRANSITION_MS)
         .ease(d3.easeQuadOut)
-        .attr('opacity', (d) => {
-          if (!isRowBrushed(d.values)) return 0;
-          if (d.id === row.id || pinnedIds.has(d.id)) return OPACITY_HIGHLIGHT;
-          return OPACITY_DIM;
+        .style('opacity', (d) => {
+          if (!isRowBrushed(d.values)) return '0';
+          if (d.id === row.id || pinnedIds.has(d.id)) return String(OPACITY_HIGHLIGHT);
+          return String(OPACITY_DIM);
         })
-        .attr('stroke-width', (d) => {
-          if (d.id === row.id) return 3;
-          if (pinnedIds.has(d.id)) return 2.5;
-          return 2;
+        .style('stroke-width', (d) => {
+          if (d.id === row.id) return '3';
+          if (pinnedIds.has(d.id)) return '2.5';
+          return '2';
         });
 
       onHover?.(row.id);
@@ -446,11 +435,11 @@ const ParallelCoordinatesChart: React.FC<ParallelCoordinatesChartProps> = ({
         .transition()
         .duration(TRANSITION_MS)
         .ease(d3.easeQuadOut)
-        .attr('opacity', (d) => {
-          if (!isRowBrushed(d.values)) return 0;
-          return pinnedIds.has(d.id) ? OPACITY_HIGHLIGHT : OPACITY_DEFAULT;
+        .style('opacity', (d) => {
+          if (!isRowBrushed(d.values)) return '0';
+          return String(pinnedIds.has(d.id) ? OPACITY_HIGHLIGHT : OPACITY_DEFAULT);
         })
-        .attr('stroke-width', (d) => (pinnedIds.has(d.id) ? 2.5 : 2));
+        .style('stroke-width', (d) => (pinnedIds.has(d.id) ? '2.5' : '2'));
 
       hideTooltip();
       onHover?.(null);
@@ -460,7 +449,7 @@ const ParallelCoordinatesChart: React.FC<ParallelCoordinatesChartProps> = ({
       onPin?.(row.id);
     }
 
-    hitLines
+    lines
       .on('mouseenter', function (event, d) {
         handleMouseEnter(event as MouseEvent, d);
         showTooltip(event as MouseEvent, d);
@@ -475,61 +464,72 @@ const ParallelCoordinatesChart: React.FC<ParallelCoordinatesChartProps> = ({
         handleClick(event as MouseEvent, d);
       });
 
-    /* ---- brush on numeric axes ---- */
-    const brushWidth = 24;
+    /* ---- brush on numeric axes (drawn on top layer so drag is never blocked) ---- */
+    const brushWidth = 30;
+    const brushLayer = g.append('g').attr('class', 'pc-brush-layer');
 
-    axisGroups
-      .filter((d) => d.type === 'numeric')
-      .each(function (axisDef) {
-        const axisG = d3.select(this);
+    AXES.filter((a) => a.type === 'numeric').forEach((axisDef) => {
+      const axisX = xScale(axisDef.key);
+      if (axisX === undefined) return;
 
-        const brush = d3
-          .brushY()
-          .extent([
-            [-brushWidth / 2, 0],
-            [brushWidth / 2, innerHeight],
-          ])
-          .on('brush end', function (event: d3.D3BrushEvent<AxisDef>) {
-            if (event.selection) {
-              brushStateRef.current.set(axisDef.key, event.selection as [number, number]);
-            } else {
-              brushStateRef.current.delete(axisDef.key);
-            }
+      const brush = d3
+        .brushY()
+        .extent([
+          [-brushWidth / 2, 0],
+          [brushWidth / 2, innerHeight],
+        ])
+        .on('brush end', function (event: d3.D3BrushEvent<AxisDef>) {
+          if (event.selection) {
+            brushStateRef.current.set(axisDef.key, event.selection as [number, number]);
+          } else {
+            brushStateRef.current.delete(axisDef.key);
+          }
 
-            // Update line visibility
-            lines
-              .transition()
-              .duration(TRANSITION_MS)
-              .attr('opacity', (d) => {
-                if (!isRowBrushed(d.values)) return 0;
-                return pinnedIds.has(d.id) ? OPACITY_HIGHLIGHT : OPACITY_DEFAULT;
-              });
+          // Update line visibility
+          lines
+            .transition()
+            .duration(TRANSITION_MS)
+            .style('opacity', (d) => {
+              if (!isRowBrushed(d.values)) return '0';
+              return String(pinnedIds.has(d.id) ? OPACITY_HIGHLIGHT : OPACITY_DEFAULT);
+            });
+          onBrushChange?.(brushStateRef.current.size > 0);
+        });
 
-            hitLines.attr('opacity', (d) => (isRowBrushed(d.values) ? 1 : 0));
-          });
+      const brushG = brushLayer
+        .append('g')
+        .attr('class', 'pc-brush')
+        .attr('transform', `translate(${axisX},0)`)
+        .call(brush);
 
-        const brushG = axisG.append('g').attr('class', 'pc-brush').call(brush);
+      // Restore brush if previously set
+      const prev = brushStateRef.current.get(axisDef.key);
+      if (prev) {
+        brushG.call(brush.move, prev);
+      }
 
-        // Restore brush if previously set
-        const prev = brushStateRef.current.get(axisDef.key);
-        if (prev) {
-          brushG.call(brush.move, prev);
-        }
-
-        // Style the brush selection rectangle
-        brushG
-          .selectAll('.selection')
-          .attr('fill', '#1a7a4c')
-          .attr('fill-opacity', 0.12)
-          .attr('stroke', '#1a7a4c')
-          .attr('stroke-width', 1);
-      });
-  }, [rows, buildScales, height, pinnedIds, onHover, onPin]);
+      // Style the brush selection rectangle
+      brushG
+        .selectAll('.selection')
+        .attr('fill', '#1a7a4c')
+        .attr('fill-opacity', 0.12)
+        .attr('stroke', '#1a7a4c')
+        .attr('stroke-width', 1);
+    });
+  }, [rows, buildScales, height, pinnedIds, onHover, onPin, onBrushChange]);
 
   /* ---- effect: render on data/size changes ---- */
   useEffect(() => {
     render();
   }, [render]);
+
+  /* ---- effect: reset brushes from parent ---- */
+  useEffect(() => {
+    if (resetBrushSignal === undefined) return;
+    brushStateRef.current.clear();
+    onBrushChange?.(false);
+    render();
+  }, [resetBrushSignal, onBrushChange, render]);
 
   /* ---- effect: ResizeObserver ---- */
   useEffect(() => {
