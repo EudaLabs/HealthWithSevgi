@@ -224,7 +224,7 @@ Same approach as the Stroke Prediction dataset.
 - **Citation:** Therrien, A. "Depression and Anxiety Data." Kaggle.
 - **License:** CC BY-SA 4.0
 - **DOI:** None
-- **Source:** [Kaggle](https://www.kaggle.com/datasets)
+- **Source:** [Kaggle](https://www.kaggle.com/datasets/anthonytherrien/depression-dataset)
 - **Records:** Variable (survey-based)
 - **Modifications:** Severity classes consolidated from fine-grained scale to 3-level classification. Column names standardised. Distributed under CC BY-SA 4.0 per ShareAlike obligation.
 
@@ -235,8 +235,8 @@ Same approach as the Stroke Prediction dataset.
 - **Citation:** Rathi, P. "COPD Dataset." Kaggle / UCL Datasets Library.
 - **License:** CC0 1.0 (Public Domain)
 - **DOI:** None
-- **Source:** [Kaggle](https://www.kaggle.com/datasets)
-- **Records:** Variable
+- **Source:** [Kaggle](https://www.kaggle.com/datasets/prakharrathi25/copd-student-dataset)
+- **Records:** 101 patients
 - **Modifications:** Column names standardised. Exacerbation target binarised.
 
 ### 3.11 Anaemia Classification
@@ -246,8 +246,8 @@ Same approach as the Stroke Prediction dataset.
 - **Citation:** Rao, B.R. "Anaemia Types Classification." Kaggle.
 - **License:** Unknown (no license specified on Kaggle)
 - **DOI:** None
-- **Source:** [Kaggle](https://www.kaggle.com/datasets)
-- **Records:** Variable
+- **Source:** [Kaggle](https://www.kaggle.com/datasets/biswaranjanrao/anemia-dataset)
+- **Records:** ~400 patients
 - **Modifications:** N/A -- dataset is not bundled. Downloaded at runtime without modification.
 - **Bundling status:** NOT BUNDLED. Auto-downloaded at runtime. License status could not be verified.
 
