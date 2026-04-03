@@ -266,6 +266,8 @@ async def get_insights(request: Request, model_id: str) -> dict:
         "class_distribution_train": class_dist,
         "use_smote": ml_session.get("smote_applied", False) if ml_session else False,
         "normalization": ml_session.get("normalization", "N/A") if ml_session else "N/A",
+        "raw_column_meta": ml_session.get("raw_column_meta", []) if ml_session else [],
+        "row_count_original": ml_session.get("row_count", 0) if ml_session else 0,
         # Performance metrics
         "accuracy": _m("accuracy"),
         "sensitivity": _m("sensitivity"),
@@ -309,14 +311,83 @@ async def get_insights(request: Request, model_id: str) -> dict:
         ],
     }
 
+    # Compared models (if user trained multiple models)
+    compared_models = []
+    if session_id:
+        try:
+            compare_data = ml.get_comparison(session_id)
+            for entry in compare_data.entries:
+                compared_models.append({
+                    "model_type": entry.model_type.value.replace("_", " ").title(),
+                    "model_id": entry.model_id,
+                    "accuracy": entry.metrics.accuracy,
+                    "sensitivity": entry.metrics.sensitivity,
+                    "specificity": entry.metrics.specificity,
+                    "auc_roc": entry.metrics.auc_roc,
+                    "f1_score": entry.metrics.f1_score,
+                    "mcc": entry.metrics.mcc,
+                    "training_time_ms": entry.training_time_ms,
+                })
+        except Exception as exc:
+            logger.warning("Comparison data unavailable: %s", exc)
+    logger.info("Insights context: %d compared models", len(compared_models))
+    context["compared_models"] = compared_models
+
+    # Feature column statistics (distributions for clinical grounding)
+    column_stats = []
+    X_train = data["X_train"]
+    for i, fname in enumerate(data["feature_names"]):
+        col_info: dict[str, Any] = {"name": fname}
+        try:
+            col = X_train[:, i] if hasattr(X_train, "shape") else X_train.iloc[:, i]
+            col_info["mean"] = round(float(np.mean(col)), 3)
+            col_info["std"] = round(float(np.std(col)), 3)
+            col_info["min"] = round(float(np.min(col)), 3)
+            col_info["max"] = round(float(np.max(col)), 3)
+        except Exception:
+            pass
+        column_stats.append(col_info)
+    context["column_statistics"] = column_stats
+
+    # Sample rows from test set (real patient data for LLM grounding)
+    feature_names = data["feature_names"]
+    classes = data["classes"]
+    X_test = data["X_test"]
+    y_test = data["y_test"]
+    sample_rows = []
+    n_samples = min(5, len(X_test))
+    # Pick diverse samples: some positive, some negative
+    try:
+        pos_idx = [i for i in range(len(y_test)) if int(y_test[i]) == 1]
+        neg_idx = [i for i in range(len(y_test)) if int(y_test[i]) == 0]
+        pick = (pos_idx[:3] + neg_idx[:2])[:n_samples] if pos_idx and neg_idx else list(range(n_samples))
+        for idx in pick:
+            row = {}
+            for j, fname in enumerate(feature_names):
+                val = X_test[idx, j] if hasattr(X_test, "shape") else X_test.iloc[idx, j]
+                row[fname] = round(float(val), 3)
+            row["_actual_outcome"] = classes[int(y_test[idx])] if int(y_test[idx]) < len(classes) else str(y_test[idx])
+            sample_rows.append(row)
+    except Exception:
+        pass
+    context["sample_patients"] = sample_rows
+
+    # EU AI Act static items for enrichment
+    from app.services.ethics_service import EU_AI_ACT_ITEMS
+    context["eu_ai_act_items"] = EU_AI_ACT_ITEMS
+
     try:
         ethics_task = insight_svc.generate_ethics_insight(context)
         cases_task = insight_svc.generate_case_studies(context)
-        ethics_result, cases_result = await asyncio.gather(ethics_task, cases_task)
+        eu_act_task = insight_svc.generate_eu_ai_act_insights(context)
+        ethics_result, cases_result, eu_act_result = await asyncio.gather(
+            ethics_task, cases_task, eu_act_task
+        )
 
         return {
             "ethics_insight": ethics_result,
             "case_studies": cases_result,
+            "eu_ai_act_insights": eu_act_result,
         }
     except Exception as exc:
         logger.exception("Insight generation failed")
