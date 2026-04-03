@@ -328,6 +328,20 @@ class DataService:
             norm_samples=norm_samples,
         )
 
+        # Column metadata from raw DataFrame (before preprocessing)
+        raw_column_meta = []
+        for col in df.columns:
+            series = df[col]
+            raw_column_meta.append({
+                "name": col,
+                "dtype": str(series.dtype),
+                "missing_count": int(series.isna().sum()),
+                "missing_pct": round(series.isna().sum() / len(df) * 100, 2),
+                "unique_count": int(series.nunique()),
+                "sample_values": [str(v) for v in series.dropna().head(3).tolist()],
+                "is_target": col == target_col,
+            })
+
         # Persist to session store
         self._session_store[session_id] = {
             "X_train": X_train,
@@ -342,6 +356,8 @@ class DataService:
             "normalization": settings.normalization,
             "y_train_original": y_train_original,
             "smote_applied": smote_applied,
+            "raw_column_meta": raw_column_meta,
+            "row_count": len(df),
         }
         logger.info(
             "Session %s prepared — train=%d, test=%d, features=%d",
