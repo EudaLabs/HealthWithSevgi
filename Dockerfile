@@ -27,6 +27,7 @@ COPY --from=py-builder /build/deps /usr/local/lib/python3.12/site-packages
 # Backend source
 COPY backend/app ./app
 COPY backend/datasets ./datasets
+COPY backend/data_cache ./data_cache
 
 # HF entrypoint
 COPY hf-space/main_hf.py .
