@@ -48,6 +48,18 @@ qa/
 docs/sprint2-check/
 docs/media/*.png
 
+# ─── Secrets / API Keys ──────────────────────────
+*.env
+.env.*
+!.env.example
+backend/.env
+secrets/
+*.key
+*.pem
+service-account*.json
+*credentials*.json
+gcloud-*.json
+
 # ─── Data cache (auto-downloaded at runtime) ──────
 backend/data_cache/
 *.Zone.Identifier
