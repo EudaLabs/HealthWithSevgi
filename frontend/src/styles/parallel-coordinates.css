@@ -1,0 +1,261 @@
+/* =============================================================================
+   Parallel Coordinates Chart — Light theme matching project globals
+   Scoped under the .pc- prefix to avoid cascade conflicts with globals.css
+   ============================================================================= */
+
+/* --------------------------------------------------------------------------
+   Container
+   -------------------------------------------------------------------------- */
+.pc-container {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.pc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pc-title {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.pc-subtitle {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* --------------------------------------------------------------------------
+   Controls
+   -------------------------------------------------------------------------- */
+.pc-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.pc-btn {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  line-height: 1.4;
+}
+
+.pc-btn:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Chart area
+   -------------------------------------------------------------------------- */
+.pc-chart-area {
+  width: 100%;
+  position: relative;
+}
+
+.pc-svg {
+  width: 100%;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Lines — base state
+   -------------------------------------------------------------------------- */
+.pc-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+  transition: opacity 200ms ease, stroke-width 200ms ease;
+  cursor: pointer;
+}
+
+.pc-line--dimmed {
+  opacity: 0.1;
+}
+
+.pc-line--highlighted {
+  opacity: 1;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.pc-line--pinned {
+  opacity: 1;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 3px currentColor);
+}
+
+.pc-line--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Lines — entrance animation
+   -------------------------------------------------------------------------- */
+@keyframes pc-line-draw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.pc-line--entering {
+  stroke-dasharray: 1000;
+  animation: pc-line-draw 800ms ease-out forwards;
+}
+
+/* --------------------------------------------------------------------------
+   Axes
+   -------------------------------------------------------------------------- */
+.pc-axis-line {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.pc-axis-label {
+  fill: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-anchor: middle;
+  letter-spacing: 0.02em;
+}
+
+.pc-axis-tick {
+  fill: var(--text-muted);
+  font-size: 0.68rem;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+}
+
+/* --------------------------------------------------------------------------
+   D3 brush selection
+   -------------------------------------------------------------------------- */
+.pc-brush .selection {
+  fill: rgba(26, 122, 76, 0.12);
+  stroke: var(--primary);
+  stroke-width: 1;
+  rx: 3;
+}
+
+/* --------------------------------------------------------------------------
+   Tooltip
+   -------------------------------------------------------------------------- */
+.pc-tooltip {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: 260px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.pc-tooltip--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pc-tooltip-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pc-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.pc-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  color: var(--text-secondary);
+}
+
+.pc-tooltip-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+}
+
+/* --------------------------------------------------------------------------
+   Legend
+   -------------------------------------------------------------------------- */
+.pc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.pc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.pc-legend-item:hover {
+  color: var(--text-primary);
+}
+
+.pc-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Empty state
+   -------------------------------------------------------------------------- */
+.pc-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+
+.pc-empty-icon {
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.pc-empty-text {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
