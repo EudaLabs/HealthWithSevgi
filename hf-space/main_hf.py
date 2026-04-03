@@ -15,7 +15,7 @@ from app.services.ethics_service import EthicsService
 from app.services.explain_service import ExplainService
 from app.services.ml_service import MLService
 
-app = FastAPI(title="HealthWithSevgi API", version="1.0.0")
+app = FastAPI(title="HealthWithSevgi API", version="1.3.1")
 
 app.add_middleware(
     CORSMiddleware,
