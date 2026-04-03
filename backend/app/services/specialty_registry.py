@@ -261,7 +261,7 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
             "Spirometry measurements, particularly FEV1 and the FEV1/FVC ratio, are "
             "the gold standard for COPD diagnosis and staging. "
             "This model predicts the risk of acute exacerbation using clinical, "
-            "spirometric, and patient-reported outcome measures from the PhysioNet COPD EHR dataset."
+            "spirometric, and patient-reported outcome measures from the Kaggle COPD patient dataset."
         ),
     ),
     "haematology_anaemia": SpecialtyInfo(
