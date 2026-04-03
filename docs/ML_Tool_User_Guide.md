@@ -316,3 +316,25 @@ This glossary is available inside the tool via the Help button in the top naviga
 | **Hyperparameter** | A setting chosen before training that controls model behaviour — for example, K in KNN or tree depth in Decision Tree. Not learned from data; set by the user via sliders. |
 | **Bias (AI)** | When a model performs significantly worse for certain patient subgroups (for example, older patients, women, or ethnic minorities) because they were under-represented in the training data. |
 | **Cross-Validation** | Splitting the data multiple times and averaging results to get a more reliable performance estimate than a single train/test split. |
+
+# Dataset Licensing and Compliance
+
+All 20 datasets used in this tool have been reviewed for licensing and redistribution
+rights. Full details, including per-dataset citations, DOIs, license texts, and EU AI Act
+compliance documentation, are available in
+[DATA_LICENSES.md](../DATA_LICENSES.md).
+
+**Summary:** 18 of the 20 datasets are bundled directly in the Docker image under
+open-access licenses (CC BY 4.0, CC0 1.0, CC BY-SA 4.0, or CC BY-NC 4.0). The remaining
+2 datasets are downloaded automatically at runtime because their licenses could not be
+verified for redistribution.
+
+| Dataset | Reason Not Bundled | How It Is Provided |
+|---------|--------------------|--------------------|
+| Stroke Prediction (Kaggle) | No formal license on Kaggle | Auto-downloaded at runtime when user selects the Stroke specialty |
+| Anaemia Classification (Kaggle) | License unknown | Auto-downloaded at runtime when user selects the Haematology specialty |
+
+All use of these datasets is strictly academic and non-commercial, within the scope of the
+SENG 430 Software Quality Assurance course at Cankaya University. No dataset is used in
+any clinical decision-making or commercial product. A concise attribution file suitable
+for Docker image inspection is available at [ATTRIBUTION.md](../ATTRIBUTION.md).

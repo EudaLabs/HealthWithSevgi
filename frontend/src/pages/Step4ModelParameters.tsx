@@ -137,7 +137,7 @@ export default function Step4ModelParameters({
         fireAutoRetrain(selectedType, newParams)
       }, 300)
     }
-  }, [selectedType]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedType, autoRetrain]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const resultsRef = useRef<HTMLDivElement>(null)
 

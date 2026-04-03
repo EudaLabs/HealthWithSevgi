@@ -16,6 +16,9 @@ class SpecialtyInfo(BaseModel):
     clinical_context: str
     data_source: str
     what_ai_predicts: str
+    license_type: str = ""
+    license_url: str = ""
+    requires_attribution: bool = False
 
 
 class ColumnStat(BaseModel):
