@@ -58,6 +58,22 @@ logger = logging.getLogger(__name__)
 
 _SENSITIVITY_WARNING_THRESHOLD = 0.5
 
+
+def _sanitize_float(val: Any) -> Any:
+    """Replace inf/-inf/nan with JSON-safe values recursively."""
+    if isinstance(val, float):
+        if np.isinf(val) or np.isnan(val):
+            return 0.0
+        return val
+    if isinstance(val, dict):
+        return {k: _sanitize_float(v) for k, v in val.items()}
+    if isinstance(val, list):
+        return [_sanitize_float(v) for v in val]
+    if isinstance(val, np.floating):
+        f = float(val)
+        return 0.0 if np.isinf(f) or np.isnan(f) else f
+    return val
+
 _PARAM_GRIDS: dict = {
     "knn": {"n_neighbors": list(range(1, 26)), "metric": ["euclidean", "manhattan"], "weights": ["uniform", "distance"]},
     "svm": {"C": [0.1, 1, 10, 50], "kernel": ["rbf", "linear", "poly", "sigmoid"], "gamma": ["scale", "auto"]},
@@ -319,7 +335,7 @@ class MLService:
                         n_iter=20,
                         cv=StratifiedKFold(n_splits=3, shuffle=True, random_state=42),
                         scoring=scoring,
-                        n_jobs=-1,
+                        n_jobs=1,
                         random_state=42,
                         error_score=0.0,
                     )
@@ -430,7 +446,7 @@ class MLService:
         try:
             cv_scores = cross_val_score(
                 cv_pipe, X_cv, y_cv, cv=cv_splitter,
-                scoring=cv_scoring, n_jobs=-1, error_score=0.0,
+                scoring=cv_scoring, n_jobs=1, error_score=0.0,
             )
             metrics.cross_val_scores = cv_scores.tolist()
         except Exception as exc:
@@ -482,7 +498,7 @@ class MLService:
             model_id=model_id,
             session_id=session_id,
             model_type=model_type,
-            params=best_params,
+            params=_sanitize_float(best_params),
             metrics=metrics,
             training_time_ms=round(training_time_ms, 1),
             feature_names=selected_feature_names,
@@ -703,7 +719,7 @@ class MLService:
                 idx = np.linspace(0, len(fpr) - 1, min(200, len(fpr)), dtype=int)
                 return [
                     ROCPoint(fpr=round(float(fpr[i]), 4), tpr=round(float(tpr[i]), 4),
-                             threshold=round(float(thresholds[min(i, len(thresholds)-1)]), 4))
+                             threshold=round(float(_sanitize_float(thresholds[min(i, len(thresholds)-1)])), 4))
                     for i in idx
                 ]
             else:
@@ -717,7 +733,7 @@ class MLService:
                     idx = np.linspace(0, len(fpr_micro) - 1, min(200, len(fpr_micro)), dtype=int)
                     return [
                         ROCPoint(fpr=round(float(fpr_micro[i]), 4), tpr=round(float(tpr_micro[i]), 4),
-                                 threshold=round(float(thresholds[min(i, len(thresholds)-1)]), 4))
+                                 threshold=round(float(_sanitize_float(thresholds[min(i, len(thresholds)-1)])), 4))
                         for i in idx
                     ]
         except Exception as exc:
