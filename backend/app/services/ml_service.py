@@ -717,6 +717,7 @@ class MLService:
             if is_binary:
                 fpr, tpr, thresholds = roc_curve(y_true, y_prob[:, 1])
                 idx = np.linspace(0, len(fpr) - 1, min(200, len(fpr)), dtype=int)
+                thresholds = np.where(np.isinf(thresholds), 1.0, thresholds)
                 return [
                     ROCPoint(fpr=round(float(fpr[i]), 4), tpr=round(float(tpr[i]), 4),
                              threshold=round(float(_sanitize_float(thresholds[min(i, len(thresholds)-1)])), 4))
@@ -730,6 +731,7 @@ class MLService:
                     fpr_micro, tpr_micro, thresholds = roc_curve(
                         y_bin.ravel(), y_prob[:, :len(classes)].ravel()
                     )
+                    thresholds = np.where(np.isinf(thresholds), 1.0, thresholds)
                     idx = np.linspace(0, len(fpr_micro) - 1, min(200, len(fpr_micro)), dtype=int)
                     return [
                         ROCPoint(fpr=round(float(fpr_micro[i]), 4), tpr=round(float(tpr_micro[i]), 4),

@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +14,7 @@ from app.services.certificate_service import CertificateService
 from app.services.data_service import DataService
 from app.services.ethics_service import EthicsService
 from app.services.explain_service import ExplainService
+from app.services.insight_service import InsightService
 from app.services.ml_service import MLService
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
@@ -34,6 +39,7 @@ app.state.data_service = DataService()
 app.state.ml_service = MLService()
 app.state.explain_service = ExplainService()
 app.state.ethics_service = EthicsService()
+app.state.insight_service = InsightService()
 app.state.certificate_service = CertificateService()
 
 # Routers

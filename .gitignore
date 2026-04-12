@@ -48,6 +48,26 @@ qa/
 docs/sprint2-check/
 docs/media/*.png
 
+# ─── Secrets / API Keys ──────────────────────────
+*.env
+.env.*
+!.env.example
+!backend/.env.example
+backend/.env
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+service-account*.json
+*credentials*.json
+gcloud-*.json
+**/secret*
+!**/secret*.py
+**/token*.json
+.gcloud/
+application_default_credentials.json
+
 # ─── Data cache (bundled datasets tracked, restricted ones excluded) ──
 backend/data_cache/cardiology_stroke.csv
 backend/data_cache/haematology_anaemia.csv

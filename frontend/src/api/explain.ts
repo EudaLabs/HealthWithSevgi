@@ -24,6 +24,30 @@ export const fetchWhatIf = (payload: {
 }): Promise<WhatIfResponse> =>
   api.post<WhatIfResponse>('/explain/what-if', payload).then((r) => r.data)
 
+export interface EuAiActEnrichedItem {
+  id: string
+  enriched_description: string
+}
+
+export interface InsightResponse {
+  ethics_insight: { source: string; text: string }
+  case_studies: { source: string; text: string; case_studies?: CaseStudyData[] }
+  eu_ai_act_insights?: { source: string; text: string; items?: EuAiActEnrichedItem[] }
+}
+
+export interface CaseStudyData {
+  title: string
+  specialty: string
+  year: number
+  severity: 'failure' | 'near_miss' | 'prevention'
+  what_happened: string
+  impact: string
+  lesson: string
+}
+
+export const fetchInsights = (modelId: string): Promise<InsightResponse> =>
+  api.get<InsightResponse>(`/insights/${modelId}`).then((r) => r.data)
+
 export const updateChecklist = (modelId: string, itemId: string, checked: boolean): Promise<void> =>
   api.post('/ethics/checklist', { model_id: modelId, item_id: itemId, checked }).then(() => undefined)
 

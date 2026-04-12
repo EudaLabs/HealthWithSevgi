@@ -21,7 +21,7 @@ app = FastAPI(title="HealthWithSevgi API", version="1.3.1")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

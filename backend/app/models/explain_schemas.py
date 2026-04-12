@@ -51,6 +51,7 @@ class SubgroupMetrics(BaseModel):
     precision: float
     f1_score: float
     status: Literal["acceptable", "review", "action_needed"]
+    status_reason: str = ""
 
 
 class BiasWarning(BaseModel):
