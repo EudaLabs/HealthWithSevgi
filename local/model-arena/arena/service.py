@@ -68,6 +68,7 @@ class ArenaService:
                         metrics=response.metrics,
                         training_time_ms=response.training_time_ms,
                         feature_names=response.feature_names,
+                        knn_scatter=response.knn_scatter,
                     )
                     total_time += response.training_time_ms
                 except (ImportError, MemoryError):

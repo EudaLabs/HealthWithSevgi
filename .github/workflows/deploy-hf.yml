@@ -40,6 +40,8 @@ jobs:
           cp backend/requirements.txt deploy/
           cp -r backend/app deploy/
           cp -r backend/datasets deploy/
+          cp -r backend/data_cache deploy/
+          cp -r local/model-arena/arena deploy/
           cp -r frontend/dist deploy/static
           echo "*.pyc" > deploy/.gitignore
           echo "__pycache__/" >> deploy/.gitignore

@@ -533,12 +533,25 @@ class DataService:
         return df
 
     def _stroke(self) -> pd.DataFrame:
-        df = self._fetch_cached(
-            "cardiology_stroke",
-            "https://raw.githubusercontent.com/04-aditya/Stroke-Prediction-using-R/main/healthcare-dataset-stroke-data.csv",
-        )
+        try:
+            df = self._fetch_cached(
+                "cardiology_stroke",
+                "https://raw.githubusercontent.com/04-aditya/Stroke-Prediction-using-R/main/healthcare-dataset-stroke-data.csv",
+            )
+        except DatasetUnavailableError:
+            raise DatasetUnavailableError(
+                "cardiology_stroke",
+                "This dataset has no formal open license and cannot be bundled. "
+                "It must be downloaded at runtime for educational use only, "
+                "but the download failed. Check your network connection.",
+            )
         if "stroke" not in df.columns:
-            raise DatasetUnavailableError("cardiology_stroke", "Missing required column 'stroke'")
+            raise DatasetUnavailableError(
+                "cardiology_stroke",
+                "Missing required column 'stroke'. "
+                "This dataset has no formal open license and cannot be bundled. "
+                "It will be downloaded at runtime for educational use only.",
+            )
         if "id" in df.columns:
             df = df.drop(columns=["id"])
         cat_encodings: dict[str, dict] = {
@@ -558,7 +571,12 @@ class DataService:
         df["stroke"] = pd.to_numeric(df["stroke"], errors="coerce")
         df = df.dropna(subset=["stroke"])
         if len(df) < 100:
-            raise DatasetUnavailableError("cardiology_stroke", f"Dataset too small ({len(df)} rows)")
+            raise DatasetUnavailableError(
+                "cardiology_stroke",
+                f"Dataset too small ({len(df)} rows). "
+                "This dataset has no formal open license and cannot be bundled. "
+                "It will be downloaded at runtime for educational use only.",
+            )
         return df
 
     def _mental_health(self) -> pd.DataFrame:
@@ -684,10 +702,18 @@ class DataService:
         return df
 
     def _anaemia(self) -> pd.DataFrame:
-        df = self._fetch_cached(
-            "haematology_anaemia",
-            "https://raw.githubusercontent.com/maladeep/anemia-detection-with-machine-learning/master/anemia%20data%20from%20Kaggle.csv",
-        )
+        try:
+            df = self._fetch_cached(
+                "haematology_anaemia",
+                "https://raw.githubusercontent.com/maladeep/anemia-detection-with-machine-learning/master/anemia%20data%20from%20Kaggle.csv",
+            )
+        except DatasetUnavailableError:
+            raise DatasetUnavailableError(
+                "haematology_anaemia",
+                "This dataset has an unknown license and cannot be bundled. "
+                "It must be downloaded at runtime for educational use only, "
+                "but the download failed. Check your network connection.",
+            )
         rename_map = {
             "Gender": "gender", "Hemoglobin": "haemoglobin",
             "MCH": "mch", "MCHC": "mchc", "MCV": "mcv",
@@ -699,7 +725,12 @@ class DataService:
         for col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
         if "anemia_type" not in df.columns:
-            raise DatasetUnavailableError("haematology_anaemia", "Missing required column 'anemia_type'")
+            raise DatasetUnavailableError(
+                "haematology_anaemia",
+                "Missing required column 'anemia_type'. "
+                "This dataset has an unknown license and cannot be bundled. "
+                "It will be downloaded at runtime for educational use only.",
+            )
         df = df.dropna(subset=["anemia_type"])
         return df
 

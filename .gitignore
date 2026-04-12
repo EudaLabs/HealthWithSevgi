@@ -68,8 +68,9 @@ gcloud-*.json
 .gcloud/
 application_default_credentials.json
 
-# ─── Data cache (auto-downloaded at runtime) ──────
-backend/data_cache/
+# ─── Data cache (bundled datasets tracked, restricted ones excluded) ──
+backend/data_cache/cardiology_stroke.csv
+backend/data_cache/haematology_anaemia.csv
 *.Zone.Identifier
 *:Zone.Identifier
 docs/media/HEALTH_AI_Sprint2_Detailed_QA_Report*

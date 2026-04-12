@@ -1,4 +1,4 @@
-import type { MetricsResponse, ModelType } from '../../../../frontend/src/types'
+import type { KNNScatterData, MetricsResponse, ModelType } from '../../../../frontend/src/types'
 
 /**
  * Safely extract a numeric metric value from MetricsResponse.
@@ -30,6 +30,7 @@ export interface ArenaRun {
   metrics: MetricsResponse | null  // null for failed runs
   training_time_ms: number
   feature_names: string[]
+  knn_scatter?: KNNScatterData
   status: 'completed' | 'failed'
   error?: string
 }

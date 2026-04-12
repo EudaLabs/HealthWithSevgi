@@ -14,8 +14,9 @@ from app.services.data_service import DataService
 from app.services.ethics_service import EthicsService
 from app.services.explain_service import ExplainService
 from app.services.ml_service import MLService
+from arena.service import ArenaService
 
-app = FastAPI(title="HealthWithSevgi API", version="1.0.0")
+app = FastAPI(title="HealthWithSevgi API", version="1.3.1")
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,14 +31,17 @@ app.state.ml_service = MLService()
 app.state.explain_service = ExplainService()
 app.state.ethics_service = EthicsService()
 app.state.certificate_service = CertificateService()
+app.state.arena_service = ArenaService(app.state.ml_service)
 
 from app.routers.data_router import router as data_router
 from app.routers.explain_router import router as explain_router
 from app.routers.ml_router import router as ml_router
+from arena.router import router as arena_router
 
 app.include_router(data_router)
 app.include_router(ml_router)
 app.include_router(explain_router)
+app.include_router(arena_router)
 
 STATIC_DIR = Path(__file__).parent / "static"
 

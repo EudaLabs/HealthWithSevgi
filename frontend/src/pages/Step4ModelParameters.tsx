@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense } from 'react'
 import { BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap, Settings } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
@@ -7,6 +7,7 @@ import ConfusionMatrixChart from '../components/charts/ConfusionMatrixChart'
 import ROCCurveChart from '../components/charts/ROCCurveChart'
 import PRCurveChart from '../components/charts/PRCurveChart'
 import KNNScatterCanvas from '../components/charts/KNNScatterCanvas'
+const ModelComparisonViz = React.lazy(() => import('../components/charts/ModelComparisonViz'))
 
 const MODEL_CONFIGS = [
   {
@@ -91,6 +92,35 @@ const DEFAULT_PARAMS: Record<ModelType, Record<string, number | string>> = {
 
 function pct(v: number) { return `${(v * 100).toFixed(1)}%` }
 
+/** Build unique display labels for compared models (e.g. "Random Forest #1 (n=100, d=5)"). */
+function buildModelLabels(entries: CompareEntry[]): Map<string, string> {
+  const typeCounts = new Map<string, number>()
+  const typeIndices = new Map<string, number>()
+  for (const e of entries) typeCounts.set(e.model_type, (typeCounts.get(e.model_type) ?? 0) + 1)
+  const labels = new Map<string, string>()
+  for (const e of entries) {
+    const base = e.model_type.replace(/_/g, ' ')
+    const count = typeCounts.get(e.model_type) ?? 1
+    if (count === 1) {
+      labels.set(e.model_id, base)
+    } else {
+      const idx = (typeIndices.get(e.model_type) ?? 0) + 1
+      typeIndices.set(e.model_type, idx)
+      const hints: string[] = []
+      const p = e.params
+      if (p.n_neighbors != null) hints.push(`k=${p.n_neighbors}`)
+      if (p.kernel != null) hints.push(`${p.kernel}`)
+      if (p.C != null) hints.push(`C=${p.C}`)
+      if (p.n_estimators != null) hints.push(`n=${p.n_estimators}`)
+      if (p.max_depth != null) hints.push(`d=${p.max_depth}`)
+      if (p.learning_rate != null) hints.push(`lr=${p.learning_rate}`)
+      const hint = hints.length > 0 ? ` (${hints.join(', ')})` : ''
+      labels.set(e.model_id, `${base} #${idx}${hint}`)
+    }
+  }
+  return labels
+}
+
 interface Props {
   sessionId: string
   trainResponse: TrainResponse | null
@@ -137,7 +167,7 @@ export default function Step4ModelParameters({
         fireAutoRetrain(selectedType, newParams)
       }, 300)
     }
-  }, [selectedType]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedType, autoRetrain]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const resultsRef = useRef<HTMLDivElement>(null)
 
@@ -298,6 +328,8 @@ export default function Step4ModelParameters({
     [comparedModels]
   )
 
+  const modelLabels = useMemo(() => buildModelLabels(comparedModels), [comparedModels])
+
   const selectedConfig = MODEL_CONFIGS.find(m => m.type === selectedType)!
   const paramHint = PARAM_HINTS[selectedType]
 
@@ -372,6 +404,13 @@ export default function Step4ModelParameters({
           )}
         </div>
       </div>
+
+      {/* Parallel Coordinates Visualization — full width */}
+      {comparedModels.length > 0 && (
+        <Suspense fallback={<div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading comparison chart...</div>}>
+          <ModelComparisonViz entries={comparedModels} />
+        </Suspense>
+      )}
 
       {/* Parameters + comparison side by side */}
       <div style={{ display: 'grid', gridTemplateColumns: comparedModels.length > 0 ? '1fr 1fr' : '1fr', gap: '1rem' }}>
@@ -458,7 +497,7 @@ export default function Step4ModelParameters({
                     <tr key={e.model_id}>
                       <td>
                         {i === 0 && <span className="badge badge-success" style={{ marginRight: 6 }}>Best</span>}
-                        {e.model_type.replace(/_/g,' ')}
+                        {modelLabels.get(e.model_id) ?? e.model_type.replace(/_/g,' ')}
                       </td>
                       <td>{pct(e.metrics.accuracy)}</td>
                       <td className={e.metrics.sensitivity >= 0.7 ? 'metric-green' : e.metrics.sensitivity >= 0.5 ? 'metric-amber' : 'metric-red'}>

@@ -12,6 +12,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Heart Failure Clinical Records — kaggle.com/datasets/andrewmvd/heart-failure-clinical-data",
         what_ai_predicts="30-day mortality after heart failure discharge",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "anaemia", "creatinine_phosphokinase", "diabetes",
             "ejection_fraction", "high_blood_pressure", "platelets",
@@ -34,6 +37,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="NIH Chest X-Ray Metadata — kaggle.com/datasets/nih-chest-xrays/data",
         what_ai_predicts="Normal vs. Pneumonia from chest X-ray clinical metadata",
+        license_type="CC0 1.0",
+        license_url="https://creativecommons.org/publicdomain/zero/1.0/",
+        requires_attribution=False,
         feature_names=[
             "age", "sex", "view_position", "follow_up_number",
         ],
@@ -54,6 +60,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="UCI CKD Dataset — archive.ics.uci.edu/dataset/336/chronic+kidney+disease",
         what_ai_predicts="Chronic kidney disease (ckd vs. notckd) from routine lab values",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "blood_pressure", "specific_gravity", "albumin", "sugar",
             "red_blood_cells", "pus_cell", "blood_glucose_random", "blood_urea",
@@ -77,6 +86,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Breast Cancer Wisconsin — archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic",
         what_ai_predicts="Malignancy of a breast biopsy from fine-needle aspirate cell measurements",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "mean_radius", "mean_texture", "mean_perimeter", "mean_area",
             "mean_smoothness", "mean_compactness", "mean_concavity",
@@ -101,6 +113,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="UCI Parkinson's Dataset — archive.ics.uci.edu/dataset/174/parkinsons",
         what_ai_predicts="Parkinson's disease presence from voice biomarkers",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "MDVP_Fo_Hz", "MDVP_Fhi_Hz", "MDVP_Flo_Hz",
             "MDVP_Jitter_pct", "MDVP_Jitter_Abs", "MDVP_RAP", "MDVP_PPQ", "Jitter_DDP",
@@ -126,6 +141,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Pima Indians Diabetes — kaggle.com/datasets/uciml/pima-indians-diabetes-database",
         what_ai_predicts="Diabetes onset within 5 years from metabolic markers",
+        license_type="CC0 1.0 / CC BY 4.0",
+        license_url="https://creativecommons.org/publicdomain/zero/1.0/",
+        requires_attribution=True,
         feature_names=[
             "pregnancies", "glucose", "blood_pressure", "skin_thickness",
             "insulin", "bmi", "diabetes_pedigree_function", "age",
@@ -149,6 +167,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Indian Liver Patient Dataset — archive.ics.uci.edu/dataset/225/ilpd+indian+liver+patient+dataset",
         what_ai_predicts="Liver disease vs. healthy from blood test results",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "gender", "total_bilirubin", "direct_bilirubin",
             "alkaline_phosphotase", "alamine_aminotransferase",
@@ -173,6 +194,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Stroke Prediction Dataset — kaggle.com/datasets/fedesoriano/stroke-prediction-dataset",
         what_ai_predicts="Stroke occurrence from demographics and comorbidities",
+        license_type="No formal license",
+        license_url="",
+        requires_attribution=False,
         feature_names=[
             "gender", "age", "hypertension", "heart_disease", "ever_married",
             "work_type", "residence_type", "avg_glucose_level", "bmi", "smoking_status",
@@ -195,6 +219,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Depression Dataset — kaggle.com/datasets/anthonytherrien/depression-dataset",
         what_ai_predicts="History of mental illness (has_condition / no_condition) from lifestyle and demographic data",
+        license_type="CC BY-SA 4.0",
+        license_url="https://creativecommons.org/licenses/by-sa/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "number_of_children", "income", "dietary_habits", "sleep_patterns",
             "alcohol_consumption", "physical_activity_level", "smoking_status",
@@ -218,8 +245,11 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         description="Predict COPD exacerbation risk from spirometry and clinical EHR data.",
         target_variable="exacerbation",
         target_type="binary",
-        data_source="COPD EHR Dataset — physionet.org/content/copd-ehr/1.0.0/",
+        data_source="COPD Dataset — kaggle.com/datasets/prakharrathi25/copd-student-dataset",
         what_ai_predicts="COPD acute exacerbation risk from spirometry and EHR data",
+        license_type="CC0 1.0",
+        license_url="https://creativecommons.org/publicdomain/zero/1.0/",
+        requires_attribution=False,
         feature_names=[
             "age", "sex", "smoking_pack_years", "fev1_litres", "fvc_litres",
             "fev1_fvc_ratio", "prior_exacerbations_year", "bmi",
@@ -233,7 +263,7 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
             "Spirometry measurements, particularly FEV1 and the FEV1/FVC ratio, are "
             "the gold standard for COPD diagnosis and staging. "
             "This model predicts the risk of acute exacerbation using clinical, "
-            "spirometric, and patient-reported outcome measures from the PhysioNet COPD EHR dataset."
+            "spirometric, and patient-reported outcome measures from the Kaggle COPD patient dataset."
         ),
     ),
     "haematology_anaemia": SpecialtyInfo(
@@ -241,9 +271,12 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         name="Haematology — Anaemia",
         description="Detect anaemia from full blood count indices including haemoglobin, MCV, MCH, and MCHC.",
         target_variable="anemia_type",
-        target_type="binary",
-        data_source="Anaemia Detection Dataset — kaggle.com/datasets/biswaranjanrao/anemia-dataset",
-        what_ai_predicts="Anaemia presence (anemic vs not anemic) from full blood count indices",
+        target_type="multiclass",
+        data_source="Anaemia Classification Dataset — kaggle.com/datasets/biswaranjanrao/anemia-dataset",
+        what_ai_predicts="Type of anaemia from full blood count (iron deficiency / megaloblastic / normocytic / normal)",
+        license_type="Unknown",
+        license_url="",
+        requires_attribution=False,
         feature_names=[
             "gender", "haemoglobin", "mch", "mchc", "mcv",
         ],
@@ -267,6 +300,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="HAM10000 Metadata — Harvard Dataverse doi:10.7910/DVN/DBW86T",
         what_ai_predicts="Benign vs. malignant skin lesion from dermoscopy metadata",
+        license_type="CC BY-NC 4.0",
+        license_url="https://creativecommons.org/licenses/by-nc/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "sex", "localization",
         ],
@@ -288,6 +324,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Diabetic Retinopathy Debrecen Dataset — archive.ics.uci.edu/dataset/329/diabetic+retinopathy+debrecen+data+set",
         what_ai_predicts="Presence of diabetic retinopathy signs from retinal analysis (0=No DR, 1=DR present)",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "quality_assessment", "pre_screening", "ma_detection_0.5",
             "ma_detection_0.6", "ma_detection_0.7", "ma_detection_0.8",
@@ -314,6 +353,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="Vertebral Column Dataset — archive.ics.uci.edu/dataset/212/vertebral+column",
         what_ai_predicts="Normal vs. abnormal spinal status from pelvic biomechanical measurements",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "pelvic_incidence", "pelvic_tilt", "lumbar_lordosis_angle",
             "sacral_slope", "pelvic_radius", "degree_spondylolisthesis",
@@ -336,6 +378,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="PhysioNet Sepsis Dataset — physionet.org/content/challenge-2019/1.0.0/",
         what_ai_predicts="Sepsis onset (SepsisLabel=1) from ICU vital signs and lab results",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "HR", "O2Sat", "Temp", "SBP", "MAP", "Resp",
             "BaseExcess", "pH", "PaCO2", "Lactate", "Creatinine",
@@ -360,6 +405,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="multiclass",
         data_source="Cardiotocography Dataset — archive.ics.uci.edu/dataset/193/cardiotocography",
         what_ai_predicts="Fetal CTG classification: 1=Normal, 2=Suspect, 3=Pathological",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "baseline_value", "accelerations", "fetal_movement",
             "uterine_contractions", "light_decelerations", "severe_decelerations",
@@ -386,6 +434,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="binary",
         data_source="UCI Arrhythmia Dataset — archive.ics.uci.edu/dataset/5/arrhythmia",
         what_ai_predicts="Cardiac arrhythmia presence vs. normal sinus rhythm from ECG features",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "sex", "height", "weight", "QRS_duration",
             "PR_interval", "QT_interval", "T_interval", "P_interval",
@@ -412,7 +463,10 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_variable="Biopsy",
         target_type="binary",
         data_source="Cervical Cancer Dataset — archive.ics.uci.edu/dataset/383/cervical+cancer+risk+factors",
-        what_ai_predicts="Biopsy-confirmed cervical cancer from screening test results and risk factors",
+        what_ai_predicts="Biopsy-confirmed cervical cancer from demographic and behavioural data",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "number_of_sexual_partners", "first_sexual_intercourse_age",
             "num_of_pregnancies",
@@ -443,6 +497,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="multiclass",
         data_source="UCI New Thyroid Dataset — archive.ics.uci.edu/dataset/102/thyroid+disease",
         what_ai_predicts="Thyroid function classification (hyperthyroid / normal / hypothyroid)",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "T3_resin_uptake", "total_serum_thyroxine", "T3", "TSH", "max_abs_diff_TSH",
         ],
@@ -466,6 +523,9 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
         target_type="multiclass",
         data_source="Diabetes 130-US Hospitals Dataset — archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008",
         what_ai_predicts="Readmission risk: <30 days / >30 days / NO from medication and utilisation data",
+        license_type="CC BY 4.0",
+        license_url="https://creativecommons.org/licenses/by/4.0/",
+        requires_attribution=True,
         feature_names=[
             "age", "gender", "time_in_hospital", "num_lab_procedures",
             "num_procedures", "num_medications", "number_outpatient",

@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(mes
 app = FastAPI(
     title="HealthWithSevgi API",
     description="ML Visualization Tool for Healthcare — REST API",
-    version="1.0.0",
+    version="1.3.1",
 )
 
 # CORS — allow frontend dev server
@@ -66,7 +66,7 @@ app.include_router(arena_router)
 
 @app.get("/")
 async def root() -> dict:
-    return {"status": "ok", "project": "HealthWithSevgi", "version": "1.0.0"}
+    return {"status": "ok", "project": "HealthWithSevgi", "version": "1.3.1"}
 
 
 @app.get("/health")

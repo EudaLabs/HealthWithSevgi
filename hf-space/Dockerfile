@@ -24,6 +24,8 @@ COPY --from=builder /build/deps /usr/local/lib/python3.12/site-packages
 
 COPY app ./app
 COPY datasets ./datasets
+COPY data_cache ./data_cache
+COPY arena ./arena
 COPY static ./static
 COPY main_hf.py .
 
