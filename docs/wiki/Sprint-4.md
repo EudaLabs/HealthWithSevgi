@@ -47,4 +47,4 @@ Sample patients are selected by risk stratification — the lowest probability p
 
 Bias detection uses a strict >10pp sensitivity gap threshold aligned with clinical fairness literature, while training data representation uses a separate >15pp gap threshold against population norms.
 
-**Live deployment:** HuggingFace Spaces and Docker container available
+**Live deployment:** [0xbatuhan4-healthwithsevgi.hf.space](https://0xbatuhan4-healthwithsevgi.hf.space/) — also available as Docker container

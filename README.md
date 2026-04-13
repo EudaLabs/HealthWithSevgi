@@ -20,7 +20,7 @@
 HealthWithSevgi guides clinicians through a complete ML pipeline in **7 steps** — from selecting a medical specialty to training a model, interpreting predictions with SHAP, and auditing fairness — all with **zero coding required**.
 
 <p align="center">
-  <a href="https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi"><strong>Live Demo</strong></a> &nbsp;|&nbsp;
+  <a href="https://0xbatuhan4-healthwithsevgi.hf.space/"><strong>Live Demo</strong></a> &nbsp;|&nbsp;
   <a href="https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1"><strong>Jira Board</strong></a> &nbsp;|&nbsp;
   <a href="https://www.figma.com/design/1K1Dw8PC6P98NZAa30DzII/430-HealthWithSevgi"><strong>Figma Designs</strong></a> &nbsp;|&nbsp;
   <a href="SETUP.md"><strong>Setup Guide</strong></a>
@@ -294,7 +294,7 @@ HealthWithSevgi/
 
 The application is deployed on HuggingFace Spaces — no installation required:
 
-**➡️ [huggingface.co/spaces/0xBatuhan4/HealthWithSevgi](https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi)**
+**➡️ [0xbatuhan4-healthwithsevgi.hf.space](https://0xbatuhan4-healthwithsevgi.hf.space/)**
 
 ### 🐳 Docker (single command)
 
@@ -483,7 +483,7 @@ The production deployment runs on HuggingFace Spaces as a Docker container. The 
 
 `hf-space/main_hf.py` serves both the FastAPI backend and the static React build from a single process.
 
-**Live demo:** [huggingface.co/spaces/0xBatuhan4/HealthWithSevgi](https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi)
+**Live demo:** [0xbatuhan4-healthwithsevgi.hf.space](https://0xbatuhan4-healthwithsevgi.hf.space/)
 
 ---
 
