@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense } from 'react'
 import { BarChart3, Brain, GitBranch, Layers, LineChart, Network, TrendingUp, X, Zap, Settings } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import toast from 'react-hot-toast'
 import { trainModel, addToComparison } from '../api/ml'
 import type { CompareEntry, ModelType, TrainResponse } from '../types'
@@ -392,7 +393,7 @@ export default function Step4ModelParameters({
           padding: '0.875rem 1rem',
         }}>
           <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.95rem' }}>
-            {selectedConfig.fullName}
+            {selectedConfig.fullName} <InfoTip term={selectedType} />
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.3rem', lineHeight: 1.5 }}>
             {selectedConfig.desc}
@@ -425,17 +426,17 @@ export default function Step4ModelParameters({
               <label className="toggle" style={{ gap: '0.5rem' }}>
                 <input type="checkbox" checked={autoRetrain} onChange={e => setAutoRetrain(e.target.checked)} />
                 <div className="toggle-track"><div className="toggle-thumb" /></div>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Auto-Retrain</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Auto-Retrain <InfoTip term="auto_retrain" /></span>
               </label>
               <label className="toggle" style={{ gap: '0.5rem' }}>
                 <input type="checkbox" checked={tune} onChange={e => setTune(e.target.checked)} />
                 <div className="toggle-track"><div className="toggle-thumb" /></div>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Tune</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Tune <InfoTip term="hyperparameter_tuning" /></span>
               </label>
               <label className="toggle" style={{ gap: '0.5rem' }}>
                 <input type="checkbox" checked={useFeatureSelection} onChange={e => setUseFeatureSelection(e.target.checked)} />
                 <div className="toggle-track"><div className="toggle-thumb" /></div>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Feature Selection</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Feature Selection <InfoTip term="feature_selection" /></span>
               </label>
             </div>
           </div>
@@ -482,13 +483,13 @@ export default function Step4ModelParameters({
                 <thead>
                   <tr>
                     <th>Model</th>
-                    <th>Accuracy</th>
-                    <th>Sensitivity</th>
-                    <th>Specificity</th>
-                    <th>Precision</th>
-                    <th>F1</th>
-                    <th>MCC</th>
-                    <th>AUC-ROC</th>
+                    <th>Accuracy <InfoTip term="accuracy" /></th>
+                    <th>Sensitivity <InfoTip term="sensitivity" /></th>
+                    <th>Specificity <InfoTip term="specificity" /></th>
+                    <th>Precision <InfoTip term="precision" /></th>
+                    <th>F1 <InfoTip term="f1_score" /></th>
+                    <th>MCC <InfoTip term="mcc" /></th>
+                    <th>AUC-ROC <InfoTip term="auc_roc" /></th>
                     <th>Time (ms)</th>
                   </tr>
                 </thead>
@@ -573,7 +574,7 @@ export default function Step4ModelParameters({
 
             {trainResponse.metrics.cross_val_scores.length > 0 && (
               <div className="cv-summary" style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'var(--surface)', borderRadius: '8px', fontSize: '0.85rem' }}>
-                <strong>Cross-Validation (AUC):</strong>{' '}
+                <strong>Cross-Validation <InfoTip term="cross_validation" /> (AUC):</strong>{' '}
                 {(trainResponse.metrics.cross_val_scores.reduce((a,b)=>a+b,0) / trainResponse.metrics.cross_val_scores.length).toFixed(3)}
                 {' \u00b1 '}
                 {Math.sqrt(trainResponse.metrics.cross_val_scores.reduce((sum, v, _, arr) => sum + Math.pow(v - arr.reduce((a,b)=>a+b,0)/arr.length, 2), 0) / trainResponse.metrics.cross_val_scores.length).toFixed(3)}
@@ -597,7 +598,7 @@ export default function Step4ModelParameters({
               <div className="alert alert-warning mt-3">
                 <span aria-hidden="true">⚠️</span>
                 <span>
-                  <strong>Overfitting Warning:</strong> Training accuracy ({pct(trainResponse.metrics.train_accuracy)}) is significantly higher than test accuracy ({pct(trainResponse.metrics.accuracy)}). The model may not generalise well to new patients.
+                  <strong>Overfitting Warning <InfoTip term="overfitting" />:</strong> Training accuracy ({pct(trainResponse.metrics.train_accuracy)}) is significantly higher than test accuracy ({pct(trainResponse.metrics.accuracy)}). The model may not generalise well to new patients.
                 </span>
               </div>
             )}

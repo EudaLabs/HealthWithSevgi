@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone'
 import {
   CheckCircle, Lock, Upload, X, Database, Users, Layers, AlertCircle,
 } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -378,10 +379,10 @@ export default function Step2DataExploration({
           <div className="grid-4">
             {[
               { label: 'PATIENTS', value: totalPatients.toLocaleString(), icon: <Users size={18} style={{ color: 'var(--primary)' }} /> },
-              { label: 'FEATURES', value: totalFeatures.toString(), icon: <Layers size={18} style={{ color: 'var(--primary)' }} /> },
-              { label: 'MISSING %', value: `${missingPct}%`, icon: <AlertCircle size={18} style={{ color: 'var(--primary)' }} /> },
-              { label: 'CLASS BALANCE', value: classBalanceStr, icon: <BarChart3Icon size={18} style={{ color: 'var(--primary)' }} /> },
-            ].map(({ label, value, icon }) => (
+              { label: 'FEATURES', value: totalFeatures.toString(), icon: <Layers size={18} style={{ color: 'var(--primary)' }} />, tip: 'features' as const },
+              { label: 'MISSING %', value: `${missingPct}%`, icon: <AlertCircle size={18} style={{ color: 'var(--primary)' }} />, tip: 'missing_percentage' as const },
+              { label: 'CLASS BALANCE', value: classBalanceStr, icon: <BarChart3Icon size={18} style={{ color: 'var(--primary)' }} />, tip: 'class_balance' as const },
+            ].map(({ label, value, icon, tip }) => (
               <div key={label} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
                 <div style={{
                   width: 40, height: 40, borderRadius: '50%',
@@ -391,7 +392,7 @@ export default function Step2DataExploration({
                   {icon}
                 </div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)' }}>{value}</div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{label}</div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{label} {tip && <InfoTip term={tip} />}</div>
               </div>
             ))}
           </div>
@@ -424,8 +425,8 @@ export default function Step2DataExploration({
               <div className="alert alert-warning mt-3">
                 <span>&#9888;&#65039;</span>
                 <span>
-                  <strong>Class imbalance detected</strong> (ratio {explorationData.imbalance_ratio}:1).
-                  Consider enabling SMOTE in Step 3.
+                  <strong>Class imbalance detected <InfoTip term="class_imbalance" /></strong> (ratio {explorationData.imbalance_ratio}:1).
+                  Consider enabling SMOTE <InfoTip term="smote" /> in Step 3.
                 </span>
               </div>
             )}
@@ -452,7 +453,7 @@ export default function Step2DataExploration({
                       <td>
                         <code style={{ fontSize: '0.82rem', fontFamily: 'monospace' }}>{col.name}</code>
                         {col.name === explorationData.target_col && (
-                          <span className="badge badge-primary" style={{ marginLeft: 6 }}>target</span>
+                          <span className="badge badge-primary" style={{ marginLeft: 6 }}>target <InfoTip term="target_variable" /></span>
                         )}
                       </td>
                       <td><span className="badge badge-neutral">{col.dtype}</span></td>

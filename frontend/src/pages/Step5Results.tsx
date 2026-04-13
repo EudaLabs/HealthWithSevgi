@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { AlertTriangle, CheckCircle, XCircle, Info, BarChart2 } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   ReferenceLine, CartesianGrid, Legend, Bar, BarChart,
@@ -131,7 +132,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
       <div className="grid-2">
         {/* Confusion Matrix */}
         <div className="card">
-          <div className="card-title">Confusion Matrix</div>
+          <div className="card-title">Confusion Matrix <InfoTip term="confusion_matrix" /></div>
           <div className="card-subtitle" style={{ marginBottom: '1.25rem' }}>
             What the AI got right and wrong on test patients.
           </div>
@@ -147,12 +148,12 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
                   <div style={{ width: 120, display: 'flex', alignItems: 'center', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Actually: Safe</div>
                   <div className="cm-cell cm-cell-tn" style={{ flex: 1 }}>
                     <div className="cm-count">{cm.tn}</div>
-                    <div className="cm-label" style={{ color: 'var(--primary)' }}>TN — True Negative</div>
+                    <div className="cm-label" style={{ color: 'var(--primary)' }}>TN — True Negative <InfoTip term="true_negative" /></div>
                     <div className="cm-desc">Correctly called safe</div>
                   </div>
                   <div className="cm-cell cm-cell-fp" style={{ flex: 1 }}>
                     <div className="cm-count">{cm.fp}</div>
-                    <div className="cm-label" style={{ color: '#7a5200' }}>FP — False Positive</div>
+                    <div className="cm-label" style={{ color: '#7a5200' }}>FP — False Positive <InfoTip term="false_positive" /></div>
                     <div className="cm-desc">Unnecessary alarm</div>
                   </div>
                 </div>
@@ -160,12 +161,12 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
                   <div style={{ width: 120, display: 'flex', alignItems: 'center', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Actually: At Risk</div>
                   <div className="cm-cell cm-cell-fn" style={{ flex: 1 }}>
                     <div className="cm-count">{cm.fn}</div>
-                    <div className="cm-label" style={{ color: 'var(--danger)' }}>FN — False Negative</div>
+                    <div className="cm-label" style={{ color: 'var(--danger)' }}>FN — False Negative <InfoTip term="false_negative" /></div>
                     <div className="cm-desc">MISSED — most dangerous</div>
                   </div>
                   <div className="cm-cell cm-cell-tp" style={{ flex: 1 }}>
                     <div className="cm-count">{cm.tp}</div>
-                    <div className="cm-label" style={{ color: 'var(--success)' }}>TP — True Positive</div>
+                    <div className="cm-label" style={{ color: 'var(--success)' }}>TP — True Positive <InfoTip term="true_positive" /></div>
                     <div className="cm-desc">Correctly flagged</div>
                   </div>
                 </div>
@@ -251,7 +252,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
         {/* ROC Curve */}
         <div className="card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <div className="card-title" style={{ margin: 0 }}>ROC Curve</div>
+            <div className="card-title" style={{ margin: 0 }}>ROC Curve <InfoTip term="roc_curve" /></div>
             <span className="chart-auc-badge">AUC {metrics.auc_roc.toFixed(2)}</span>
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
@@ -284,7 +285,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
       {/* Overfitting / CV + PR Curve */}
       <div className="grid-2">
         <div className="card">
-          <div className="card-title">Training vs. Test Accuracy</div>
+          <div className="card-title">Training vs. Test Accuracy <InfoTip term="overfitting" /></div>
           <div style={{ marginTop: '0.5rem', display: 'flex', gap: '2rem' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Train</div>
@@ -310,7 +311,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
           {metrics.cross_val_scores.length > 0 && (
             <div style={{ marginTop: '0.75rem' }}>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                Cross-Validation Fold Scores (mean: <strong style={{ color: 'var(--primary)' }}>{cvMean !== null ? pct(cvMean) : 'N/A'}</strong>)
+                Cross-Validation <InfoTip term="cross_validation" /> Fold Scores (mean: <strong style={{ color: 'var(--primary)' }}>{cvMean !== null ? pct(cvMean) : 'N/A'}</strong>)
               </div>
               <ResponsiveContainer width="100%" height={100}>
                 <BarChart data={cvFoldData}>
@@ -328,7 +329,7 @@ export default function Step5Results({ trainResponse, onNext }: Props) {
 
         {/* PR Curve */}
         <div className="card">
-          <div className="card-title">Precision-Recall Curve</div>
+          <div className="card-title">Precision-Recall Curve <InfoTip term="pr_curve" /></div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
             Higher area = better at finding true positives without false alarms.
           </div>

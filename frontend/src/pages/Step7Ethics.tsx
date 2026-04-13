@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import { BookOpen, Brain, ChevronDown, ChevronUp, ClipboardCheck, Download, Shield, X } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
@@ -153,7 +154,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
             : (
               <div className="alert alert-success">
                 <span>✅</span>
-                <span><strong>No significant bias detected</strong> across patient subgroups. All sensitivity gaps are within 10 percentage points.</span>
+                <span><strong>No significant bias <InfoTip term="bias" /> detected</strong> across patient subgroups. All sensitivity gaps <InfoTip term="sensitivity_gap" /> are within 10 percentage points.</span>
               </div>
             )
           }
@@ -194,7 +195,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
 
           {/* Subgroup Performance Table */}
           <div className="card">
-            <div className="card-title">Subgroup Performance Table</div>
+            <div className="card-title">Subgroup Performance Table <InfoTip term="subgroup_fairness" /></div>
             <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
               Overall sensitivity: <strong>{pct(ethics.overall_sensitivity)}</strong>
             </div>
@@ -205,9 +206,9 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
               padding: '0.6rem 0.85rem', background: 'var(--background)', borderRadius: 6,
               fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '1rem',
             }}>
-              <span><span style={{ color: 'var(--success)', fontWeight: 700 }}>✓ OK</span> — all metrics above 65%, sensitivity gap &le; 10pp</span>
-              <span><span style={{ color: '#b36800', fontWeight: 700 }}>⚠ Review</span> — any metric below 65% or sensitivity gap &gt; 10pp</span>
-              <span><span style={{ color: 'var(--danger)', fontWeight: 700 }}>✗ Action Needed</span> — sensitivity below 50% or gap &gt; 20pp</span>
+              <span><span style={{ color: 'var(--success)', fontWeight: 700 }}>✓ OK</span> <InfoTip term="status_ok" /> — all metrics above 65%, sensitivity gap &le; 10pp</span>
+              <span><span style={{ color: '#b36800', fontWeight: 700 }}>⚠ Review</span> <InfoTip term="status_review" /> — any metric below 65% or sensitivity gap &gt; 10pp</span>
+              <span><span style={{ color: 'var(--danger)', fontWeight: 700 }}>✗ Action Needed</span> <InfoTip term="status_action_needed" /> — sensitivity below 50% or gap &gt; 20pp</span>
             </div>
 
             <div className="data-table-wrapper">
@@ -216,11 +217,11 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                   <tr>
                     <th>Patient Group</th>
                     <th>Sample n</th>
-                    <th>Accuracy</th>
-                    <th>Sensitivity</th>
-                    <th>Specificity</th>
-                    <th>Precision</th>
-                    <th>F1</th>
+                    <th>Accuracy <InfoTip term="accuracy" /></th>
+                    <th>Sensitivity <InfoTip term="sensitivity" /></th>
+                    <th>Specificity <InfoTip term="specificity" /></th>
+                    <th>Precision <InfoTip term="precision" /></th>
+                    <th>F1 <InfoTip term="f1_score" /></th>
                     <th>Fairness</th>
                   </tr>
                 </thead>
@@ -261,7 +262,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
           <div className="grid-2">
             {/* Training Data Representation */}
             <div className="card">
-              <div className="card-title">Training Data Representation</div>
+              <div className="card-title">Training Data Representation <InfoTip term="training_representation" /></div>
               <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
                 Gender distribution in training dataset vs. general population norms.
               </div>
@@ -303,7 +304,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <ClipboardCheck size={18} />
-                  EU AI Act Compliance
+                  EU AI Act Compliance <InfoTip term="eu_ai_act" />
                 </span>
                 <span className="badge" style={{
                   background: checkedCount === ethics.eu_ai_act_items.length ? 'var(--success-light)' : 'var(--background)',

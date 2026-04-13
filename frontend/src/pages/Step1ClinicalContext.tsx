@@ -1,5 +1,6 @@
 import React from 'react'
 import { Heart, AlertTriangle, CheckCircle, Brain, BarChart3, Settings, Lightbulb, Scale, Database, Stethoscope } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import type { Specialty } from '../types'
 
 const STEP_ROADMAP = [
@@ -93,8 +94,8 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
               Source: <strong style={{ color: 'var(--text-primary)' }}>{specialty.data_source}</strong>
             </p>
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-              <span className="badge badge-success">{specialty.target_type === 'binary' ? 'Binary Classification' : 'Multi-class'}</span>
-              <span className="badge badge-neutral">Target: {specialty.target_variable}</span>
+              <span className="badge badge-success">{specialty.target_type === 'binary' ? 'Binary Classification' : 'Multi-class'} <InfoTip term={specialty.target_type === 'binary' ? 'binary_classification' : 'multiclass'} /></span>
+              <span className="badge badge-neutral">Target: {specialty.target_variable} <InfoTip term="target_variable" /></span>
             </div>
           </div>
         </div>
@@ -144,7 +145,7 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
         <div className="info-card-amber">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <AlertTriangle size={18} style={{ color: '#8a5200' }} />
-            <span style={{ fontWeight: 700, color: '#8a5200' }}>What ML Cannot Do</span>
+            <span style={{ fontWeight: 700, color: '#8a5200' }}>What ML Cannot Do <InfoTip term="machine_learning" /></span>
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
             ML cannot replace clinical judgment or doctor-patient relationships.{' '}

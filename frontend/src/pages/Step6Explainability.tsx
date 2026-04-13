@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { AlertTriangle, Eye } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   Cell, ReferenceLine, ComposedChart,
@@ -127,7 +128,7 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
         {/* LEFT: Global Feature Importance */}
         <div className="card">
           <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
-            Most Important Patient Measurements (Overall)
+            Most Important Patient Measurements (Overall) <InfoTip term="feature_importance" />
           </div>
           <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
             Which patient measurements had the most influence across all predictions.
@@ -286,7 +287,7 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
       {patient && waterfallData.length > 0 && (
         <div className="card">
           <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
-            SHAP Waterfall — Feature Contributions for Patient #{patientIdx}
+            SHAP Waterfall <InfoTip term="shap_values" /> — Feature Contributions for Patient #{patientIdx}
           </div>
           <div className="card-subtitle" style={{ marginBottom: '0.75rem' }}>
             Each bar shows how much a feature pushed the prediction toward or away from risk.
@@ -314,7 +315,7 @@ export default function Step6Explainability({ trainResponse, onNext }: Props) {
       {patient && top5Features.length > 0 && (
         <div className="card" style={{ borderLeft: '4px solid var(--info, #2563eb)', background: 'var(--info-light, #eff6ff)' }}>
           <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--info, #2563eb)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
-            🔍 What-If Analysis
+            🔍 What-If Analysis <InfoTip term="what_if_analysis" />
           </div>
           <div className="card-subtitle" style={{ marginBottom: '1rem' }}>
             Simulate changing a single clinical measurement and see how the predicted probability shifts.

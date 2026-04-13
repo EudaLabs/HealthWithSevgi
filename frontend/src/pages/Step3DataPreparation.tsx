@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { CheckCircle, AlertTriangle, ChevronDown } from 'lucide-react'
+import InfoTip from '../components/InfoTip'
 import toast from 'react-hot-toast'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -110,7 +111,7 @@ export default function Step3DataPreparation({
 
           {/* Train/Test Split */}
           <div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.75rem' }}>Train / Test Split</div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.75rem' }}>Train / Test Split <InfoTip term="train_test_split" /></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem' }}>Training: {trainPct}%</span>
               <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.9rem' }}>Testing: {testPct}%</span>
@@ -150,7 +151,7 @@ export default function Step3DataPreparation({
           {/* Missing Values Strategy */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Missing Values Strategy</span>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Missing Values Strategy <InfoTip term="missing_values" /></span>
               {settings.missing_strategy === 'median' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
             </div>
             <div className="mapper-select-wrapper">
@@ -175,7 +176,7 @@ export default function Step3DataPreparation({
           {/* Normalisation */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Normalisation</span>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Normalisation <InfoTip term="normalization" /></span>
               {settings.normalization === 'zscore' && <span className="badge badge-success" style={{ fontSize: '0.65rem' }}>Recommended</span>}
             </div>
             <div className="mapper-select-wrapper">
@@ -200,7 +201,7 @@ export default function Step3DataPreparation({
           {/* SMOTE Oversampling */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>SMOTE Oversampling</span>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>SMOTE Oversampling <InfoTip term="smote" /></span>
             </div>
             <div className="mapper-select-wrapper">
               <select
@@ -226,7 +227,7 @@ export default function Step3DataPreparation({
           {/* Outlier Handling */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Outlier Handling</span>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Outlier Handling <InfoTip term="outlier_handling" /></span>
             </div>
             <div className="mapper-select-wrapper">
               <select
@@ -348,8 +349,8 @@ export default function Step3DataPreparation({
         <div className="alert alert-warning">
           <AlertTriangle size={18} className="alert-icon" />
           <div>
-            <strong>Class imbalance detected</strong> (ratio {explorationData.imbalance_ratio}:1).
-            {' '}Enable SMOTE above to create synthetic minority class samples during training.
+            <strong>Class imbalance detected <InfoTip term="class_imbalance" /></strong> (ratio {explorationData.imbalance_ratio}:1).
+            {' '}Enable SMOTE <InfoTip term="smote" /> above to create synthetic minority class samples during training.
           </div>
         </div>
       )}

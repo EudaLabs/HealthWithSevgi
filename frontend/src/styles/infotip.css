@@ -1,0 +1,133 @@
+/* ── InfoTip — Educational tooltip component ── */
+
+.infotip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* The ⓘ button */
+.infotip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity var(--transition), background var(--transition), transform var(--transition);
+  padding: 0;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.infotip-trigger:hover {
+  opacity: 1;
+  background: var(--primary-light);
+  transform: scale(1.1);
+}
+
+.infotip-trigger[aria-expanded="true"] {
+  opacity: 1;
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Popover — default: above the icon */
+.infotip-popover {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  max-width: 90vw;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.1rem;
+  z-index: 1000;
+  animation: infotip-enter 150ms ease;
+}
+
+/* Arrow pointing down (when popover is above) */
+.infotip-popover::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: var(--surface);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.06));
+}
+
+/* Flipped variant: popover below the icon */
+.infotip-popover--below {
+  bottom: auto;
+  top: calc(100% + 10px);
+}
+
+.infotip-popover--below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--surface);
+}
+
+.infotip-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+
+.infotip-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.infotip-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--primary-light);
+  transition: background var(--transition);
+}
+
+.infotip-link:hover {
+  background: rgba(26, 122, 76, 0.15);
+  text-decoration: none;
+}
+
+@keyframes infotip-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Responsive: narrower popovers on small screens */
+@media (max-width: 600px) {
+  .infotip-popover {
+    width: 260px;
+    padding: 0.875rem 1rem;
+  }
+}
