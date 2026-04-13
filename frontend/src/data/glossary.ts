@@ -41,6 +41,28 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     learnMoreUrl: 'https://developers.google.com/machine-learning/crash-course/framing/ml-terminology',
   },
 
+  // ── Column Roles ──
+  role_feature: {
+    title: 'Feature (Input Column)',
+    description:
+      'A column that the model uses as input to make its prediction. These are the patient measurements — lab values, vital signs, demographics — that the model examines to identify patterns.',
+  },
+  role_target: {
+    title: 'Target (Output Column)',
+    description:
+      'The column that the model is trying to predict. This is the clinical outcome or diagnosis you want the model to learn — e.g. "diabetes_positive" or "readmission". There can only be one target column.',
+  },
+  role_ignore: {
+    title: 'Ignore (Excluded Column)',
+    description:
+      'A column that will not be used by the model at all. Patient IDs, names, and other identifiers should be set to "Ignore" because they do not contain medical information and could cause the model to memorise patients instead of learning patterns.',
+  },
+  data_leakage: {
+    title: 'Data Leakage',
+    description:
+      'When the model accidentally has access to information it would not have in real clinical practice — for example, using a patient ID that correlates with the outcome. This makes the model appear accurate during testing but fail on real patients.',
+  },
+
   // ── Data Preparation ──
   train_test_split: {
     title: 'Train / Test Split',

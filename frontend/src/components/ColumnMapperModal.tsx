@@ -3,6 +3,7 @@ import {
   X, Star, ChevronDown, AlertTriangle, CheckCircle, Info,
   ShieldCheck, Save, Layers,
 } from 'lucide-react'
+import InfoTip from './InfoTip'
 import type { DataExplorationResponse, Specialty, ColumnStat } from '../types'
 
 /* ------------------------------------------------------------------ */
@@ -251,7 +252,7 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
               </div>
 
               <div className="form-group" style={{ marginTop: '1rem' }}>
-                <label className="form-label">Problem Type</label>
+                <label className="form-label">Problem Type <InfoTip term="classification" /></label>
                 <div className="mapper-select-wrapper">
                   <select
                     className="form-select"
@@ -263,10 +264,15 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                   </select>
                   <ChevronDown size={14} className="mapper-select-icon" />
                 </div>
+                <p style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                  {problemType === 'Binary Classification'
+                    ? 'The model will predict one of two outcomes for each patient — e.g. "at risk" vs "not at risk".'
+                    : 'The model will predict one of several possible categories for each patient — e.g. different diagnosis types.'}
+                </p>
               </div>
 
               <div className="form-group" style={{ marginTop: '0.75rem' }}>
-                <label className="form-label">Target Column</label>
+                <label className="form-label">Target Column <InfoTip term="target_variable" /></label>
                 <div className="mapper-select-wrapper">
                   <select
                     className="form-select"
@@ -309,7 +315,7 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                   </span>
                 </div>
                 <div className="mapper-schema-row">
-                  <span>Missing Values</span>
+                  <span>Missing Values <InfoTip term="missing_values" /></span>
                   <span style={{ fontWeight: 600 }}>{missingPct}%</span>
                 </div>
               </div>
@@ -322,7 +328,7 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                     <strong>Identifier Columns Detected</strong>
                     <p style={{ margin: 0, marginTop: 4 }}>
                       Patient IDs and unique identifiers should be set to
-                      &quot;Ignore&quot; to prevent data leakage in your model.
+                      &quot;Ignore&quot; to prevent data leakage <InfoTip term="data_leakage" /> in your model.
                     </p>
                   </div>
                 </div>
@@ -409,7 +415,7 @@ export default function ColumnMapperModal({ explorationData, specialty, onSave, 
                     <tr>
                       <th>Column Name</th>
                       <th>Type</th>
-                      <th>Role</th>
+                      <th>Role <InfoTip term="role_feature" /></th>
                     </tr>
                   </thead>
                   <tbody>
