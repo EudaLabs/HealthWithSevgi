@@ -7,7 +7,7 @@
   gap: 0.2rem;
 }
 
-/* The ⓘ button */
+/* The (i) button */
 .infotip-trigger {
   display: inline-flex;
   align-items: center;
@@ -39,21 +39,18 @@
   border-color: var(--primary);
 }
 
-/* Popover — default: above the icon */
+/* Popover — rendered via portal at body level with position:fixed */
 .infotip-popover {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
   width: 300px;
   max-width: 90vw;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem 1.1rem;
-  z-index: 1000;
+  z-index: 10000;
   animation: infotip-enter 150ms ease;
+  pointer-events: auto;
 }
 
 /* Arrow pointing down (when popover is above) */
@@ -69,11 +66,6 @@
 }
 
 /* Flipped variant: popover below the icon */
-.infotip-popover--below {
-  bottom: auto;
-  top: calc(100% + 10px);
-}
-
 .infotip-popover--below::after {
   top: auto;
   bottom: 100%;
@@ -114,14 +106,8 @@
 }
 
 @keyframes infotip-enter {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Responsive: narrower popovers on small screens */

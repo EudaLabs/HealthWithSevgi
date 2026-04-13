@@ -68,7 +68,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     title: 'Train / Test Split',
     description:
       'Dividing the dataset into two parts: a training set (used to teach the model) and a test set (used to evaluate it on unseen data). This simulates how the model would perform on new patients it has never encountered.',
-    learnMoreUrl: 'https://developers.google.com/machine-learning/crash-course/training-and-test-sets',
+    learnMoreUrl: 'https://developers.google.com/machine-learning/crash-course/training-and-test-sets/splitting-data',
   },
   missing_values: {
     title: 'Missing Values',
@@ -333,7 +333,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     title: 'Overfitting',
     description:
       'When a model learns the training data too well — memorising noise and peculiarities rather than genuine patterns. An overfit model performs excellently on training data but poorly on new, unseen patients. Detected by a large gap between training and test accuracy.',
-    learnMoreUrl: 'https://developers.google.com/machine-learning/crash-course/generalization',
+    learnMoreUrl: 'https://developers.google.com/machine-learning/crash-course/overfitting',
   },
 
   // ── Explainability ──
