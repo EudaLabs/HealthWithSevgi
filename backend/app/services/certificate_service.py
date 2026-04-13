@@ -325,6 +325,10 @@ class CertificateService:
             fontSize=9, textColor=DARK_TEXT, leading=13,
             leftIndent=14, firstLineIndent=-10,
         )
+        cell8 = ParagraphStyle(
+            "Cell8", parent=styles["Normal"],
+            fontSize=8, textColor=DARK_TEXT, leading=10,
+        )
 
         story = []
 
@@ -452,9 +456,11 @@ class CertificateService:
         ]
         for i, bg in enumerate(row_bgs):
             ts.append(("BACKGROUND", (0, i), (-1, i), bg))
-        # Colour the Status column text
+        # Colour the Value and Status columns
         for i, (val, gt, at) in enumerate(perf_vals_thresholds, start=1):
             col = SUCCESS if val >= gt else (WARNING if val >= at else DANGER)
+            ts.append(("TEXTCOLOR", (1, i), (1, i), col))
+            ts.append(("FONTNAME", (1, i), (1, i), "Helvetica-Bold"))
             ts.append(("TEXTCOLOR", (3, i), (3, i), col))
             ts.append(("FONTNAME", (3, i), (3, i), "Helvetica-Bold"))
         perf_table.setStyle(TableStyle(ts))
@@ -554,17 +560,19 @@ class CertificateService:
             ))
         story.append(Spacer(1, 0.2 * cm))
 
-        subgroup_data = [["Subgroup", "n", "Accuracy", "Sensitivity", "Specificity", "Status"]]
+        subgroup_data = [["Subgroup", "n", "Accuracy", "Sens.", "Spec.", "F1", "Status"]]
         for sm in ethics.subgroup_metrics:
             status_sym = {"acceptable": "✓", "review": "⚠", "action_needed": "✗"}.get(sm.status, "?")
             subgroup_data.append([
-                sm.group_label, str(sm.sample_size),
+                Paragraph(sm.group_label, cell8),
+                str(sm.sample_size),
                 _pct(sm.accuracy), _pct(sm.sensitivity), _pct(sm.specificity),
+                _pct(sm.f1_score),
                 f"{status_sym}  {sm.status.replace('_', ' ').title()}",
             ])
         sg_table = Table(
             subgroup_data,
-            colWidths=[3.8 * cm, 1.5 * cm, 2.5 * cm, 2.8 * cm, 2.8 * cm, 3.6 * cm],
+            colWidths=[3.2 * cm, 1.2 * cm, 2.1 * cm, 2.1 * cm, 2.1 * cm, 2.1 * cm, 4.2 * cm],
         )
         sg_ts = [
             ("BACKGROUND", (0, 0), (-1, 0), PRIMARY),
@@ -581,8 +589,8 @@ class CertificateService:
         for i, sm in enumerate(ethics.subgroup_metrics, 1):
             col = (SUCCESS if sm.status == "acceptable"
                    else WARNING if sm.status == "review" else DANGER)
-            sg_ts.append(("TEXTCOLOR", (5, i), (5, i), col))
-            sg_ts.append(("FONTNAME", (5, i), (5, i), "Helvetica-Bold"))
+            sg_ts.append(("TEXTCOLOR", (6, i), (6, i), col))
+            sg_ts.append(("FONTNAME", (6, i), (6, i), "Helvetica-Bold"))
         sg_table.setStyle(TableStyle(sg_ts))
         story.append(sg_table)
         story.append(Spacer(1, 0.4 * cm))
@@ -595,7 +603,7 @@ class CertificateService:
             is_checked = item.get("pre_checked") or checklist_state.get(item["id"], False)
             checklist_data.append([
                 str(i),
-                item["text"],
+                Paragraph(item["text"], cell8),
                 "✓  Complete" if is_checked else "○  Pending",
             ])
         cl_table = Table(checklist_data, colWidths=[1 * cm, 14 * cm, 2 * cm])
@@ -641,7 +649,7 @@ class CertificateService:
                                 spaceAfter=5))
 
         story.append(Paragraph(
-            f"Generated: <b>{today}</b>  ·  HEALTH-AI ML Learning Tool v1.0  "
+            f"Generated: <b>{today}</b>  ·  HEALTH-AI ML Learning Tool v1.5  "
             "·  Prepared by the HealthWithSevgi Team",
             small_center,
         ))
@@ -654,5 +662,15 @@ class CertificateService:
             disclaimer_style,
         ))
 
-        doc.build(story)
+        def _add_page_number(canvas, doc_template):
+            canvas.saveState()
+            canvas.setFont("Helvetica", 7)
+            canvas.setFillColor(colors.HexColor("#9CA3AF"))
+            canvas.drawCentredString(
+                PAGE_W / 2, 1.0 * cm,
+                f"Page {canvas.getPageNumber()}"
+            )
+            canvas.restoreState()
+
+        doc.build(story, onFirstPage=_add_page_number, onLaterPages=_add_page_number)
         return buf.getvalue()
