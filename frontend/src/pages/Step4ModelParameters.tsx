@@ -614,12 +614,21 @@ export default function Step4ModelParameters({
             </div>
             <div className="charts-grid">
               <div className="chart-cell">
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Shows how many patients the model classified correctly vs incorrectly — each cell is a combination of actual and predicted outcome. <InfoTip term="confusion_matrix" />
+                </div>
                 <ConfusionMatrixChart data={trainResponse.metrics.confusion_matrix} />
               </div>
               <div className="chart-cell">
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Plots Sensitivity vs False Positive Rate at every threshold — the further the curve bows toward the top-left, the better. <InfoTip term="roc_curve" />
+                </div>
                 <ROCCurveChart points={trainResponse.metrics.roc_curve} auc={trainResponse.metrics.auc_roc} />
               </div>
               <div className="chart-cell">
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Plots Precision vs Recall — a higher area means the model finds true positives without generating too many false alarms. <InfoTip term="pr_curve" />
+                </div>
                 <PRCurveChart points={trainResponse.metrics.pr_curve} />
               </div>
               {trainResponse.knn_scatter && trainResponse.model_type === 'knn' && (

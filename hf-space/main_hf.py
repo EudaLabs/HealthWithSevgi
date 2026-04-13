@@ -13,6 +13,7 @@ from app.services.certificate_service import CertificateService
 from app.services.data_service import DataService
 from app.services.ethics_service import EthicsService
 from app.services.explain_service import ExplainService
+from app.services.insight_service import InsightService
 from app.services.ml_service import MLService
 from arena.service import ArenaService
 
@@ -30,6 +31,7 @@ app.state.data_service = DataService()
 app.state.ml_service = MLService()
 app.state.explain_service = ExplainService()
 app.state.ethics_service = EthicsService()
+app.state.insight_service = InsightService()
 app.state.certificate_service = CertificateService()
 app.state.arena_service = ArenaService(app.state.ml_service)
 

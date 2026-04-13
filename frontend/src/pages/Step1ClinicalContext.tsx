@@ -97,6 +97,11 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
               <span className="badge badge-success">{specialty.target_type === 'binary' ? 'Binary Classification' : 'Multi-class'} <InfoTip term={specialty.target_type === 'binary' ? 'binary_classification' : 'multiclass'} /></span>
               <span className="badge badge-neutral">Target: {specialty.target_variable} <InfoTip term="target_variable" /></span>
             </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem', lineHeight: 1.5 }}>
+              {specialty.target_type === 'binary'
+                ? 'The AI will predict one of two outcomes for each patient — for example, "at risk" or "not at risk". This is the most common type of clinical prediction task.'
+                : 'The AI will predict one of several possible categories for each patient. Each category represents a distinct clinical outcome or diagnosis.'}
+            </p>
           </div>
         </div>
 
