@@ -37,7 +37,7 @@
 
 ### Features Delivered
 
-- **SHAP-based global feature importance** — horizontal bars sorted descending, clinical names only, importance values 0.00–1.00
+- **SHAP-based global feature importance** — horizontal bars sorted descending, clinical names only, mean absolute SHAP values
 - **Clinical sense-check banner** — domain-specific top-feature explanation text that updates across all 20 medical specialties
 - **Patient selector dropdown** — 3 representative test patients (low, medium, high risk)
 - **Waterfall explanation chart** — red bars for risk-increasing features, green bars for risk-reducing features
@@ -72,7 +72,7 @@ The clinical justification table for all 20 specialties is documented separately
 ## Documentation Status
 
 - **Wiki pages completed:** Sprint 4 summary, Domain Clinical Review
-- **Reports intentionally deferred for now:** Full Pipeline Test Report PDF, Weekly Progress Report PDF
+- **Reports completed:** Full Pipeline Test Report PDF (84/84 pass), Weekly Progress Report PDF
 
 ## Deadline
 
