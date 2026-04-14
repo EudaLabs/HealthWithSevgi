@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthWithSevgi — Sprint 4 Progress Report</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.5; max-width: 800px; margin: 0 auto; padding: 2cm; }
+
+  /* Header / Footer */
+  .page-header { text-align: center; color: #888; font-size: 9pt; margin-bottom: 2em; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  .page-footer { text-align: center; color: #888; font-size: 9pt; margin-top: 3em; border-top: 1px solid #ddd; padding-top: 4px; }
+
+  /* Cover */
+  .cover { text-align: center; padding: 3em 0; }
+  .cover .logo { font-size: 36pt; color: #9e9e9e; }
+  .cover h1 { font-size: 28pt; color: #2E7D32; margin: 4px 0; }
+  .cover h2 { font-size: 16pt; color: #2E7D32; font-weight: 600; margin-bottom: 12px; }
+  .cover .subtitle { color: #555; }
+  .cover .instructor { color: #222; }
+  .cover .instructor strong { color: #000; }
+  .green-rule { border: none; height: 3px; background: #2E7D32; margin: 1.5em 0; }
+
+  /* Info box */
+  .info-box { border: 1px solid #ccc; border-radius: 6px; padding: 16px 24px; margin: 1.5em auto; max-width: 560px; }
+  .info-box table { width: 100%; }
+  .info-box td:first-child { font-weight: 700; color: #2E7D32; width: 200px; padding: 4px 0; }
+  .info-box td:last-child { padding: 4px 0; }
+
+  /* TOC */
+  .toc-box { border: 1px solid #ccc; border-radius: 6px; padding: 20px 28px; margin: 1.5em auto; max-width: 640px; }
+  .toc-box h2 { font-size: 18pt; color: #1B5E20; margin-bottom: 12px; }
+  .toc-cols { display: flex; gap: 2em; }
+  .toc-cols ol { padding-left: 1.2em; }
+  .toc-cols li { margin-bottom: 4px; }
+  .toc-cols a { color: #2E7D32; text-decoration: none; }
+  .toc-cols a:hover { text-decoration: underline; }
+
+  /* Team table */
+  .team-table, .data-table, .metrics-table, .test-table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+  .team-table th, .data-table th, .metrics-table th, .test-table th { background: #2E7D32; color: #fff; text-align: left; padding: 8px 12px; font-size: 10pt; text-transform: uppercase; letter-spacing: 0.5px; }
+  .team-table td, .data-table td, .metrics-table td, .test-table td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+  .team-table tr:nth-child(even) td, .data-table tr:nth-child(even) td { background: #F1F8E9; }
+
+  /* Section headings */
+  h2.section { font-size: 16pt; color: #1B5E20; margin-top: 2em; padding-bottom: 6px; border-bottom: 3px solid #2E7D32; }
+  h3.sub { font-size: 13pt; color: #2E7D32; margin: 1.2em 0 0.5em; }
+
+  /* Domain box */
+  .domain-box { border-left: 4px solid #2E7D32; padding: 8px 16px; margin: 8px 0; background: #f9fdf5; font-size: 10pt; color: #333; }
+
+  /* Status badges */
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 9pt; font-weight: 700; text-transform: uppercase; }
+  .badge-pass { background: #C8E6C9; color: #1B5E20; }
+  .badge-done { background: #C8E6C9; color: #1B5E20; }
+  .badge-pending { background: #FFF3E0; color: #E65100; }
+  .badge-risk { background: #FFCDD2; color: #B71C1C; }
+
+  /* Retro cards */
+  .retro { display: flex; gap: 16px; margin: 1em 0; }
+  .retro-card { flex: 1; border: 1px solid #ccc; border-radius: 6px; padding: 14px; }
+  .retro-card h4 { font-size: 11pt; margin-bottom: 8px; }
+  .retro-card.keep h4 { color: #1B5E20; }
+  .retro-card.improve h4 { color: #E65100; }
+  .retro-card.try h4 { color: #0D47A1; }
+  .retro-card p { font-size: 10pt; color: #444; }
+
+  /* Sub-total row */
+  .subtotal td { font-weight: 700; border-top: 2px solid #2E7D32; }
+  .total-line { text-align: right; font-weight: 700; color: #B71C1C; margin: 0.5em 0 1.5em; }
+
+  /* Page break */
+  .page-break { page-break-after: always; break-after: page; margin: 0; }
+
+  /* Links */
+  a { color: #2E7D32; }
+
+  /* Print */
+  @media print {
+    body { padding: 0; }
+    .page-break { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">HealthWithSevgi — Sprint 4 Progress Report</div>
+
+<!-- ===== COVER PAGE ===== -->
+<div class="cover">
+  <div class="logo">H</div>
+  <h1>Weekly Progress Report</h1>
+  <h2>Sprint 4 — Explainability & Ethics (Steps 6&ndash;7)</h2>
+  <p class="subtitle">SENG 430 &middot; Software Quality Assurance &middot; Cankaya University &middot; Spring 2025&ndash;2026</p>
+  <p class="instructor">Instructor: <strong>Dr. Sevgi Koyuncu Tun&ccedil;</strong></p>
+</div>
+
+<hr class="green-rule">
+
+<div class="info-box">
+  <table>
+    <tr><td>Group Name</td><td>HealthWithSevgi</td></tr>
+    <tr><td>Week Number</td><td>Week 8 (Final week of Sprint 4)</td></tr>
+    <tr><td>Scrum Master</td><td>Batuhan Bayazit</td></tr>
+    <tr><td>Date Submitted</td><td>April 15, 2026</td></tr>
+    <tr><td>Sprint Period</td><td>March 31 &ndash; April 15, 2026</td></tr>
+    <tr><td>Domains Implemented</td><td><strong>20 / 20</strong> (all clinical domains functional)</td></tr>
+  </table>
+</div>
+
+<div class="toc-box">
+  <h2>Table of Contents</h2>
+  <div class="toc-cols">
+    <ol>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#burndown">Burndown Chart</a></li>
+      <li><a href="#completed">Completed This Sprint</a></li>
+      <li><a href="#inprogress">In Progress</a></li>
+      <li><a href="#blocked">Blocked / At Risk</a></li>
+    </ol>
+    <ol start="6">
+      <li><a href="#decisions">Key Decisions Made</a></li>
+      <li><a href="#tests">Test Results</a></li>
+      <li><a href="#metrics">Sprint 4 Metrics</a></li>
+      <li><a href="#nextweek">Next Week Plan (Sprint 5)</a></li>
+      <li><a href="#retro">Retrospective Note</a></li>
+    </ol>
+  </div>
+</div>
+
+<div style="text-align:center; margin-top:1.5em;">
+  <p><strong>GitHub:</strong> github.com/EudaLabs/HealthWithSevgi</p>
+  <p><strong>Live Demo:</strong> huggingface.co/spaces/0xBatuhan4/HealthWithSevgi</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ===== 1. TEAM ===== -->
+<h2 class="section" id="team">1. Team</h2>
+<table class="team-table">
+  <thead><tr><th>Role</th><th>Name</th><th>Student ID</th></tr></thead>
+  <tbody>
+    <tr><td>Product Owner + Developer</td><td>Efe &Ccedil;elik</td><td>202128016</td></tr>
+    <tr><td>UX Designer</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>202128028</td></tr>
+    <tr><td>Lead Developer + Scrum Master</td><td>Batuhan Bayaz&inodot;t</td><td>202228008</td></tr>
+    <tr><td>Developer</td><td>Berat Mert G&ouml;kkaya</td><td>202228019</td></tr>
+    <tr><td>QA / Documentation Lead</td><td>Berfin Duru Alkan</td><td>202228005</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 2. BURNDOWN ===== -->
+<h2 class="section" id="burndown">2. Burndown Chart</h2>
+
+<div class="domain-box">
+  Sprint 4 duration: March 31 &ndash; April 15, 2026. Scope: Step 6 (Explainability) and Step 7 (Ethics &amp; Bias).
+  26 total issues in sprint scope (10 User Stories from backlog + 16 new Sprint 4 stories).
+  All 26 stories marked Done. 52 commits merged to main during the sprint period.
+</div>
+
+<table class="data-table" style="margin-top:1em;">
+  <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Sprint Duration</td><td>March 31 &ndash; April 15, 2026</td></tr>
+    <tr><td>Total Issues (Sprint 4 scope)</td><td>26 (10 backlog stories + 16 new stories)</td></tr>
+    <tr><td>Stories Completed</td><td>26 / 26</td></tr>
+    <tr><td>Done</td><td>26 issues &mdash; all Sprint 4 scope items</td></tr>
+    <tr><td>In Progress</td><td>0 issues</td></tr>
+    <tr><td>Commits</td><td>52 commits to main</td></tr>
+    <tr><td>Dev Completion</td><td>All Step 6 &amp; Step 7 features delivered</td></tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ===== 3. COMPLETED ===== -->
+<h2 class="section" id="completed">3. Completed This Sprint</h2>
+<p>All features listed below are fully implemented and merged on the <code>main</code> branch. Completion evidence comes from Git commit history, Jira board, and UAT test results.</p>
+
+<h3 class="sub">3.1 User Stories &mdash; Step 6 Explainability</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>US-020<br><small>(SCRUM-45)</small></td><td>View feature importance chart with clinical names</td><td>Batuhan Bayaz&inodot;t</td><td>2026-04-09</td></tr>
+    <tr><td>US-021<br><small>(SCRUM-46)</small></td><td>View SHAP waterfall explanation for individual patient</td><td>Berat Mert</td><td>2026-04-09</td></tr>
+    <tr><td>US-029<br><small>(SCRUM-142)</small></td><td>Display correlation vs. causation disclaimer on Step 6</td><td>Batuhan Bayaz&inodot;t</td><td>2026-04-09</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">3.2 User Stories &mdash; Step 7 Ethics &amp; Bias</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>US-022<br><small>(SCRUM-47)</small></td><td>View subgroup fairness performance table with bias alerts</td><td>Berat Mert</td><td>2026-04-12</td></tr>
+    <tr><td>US-023<br><small>(SCRUM-48)</small></td><td>Complete EU AI Act compliance checklist</td><td>Berfin Duru Alkan</td><td>2026-04-12</td></tr>
+    <tr><td>US-024<br><small>(SCRUM-49)</small></td><td>View training data representation chart vs. hospital population</td><td>Efe &Ccedil;elik</td><td>2026-04-12</td></tr>
+    <tr><td>US-025<br><small>(SCRUM-50)</small></td><td>Download PDF summary certificate after completing all steps</td><td>Efe &Ccedil;elik</td><td>2026-04-13</td></tr>
+    <tr><td>US-027<br><small>(SCRUM-57)</small></td><td>View real-world AI failure case studies in Step 7</td><td>Efe &Ccedil;elik</td><td>2026-04-13</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">3.3 User Stories &mdash; Sprint 4 Enhancements</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>US-030<br><small>(SCRUM-199)</small></td><td>Interactive parallel coordinates chart for model comparison</td><td>Batuhan Bayaz&inodot;t</td><td>2026-04-12</td></tr>
+    <tr><td>US-031<br><small>(SCRUM-200)</small></td><td>Sanitize inf/nan floats and optimize ML training pipeline</td><td>Berat Mert</td><td>2026-04-12</td></tr>
+    <tr><td>US-032<br><small>(SCRUM-201)</small></td><td>InsightService backend &mdash; LLM-powered clinical insights with MedGemma/Gemini</td><td>Berat Mert</td><td>2026-04-13</td></tr>
+    <tr><td>US-033<br><small>(SCRUM-202)</small></td><td>AI clinical assessment UI and enriched ethics modals</td><td>Efe &Ccedil;elik</td><td>2026-04-14</td></tr>
+    <tr><td>US-040<br><small>(SCRUM-209)</small></td><td>UI/UX design for model comparison chart &amp; clinical insights UI</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>2026-04-12</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">3.4 ISO 42001 Documentation Stories</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>US-034<br><small>(SCRUM-203)</small></td><td>ISO 42001 Ch.1 &mdash; AIMS Scope, Context &amp; Stakeholders</td><td>Efe &Ccedil;elik</td><td>2026-04-14</td></tr>
+    <tr><td>US-035<br><small>(SCRUM-204)</small></td><td>ISO 42001 Ch.2 &mdash; AI Policy &amp; Governance Roles</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>2026-04-14</td></tr>
+    <tr><td>US-036<br><small>(SCRUM-205)</small></td><td>ISO 42001 Ch.3 &mdash; Data Governance &amp; Third-Party Management</td><td>Berat Mert</td><td>2026-04-14</td></tr>
+    <tr><td>US-037<br><small>(SCRUM-206)</small></td><td>ISO 42001 Appendix A (SoA) &amp; Appendix B (Feedback Form)</td><td>Berfin Duru Alkan</td><td>2026-04-14</td></tr>
+    <tr><td>US-038<br><small>(SCRUM-207)</small></td><td>ISO 42001 report technical review and cross-referencing</td><td>Batuhan Bayaz&inodot;t</td><td>2026-04-14</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">3.5 QA / Test Stories</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>TEST-S6<br><small>(SCRUM-65)</small></td><td>Test &mdash; Step 6 Explainability</td><td>Berfin Duru Alkan</td><td>2026-04-15</td></tr>
+    <tr><td>TEST-S7<br><small>(SCRUM-66)</small></td><td>Test &mdash; Step 7 Ethics &amp; Bias + Certificate</td><td>Berfin Duru Alkan</td><td>2026-04-15</td></tr>
+    <tr><td>US-042<br><small>(SCRUM-211)</small></td><td>QA execution &mdash; Step 6 feature importance &amp; clinical sense-check (TC-S4-001 to TC-S4-013)</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>2026-04-15</td></tr>
+    <tr><td>US-043<br><small>(SCRUM-212)</small></td><td>QA execution &mdash; Step 6 patient waterfall, what-if &amp; domain coverage (TC-S4-014 to TC-S4-030)</td><td>Batuhan Bayaz&inodot;t</td><td>2026-04-15</td></tr>
+    <tr><td>US-044<br><small>(SCRUM-213)</small></td><td>QA execution &mdash; Step 7 subgroup table &amp; bias detection (TC-S4-031 to TC-S4-040)</td><td>Berat Mert</td><td>2026-04-15</td></tr>
+    <tr><td>US-045<br><small>(SCRUM-214)</small></td><td>QA execution &mdash; Step 7 EU AI Act checklist, representation &amp; case studies (TC-S4-041 to TC-S4-054)</td><td>Efe &Ccedil;elik</td><td>2026-04-13</td></tr>
+    <tr><td>US-046<br><small>(SCRUM-215)</small></td><td>QA execution &mdash; Certificate PDF validation &amp; cross-step consistency (TC-S4-055 to TC-S4-069)</td><td>Berat Mert</td><td>2026-04-15</td></tr>
+    <tr><td>US-047<br><small>(SCRUM-216)</small></td><td>QA execution &mdash; End-to-end pipeline &amp; deliverable verification (TC-S4-070 to TC-S4-084)</td><td>Berfin Duru Alkan</td><td>2026-04-15</td></tr>
+  </tbody>
+</table>
+
+<p class="total-line">Total Stories Delivered: 26</p>
+
+<div class="page-break"></div>
+
+<!-- ===== 4. IN PROGRESS ===== -->
+<h2 class="section" id="inprogress">4. In Progress</h2>
+<ul>
+  <li><strong>None</strong> &mdash; all Sprint 4 stories are completed and marked as Done in Jira.</li>
+</ul>
+
+<!-- ===== 5. BLOCKED ===== -->
+<h2 class="section" id="blocked">5. Blocked / At Risk</h2>
+<ul>
+  <li><strong>No blockers.</strong> All Sprint 4 deliverables are complete.</li>
+  <li>All 26 Jira stories have been transitioned to <span class="badge badge-done">DONE</span> status.</li>
+</ul>
+
+<!-- ===== 6. KEY DECISIONS ===== -->
+<h2 class="section" id="decisions">6. Key Decisions Made</h2>
+
+<ol style="padding-left:1.2em; margin-top:0.8em;">
+  <li style="margin-bottom:1em;">
+    <strong>Clinical-first language throughout Steps 6&ndash;7.</strong>
+    All feature labels use plain clinical names (e.g., &ldquo;Serum Creatinine (mg/dL)&rdquo;) instead of raw database column names. A 100+ entry <code>CLINICAL_NAME_MAP</code> translates every feature. Zero raw column names visible to the end user.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Fast What-If analysis with predict_proba.</strong>
+    Probability shifts are calculated using <code>predict_proba</code> instead of recomputing SHAP values, making What-If simulations near-instant (&lt;100ms) compared to 3&ndash;5 seconds for full SHAP recomputation.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Three-patient sampling strategy for waterfall explanations.</strong>
+    Low-risk, mid-risk, and high-risk representative patients are sampled automatically from test data. This provides meaningful contrast in SHAP waterfall explanations without requiring the user to browse through hundreds of patients.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Strict bias thresholding for fairness alerts.</strong>
+    The bias auto-detection banner uses a &gt;10pp sensitivity gap rule for triggering warnings, and a &gt;15pp demographic gap for representation warnings. These thresholds were chosen to balance clinical significance against false alarms.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>LLM-powered clinical insights via InsightService.</strong>
+    Integrated MedGemma and Gemini as LLM providers for generating domain-specific clinical interpretations of model results, enriching the EU AI Act checklist descriptions and case study analysis.
+  </li>
+</ol>
+
+<div class="page-break"></div>
+
+<!-- ===== 7. TEST RESULTS ===== -->
+<h2 class="section" id="tests">7. Test Results</h2>
+<p>Based on the Sprint 4 QA Full Pipeline Test Report (84 test cases). All test cases executed on the live HuggingFace Spaces deployment.</p>
+
+<table class="test-table">
+  <thead><tr><th>Test Area</th><th>Total</th><th>Pass</th><th>Fail</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Step 6 &mdash; Explainability</td><td>30</td><td>30</td><td>0</td><td>Feature importance, waterfall, what-if, clinical sense-check, domain coverage</td></tr>
+    <tr><td>Step 7 &mdash; Ethics &amp; Bias</td><td>24</td><td>24</td><td>0</td><td>Subgroup table, bias banner, EU AI Act checklist, representation chart, case studies</td></tr>
+    <tr><td>Certificate / E2E / Deliverable</td><td>30</td><td>30</td><td>0</td><td>PDF generation, end-to-end pipeline, cross-step consistency, domain switching</td></tr>
+    <tr style="font-weight:700; border-top:2px solid #2E7D32;">
+      <td><strong>TOTAL</strong></td><td><strong>84</strong></td><td><strong>84</strong></td><td><strong>0</strong></td>
+      <td><span class="badge badge-pass" style="font-size:10pt;">100% PASS RATE</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:10pt; color:#555; margin-top:0.5em;">
+  Individual test case evidence: 84 screenshots captured (TC-S4-001 through TC-S4-084).
+  Original tester: Berfin Duru Alkan. Verified on production environment.
+</p>
+
+<!-- ===== 8. SPRINT 4 METRICS ===== -->
+<h2 class="section" id="metrics">8. Sprint 4 Metrics</h2>
+
+<table class="metrics-table">
+  <thead><tr><th>Metric</th><th>What We Measured</th><th>Result</th><th>Target</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Bias Detection Accuracy</td>
+      <td>Subgroup gap at 10pp and &gt;10pp</td>
+      <td>Banner hidden at &le;10pp; visible at &gt;10pp. Confirmed with Cardiology (25.2pp gap &rarr; visible) and Neurology (within threshold &rarr; hidden)</td>
+      <td>Correct threshold behaviour</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Checklist Toggle</td>
+      <td>All 8 EU AI Act items</td>
+      <td>8 items render, 2 pre-checked on load, all toggle correctly. 3/3 backend checklist tests pass</td>
+      <td>All toggle; 2 pre-checked</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Certificate Content</td>
+      <td>PDF for 3 different domains</td>
+      <td>Each PDF includes domain name, model type, 6 metrics (Accuracy, Sensitivity, Specificity, Precision, F1, AUC-ROC), confusion matrix, bias findings, checklist state</td>
+      <td>Correct content per domain</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Certificate Generation Time</td>
+      <td>POST /api/generate-certificate timing</td>
+      <td>0.69 seconds measured via curl</td>
+      <td>&lt; 10 seconds</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>End-to-End Flow</td>
+      <td>Steps 1&ndash;7 with fresh CSV</td>
+      <td>Full 7-step pipeline completed for 3 domains (Cardiology, Neurology, Endocrinology) with default and uploaded CSV. Zero crashes, all step locks enforced</td>
+      <td>Zero crashes</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Clinical Language Audit</td>
+      <td>Count raw column names in UI</td>
+      <td>0 raw database column names observed across all tested domains. All labels use clinical display names</td>
+      <td>0 raw names</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Domain Count (Steps 6&ndash;7)</td>
+      <td>Run Steps 6&ndash;7 across domains</td>
+      <td>Verified for 3 domains (Cardiology, Neurology, Endocrinology). All 20 domains visible in specialty selector. Feature importance and subgroup tables update correctly on switch</td>
+      <td>20/20</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ===== 9. NEXT WEEK PLAN ===== -->
+<h2 class="section" id="nextweek">9. Next Week Plan (Sprint 5 &mdash; Final Submission)</h2>
+<p>Sprint 5 scope: <strong>Final Presentation</strong> + <strong>Complete Documentation</strong> + <strong>Polish &amp; Hardening</strong>.</p>
+
+<table class="data-table" style="margin-top:1em;">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Assignee</th></tr></thead>
+  <tbody>
+    <tr><td>US-048</td><td>Final presentation slides and live demo preparation</td><td>Team</td></tr>
+    <tr><td>US-049</td><td>ISO 42001 report finalisation and submission</td><td>Efe &Ccedil;elik / Berat Mert</td></tr>
+    <tr><td>US-050</td><td>End-to-end regression test across all 20 domains</td><td>Berfin Duru Alkan</td></tr>
+    <tr><td>US-051</td><td>UI polish &mdash; responsive layout, accessibility audit</td><td>Burak Aydo&gbreve;mu&scedil;</td></tr>
+    <tr><td>US-052</td><td>Documentation cleanup &mdash; README, wiki, inline comments</td><td>Batuhan Bayaz&inodot;t</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 10. RETROSPECTIVE ===== -->
+<h2 class="section" id="retro">10. Retrospective Note (Week 8 &mdash; Even Week)</h2>
+
+<div class="retro">
+  <div class="retro-card keep">
+    <h4>KEEP</h4>
+    <p>QA-driven development with test plan written before implementation continued to catch issues early. The 84-test-case QA report was completed before the deadline with zero failures. Clinical language review during development prevented post-hoc renaming.</p>
+  </div>
+  <div class="retro-card improve">
+    <h4>IMPROVE</h4>
+    <p>Sprint 4 had a heavy documentation load (ISO 42001 report) alongside feature work. Starting documentation earlier in the sprint would reduce last-day pressure. Jira ticket creation for QA stories could be more granular.</p>
+  </div>
+  <div class="retro-card try">
+    <h4>TRY</h4>
+    <p>For Sprint 5, run a full 20-domain regression test as a CI gate before any merge to main. Schedule the final presentation rehearsal at least 2 days before the showcase to allow feedback incorporation.</p>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="page-footer">Page &middot; HealthWithSevgi &mdash; Sprint 4 Progress Report</div>
+
+</body>
+</html>

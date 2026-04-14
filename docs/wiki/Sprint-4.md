@@ -13,7 +13,7 @@
 | 4 | Domain Clinical Review | [[Domain Clinical Review]] | DONE |
 | 5 | Sprint 4 Summary | This wiki page | DONE |
 | 6 | Full Pipeline Test Report | [PDF](../seng430-sprints/Sprint4_QA_Full_Pipeline_Test_Report.pdf) | DONE |
-| 7 | Weekly Progress Report | PDF (separate upload) | PENDING |
+| 7 | Weekly Progress Report | [HTML](../reports/Sprint4_Weekly_Progress_Report.html) | DONE |
 
 ## Live Demo
 
