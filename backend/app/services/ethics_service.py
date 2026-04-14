@@ -79,14 +79,6 @@ EU_AI_ACT_ITEMS = [
         "article": "Art. 9",
         "pre_checked": False,
     },
-    {
-        "id": "data_licensing",
-        "text": "Dataset licensing verified — 18/20 datasets bundled under open licenses "
-                "(CC BY 4.0, CC0 1.0, CC BY-SA 4.0, CC BY-NC 4.0); "
-                "2 datasets with unclear licensing fetched at runtime for educational use only "
-                "(see DATA_LICENSES.md)",
-        "pre_checked": True,
-    },
 ]
 
 CASE_STUDIES = [
