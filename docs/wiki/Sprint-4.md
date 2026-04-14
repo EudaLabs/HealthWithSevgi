@@ -1,50 +1,79 @@
-# Sprint 4 Summary
+# Sprint 4
 
-**Project:** HealthWithSevgi — A clinical ML model selection and evaluation platform
+**Duration:** Mar 31 – Apr 15, 2026  
+**Goal:** Step 6 (Explainability) and Step 7 (Ethics & Bias) fully functional
 
-**Duration:** March 31 – April 15, 2026
+## Deliverables
 
-**Status:** All code deliverables completed on schedule
+| # | Deliverable | Format | Status |
+|---|-------------|--------|--------|
+| 1 | Working App — Steps 6–7 | GitHub + Live Demo | DONE |
+| 2 | Step 6 Explainability Suite | Feature importance + clinical sense-check + patient waterfall + What-If | DONE |
+| 3 | Step 7 Ethics & Bias Audit | Subgroup table + bias banner + EU AI Act checklist + representation chart + case studies | DONE |
+| 4 | Domain Clinical Review | [[Domain Clinical Review]] | DONE |
+| 5 | Sprint 4 Summary | This wiki page | DONE |
+| 6 | Full Pipeline Test Report | PDF (separate upload) | PENDING |
+| 7 | Weekly Progress Report | PDF (separate upload) | PENDING |
 
-## Core Achievements
+## Live Demo
 
-The team delivered a complete explainability and ethics pipeline covering Steps 6 and 7 of the clinical ML wizard. Step 6 provides SHAP-based global feature importance with clinical display names (never raw column names), single-patient waterfall explanations with plain-language risk factors, and a What-If analysis tool that simulates changing a clinical measurement to show how the predicted probability shifts in real time.
+- **Live Demo:** https://0xbatuhan4-healthwithsevgi.hf.space/
+- **Hugging Face Space:** https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi
+- **Docker:** `docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest`
 
-Step 7 implements a comprehensive fairness audit: subgroup performance tables broken down by gender and age, automatic bias detection that surfaces a red full-width banner when any subgroup's sensitivity falls more than 10 percentage points below overall, and training data representation charts comparing dataset demographics against population norms with amber warnings when gaps exceed 15 percentage points.
+## Sprint 4 Metrics
 
-An EU AI Act compliance checklist with 8 items (2 pre-checked) lets users track regulatory requirements, and a PDF certificate generator produces downloadable compliance documents including domain, model type, six performance metrics, bias findings, and checklist status.
+| Metric | Target | Result |
+|--------|--------|--------|
+| Bias Detection Accuracy | Banner hidden at ≤10pp sensitivity gap; shown at >10pp | PASS |
+| Checklist Toggle | All 8 items toggle correctly; 2 pre-checked on load | PASS |
+| Certificate Content | Domain, model, 6 metrics, bias findings, checklist state included | PASS |
+| Certificate Generation Time | < 10 seconds | PASS |
+| End-to-End Flow | Steps 1–7 run with fresh CSV and no crashes | PASS |
+| Clinical Language Audit | No raw database column names visible to the end user | PASS |
+| Domain Count (Steps 6–7) | Explainability and ethics outputs update across all 20 domains | PASS |
 
 ## Step 6 — Explainability
 
-- SHAP-based global feature importance chart — horizontal bars sorted descending, clinical names only, importance values 0.00–1.00
-- Clinical sense-check banner — domain-specific top-feature explanation text that updates when switching between all 20 medical specialties
-- Patient selector dropdown — 3 representative test patients (low, medium, high risk) with automatic SHAP waterfall generation on selection
-- Waterfall chart — bars colour-coded red (increases risk) and green (decreases risk) with plain-language labels
-- Amber caution banner — "These explanations show associations, not causation"
-- Blue What-If info banner — feature dropdown (top 5 by importance), new value input, Simulate button, probability shift display with directional colour coding
-- Continue to Step 7 CTA button
+### Features Delivered
+
+- **SHAP-based global feature importance** — horizontal bars sorted descending, clinical names only, importance values 0.00–1.00
+- **Clinical sense-check banner** — domain-specific top-feature explanation text that updates across all 20 medical specialties
+- **Patient selector dropdown** — 3 representative test patients (low, medium, high risk)
+- **Waterfall explanation chart** — red bars for risk-increasing features, green bars for risk-reducing features
+- **Amber caution banner** — “These explanations show associations, not causation”
+- **Blue What-If banner** — top-5 feature selector, new value input, instant probability shift simulation
+- **Step navigation CTA** — Continue to Step 7 button after Step 6 review
 
 ## Step 7 — Ethics & Bias
 
-- Subgroup performance table — Male, Female, and age-group rows; Accuracy, Sensitivity, Specificity, Precision, F1 all colour-coded; Fairness column showing OK / Review / ⚠ Action Needed
-- Bias auto-detection banner — red full-width alert when subgroup sensitivity is >10pp below overall; hidden when all groups are within threshold
-- EU AI Act checklist — 8 items, 2 auto-completed (explainability, data source), 6 toggleable; progress bar and "All complete" badge
-- Training data representation chart — grouped bars comparing dataset gender distribution vs. population norms; amber warning alerts below the chart when any group deviates by >15pp
-- AI failure case studies — 3 cards with severity-coded borders and badges: Pulse Oximeter Bias (red — failure), Sepsis Alert Over-Alerting (amber — near-miss), Dermatology AI Skin Tone Bias (green — prevention)
-- PDF certificate download — POST /api/generate-certificate; tested across 3+ domains; includes all required sections
+### Features Delivered
 
-## Quality Metrics
+- **Subgroup performance table** — male, female, and age-group rows with colour-coded Accuracy, Sensitivity, Specificity, Precision, and F1
+- **Fairness status column** — OK / Review / ⚠ Action Needed labels
+- **Bias auto-detection banner** — red full-width alert when subgroup sensitivity is more than 10 percentage points below overall
+- **EU AI Act checklist** — 8 items, 2 pre-completed, progress bar, and completion badge
+- **Training data representation chart** — compares dataset gender balance against population norms; warns when gap exceeds 15pp
+- **AI failure case studies** — three clinically framed cards with severity-coded styling
+- **PDF certificate generator** — downloadable compliance summary for the currently active model/domain
 
-Backend test suite expanded to 178 test cases, all passing. Three new test files cover Step 6 explainability (global importance, patient explanation, What-If, sample patients), Step 7 ethics (subgroup metrics, bias detection, checklist toggle, representation warnings, case study severity), and certificate generation (PDF output, content type, magic bytes, checklist state).
+## Domain Clinical Review
 
-Frontend builds with zero errors and zero TypeScript type warnings.
+The clinical justification table for all 20 specialties is documented separately on [[Domain Clinical Review]]. That page supports the Step 6 clinical sense-check banner by showing why the top predictive feature in each domain is medically plausible.
 
-## Technical Highlights
+## Key Technical Decisions
 
-"What-If uses predict_proba only" — rather than recalculating SHAP values for each simulation (which would take seconds), the What-If endpoint copies the patient's feature vector, replaces a single value, and calls model.predict_proba directly for instant response suitable for live demo.
+- **Clinical-first language** — all labels shown to the user use plain clinical names, never raw database column names
+- **Fast What-If analysis** — probability shifts are calculated with `predict_proba` instead of recomputing SHAP values for every simulation
+- **Three-patient sampling strategy** — low-risk, mid-risk, and high-risk examples provide meaningful contrast in waterfall explanations
+- **Bias thresholding** — fairness alert uses a strict >10pp sensitivity gap rule; representation warning uses a >15pp demographic gap rule
+- **Certificate payload** — PDF output includes the active domain, selected model, six core metrics, bias findings, and checklist completion state
 
-Sample patients are selected by risk stratification — the lowest probability patient (low risk), the patient closest to 0.5 (medium risk), and the highest probability patient (high risk) — providing meaningful clinical contrast in the dropdown.
+## Documentation Status
 
-Bias detection uses a strict >10pp sensitivity gap threshold aligned with clinical fairness literature, while training data representation uses a separate >15pp gap threshold against population norms.
+- **Wiki pages completed:** Sprint 4 summary, Domain Clinical Review
+- **Reports intentionally deferred for now:** Full Pipeline Test Report PDF, Weekly Progress Report PDF
 
-**Live deployment:** [0xbatuhan4-healthwithsevgi.hf.space](https://0xbatuhan4-healthwithsevgi.hf.space/) — also available as Docker container
+## Deadline
+
+Wednesday, April 15, 2026 — 13:00
