@@ -12,7 +12,7 @@
 | 3 | Step 7 Ethics & Bias Audit | Subgroup table + bias banner + EU AI Act checklist + representation chart + case studies | DONE |
 | 4 | Domain Clinical Review | [[Domain Clinical Review]] | DONE |
 | 5 | Sprint 4 Summary | This wiki page | DONE |
-| 6 | Full Pipeline Test Report | PDF (separate upload) | PENDING |
+| 6 | Full Pipeline Test Report | [PDF](../seng430-sprints/Sprint4_QA_Full_Pipeline_Test_Report.pdf) | DONE |
 | 7 | Weekly Progress Report | PDF (separate upload) | PENDING |
 
 ## Live Demo
