@@ -428,7 +428,9 @@ All endpoints are prefixed with `/api`. Full interactive documentation is availa
 |--------|----------|-------------|
 | `GET` | `/api/ethics/{model_id}` | Subgroup fairness audit + bias warnings + checklist |
 | `POST` | `/api/ethics/checklist` | Update EU AI Act checklist item |
-| `POST` | `/api/certificate` | Generate and download PDF compliance certificate |
+| `POST` | `/api/generate-certificate` | Generate and download PDF compliance certificate |
+
+> Full endpoint reference (request/response schemas, error codes, typical flow) lives on the wiki: **[API](../../wiki/API)**.
 
 ### Health
 
@@ -441,7 +443,7 @@ All endpoints are prefixed with `/api`. Full interactive documentation is availa
 
 ## Testing
 
-The project includes a comprehensive pytest suite covering all 7 steps of the pipeline — **178 tests** across 6 test files.
+The project includes a comprehensive pytest suite covering all 7 steps of the pipeline — **191 tests** across 7 test files.
 
 ```bash
 cd backend
@@ -463,11 +465,12 @@ pytest -v -m slow
 | `test_step1_clinical_context.py` | Specialty registry | All 20 specialties present, required fields non-empty, clinical context > 50 chars, 404 handling |
 | `test_step2_data_exploration.py` | Data exploration | CSV upload validation, missing value detection, class distribution, imbalance warnings |
 | `test_step3_data_preparation.py` | Preprocessing | Missing strategies (median/mode/drop), normalization, train/test split, SMOTE, data leakage prevention |
+| `test_step4_arena_latency.py` | Model Arena | Training latency, cross-model comparison, session consistency |
 | `test_step6_explainability.py` | SHAP explanations | Global importance, patient explanation, What-If analysis, sample patient selection |
 | `test_step7_ethics.py` | Fairness audit | Ethics endpoint, case study severity, checklist toggle, bias detection thresholds |
 | `test_certificate.py` | PDF generation | Certificate content type, PDF magic bytes, checklist state persistence |
 
-**Total: 178 tests — all passing.**
+**Total: 191 tests — all passing.**
 
 ---
 

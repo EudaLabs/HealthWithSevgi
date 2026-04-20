@@ -261,7 +261,7 @@ from the frontend to the ML engine and back.
 ```mermaid
 graph LR
     REQ["HTTP Request<br/>from React SPA"]
-    UVICORN["Uvicorn<br/>ASGI Server :8000"]
+    UVICORN["Uvicorn<br/>ASGI Server :8001"]
     CORS["CORS Middleware<br/>Origin Validation"]
     FASTAPI["FastAPI Router<br/>Path Matching"]
     PYDANTIC["Pydantic v2<br/>Request Validation"]
@@ -314,7 +314,7 @@ graph TB
 
             subgraph BE_CONTAINER["backend container"]
                 PY_RT["Python 3.10+ Runtime"]
-                UVI["Uvicorn ASGI<br/>:8000"]
+                UVI["Uvicorn ASGI<br/>:8001"]
                 FA["FastAPI App"]
                 SK["scikit-learn<br/>+ SHAP + pandas"]
                 CSV["datasets/<br/>20 CSV files"]
@@ -387,7 +387,7 @@ graph TB
 |------|---------|---------|---------------|
 | **Python** | 3.10+ | Backend programming language | — |
 | **FastAPI** | 0.110+ | REST API framework with auto-generated OpenAPI docs at `/docs` | `app/main.py` |
-| **Uvicorn** | 0.29+ | ASGI server with hot-reload for development | `--reload --port 8000` |
+| **Uvicorn** | 0.29+ | ASGI server with hot-reload for development | `--reload --port 8001` |
 | **Pydantic** | v2 (2.6+) | Request/response data validation and serialisation | `app/models/schemas.py` |
 | **python-multipart** | 0.0.9+ | Multipart file upload support for CSV files | `requirements.txt` |
 
