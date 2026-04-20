@@ -59,6 +59,7 @@ class _BannerBlock(Flowable):
 
     def __init__(self, width: float, height: float, bg_color: colors.Color,
                  title: str):
+        """Store the label + colour so the flowable is self-contained during layout."""
         super().__init__()
         self.width = width
         self.height = height
@@ -66,6 +67,7 @@ class _BannerBlock(Flowable):
         self.title = title
 
     def draw(self):
+        """Render the rectangle + label onto the current canvas."""
         c = self.canv
         c.setFillColor(self.bg_color)
         c.rect(0, 0, self.width, self.height, fill=1, stroke=0)
@@ -81,6 +83,7 @@ class _BorderFrame(Flowable):
 
     def __init__(self, page_width: float, page_height: float,
                  margin: float, color: colors.Color):
+        """Store the inner flowables + border colour."""
         super().__init__()
         self.page_width = page_width
         self.page_height = page_height
@@ -90,6 +93,7 @@ class _BorderFrame(Flowable):
         self.height = 0
 
     def draw(self):
+        """Draw the border + delegate inner rendering to the wrapped flowables."""
         c = self.canv
         m = self.margin
         pw, ph = self.page_width, self.page_height
@@ -109,6 +113,7 @@ class _BorderFrame(Flowable):
 # ---------------------------------------------------------------------------
 
 def _metric_colour(value: float, green: float, amber: float) -> colors.Color:
+    """Pick a banner colour for a metric value (green/amber/red) based on configured thresholds."""
     if value >= green:
         return SUCCESS
     if value >= amber:
@@ -117,10 +122,12 @@ def _metric_colour(value: float, green: float, amber: float) -> colors.Color:
 
 
 def _pct(value: float) -> str:
+    """Format a 0..1 number as a one-decimal percentage string."""
     return f"{value * 100:.1f}%"
 
 
 def _row_bg(val: float, green: float, amber: float) -> colors.Color:
+    """Alternate row background colour for zebra-striped tables."""
     if val >= green:
         return SUCCESS_BG
     if val >= amber:
@@ -129,6 +136,7 @@ def _row_bg(val: float, green: float, amber: float) -> colors.Color:
 
 
 def _compute_mcc(tp: int, tn: int, fp: int, fn: int) -> Optional[float]:
+    """Compute Matthews Correlation Coefficient from a confusion matrix row."""
     denom = math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
     if denom == 0:
         return None
@@ -270,6 +278,10 @@ def _generate_takeaways(metrics: MetricsResponse, model_type: ModelType) -> list
 # ---------------------------------------------------------------------------
 
 class CertificateService:
+    """
+    Produces the EU AI Act compliance PDF (overview, fairness, explainability, checklist,
+    signatures) via reportlab.
+    """
     def generate_pdf(
         self,
         cert_request: CertificateRequest,
@@ -279,6 +291,7 @@ class CertificateService:
         model_type: ModelType,
         training_time_ms: Optional[float] = None,
     ) -> bytes:
+        """Main entrypoint — build the full PDF for a session and return it as bytes."""
         buf = BytesIO()
         PAGE_W, PAGE_H = A4
         MARGIN = 2 * cm
@@ -663,6 +676,7 @@ class CertificateService:
         ))
 
         def _add_page_number(canvas, doc_template):
+            """Inner canvas callback that stamps `Page X / N` on every page."""
             canvas.saveState()
             canvas.setFont("Helvetica", 7)
             canvas.setFillColor(colors.HexColor("#9CA3AF"))

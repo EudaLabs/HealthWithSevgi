@@ -271,10 +271,12 @@ TOP_FEATURE_NOTES: dict[str, str] = {
 
 
 def _clinical_name(feature: str) -> str:
+    """Map a raw feature id to its clinician-readable label, fallback to the id."""
     return CLINICAL_NAME_MAP.get(feature, feature.replace("_", " ").title())
 
 
 def _plain_language(feature: str, value: float, pctile: float) -> str:
+    """Generate the plain-language summary sentence that sits above the SHAP waterfall."""
     cname = _clinical_name(feature)
     if pctile < 0.25:
         level = "very low"
@@ -290,7 +292,9 @@ def _plain_language(feature: str, value: float, pctile: float) -> str:
 
 
 class ExplainService:
+    """SHAP-based explainability — global importance + per-patient waterfall + what-if probes."""
     def _get_explainer(self, model: Any, X_train: np.ndarray, model_type: str) -> Any:
+        """Build (and cache) the appropriate SHAP explainer (TreeExplainer for tree models, KernelExplainer otherwise)."""
         mt = model_type.lower()
         try:
             import shap
@@ -352,6 +356,7 @@ class ExplainService:
         model_type: str,
         classes: list[str],
     ) -> GlobalExplainabilityResponse:
+        """Step-6 endpoint — computes global SHAP feature importance for the active model."""
         explainer, method = self._get_explainer(model, X_train, model_type)
 
         if explainer is not None:
@@ -420,6 +425,7 @@ class ExplainService:
         y_test: np.ndarray,
         scaler: Any = None,
     ) -> SinglePatientExplainResponse:
+        """Compute the SHAP waterfall for a single patient row."""
         explainer, method = self._get_explainer(model, X_train, model_type)
 
         x_patient = X_test[patient_idx : patient_idx + 1]
@@ -505,6 +511,7 @@ class ExplainService:
         )
 
     def _model_predict_proba(self, model: Any, X: np.ndarray) -> np.ndarray:
+        """Proxy for the model's predict_proba that survives SHAP's background-sample workflow."""
         if hasattr(model, "predict_proba"):
             return model.predict_proba(X)
         if hasattr(model, "decision_function"):

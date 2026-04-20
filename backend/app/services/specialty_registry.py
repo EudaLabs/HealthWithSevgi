@@ -550,8 +550,10 @@ SPECIALTIES: dict[str, SpecialtyInfo] = {
 
 
 def get_specialty(specialty_id: str) -> SpecialtyInfo | None:
+    """Look up one specialty by id, return `None` if unknown."""
     return SPECIALTIES.get(specialty_id)
 
 
 def list_specialties() -> list[SpecialtyInfo]:
+    """Return the full registry as a list, in the order the Step-1 picker expects."""
     return list(SPECIALTIES.values())

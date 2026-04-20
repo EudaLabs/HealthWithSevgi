@@ -4,6 +4,12 @@ export interface GlossaryEntry {
   learnMoreUrl?: string
 }
 
+/**
+ * Clinician-facing glossary used by the `<InfoTip>` popovers across the
+ * wizard. Keys are snake_case term IDs; values carry a short title, a
+ * plain-language description (healthcare-first, jargon avoided), and an
+ * optional external learn-more URL.
+ */
 export const GLOSSARY: Record<string, GlossaryEntry> = {
   // ── General ML Concepts ──
   machine_learning: {

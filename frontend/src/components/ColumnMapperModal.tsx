@@ -109,6 +109,14 @@ function DiscardModal({ onKeep, onDiscard }: { onKeep: () => void; onDiscard: ()
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Column-role mapper that sits between Step 2 (exploration) and Step 3
+ * (preparation). Auto-detects whether each column is numeric/categorical
+ * and proposes a sensible default role (target/feature/ignore) based on
+ * the chosen specialty's target hints. Blocks Step 3 if the user picks
+ * something clinically invalid (e.g. a degenerate target) and confirms
+ * before discarding a hand-picked mapping on specialty switch.
+ */
 export default function ColumnMapperModal({ explorationData, specialty, onSave, onClose }: Props) {
   // --- Build initial mappings ---
   const initialMappings = useMemo<ColumnMapping[]>(() => {

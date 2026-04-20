@@ -163,7 +163,9 @@ REPRESENTATION_GAP_THRESHOLD_PP = 15.0
 
 
 class EthicsService:
+    """Runs the fairness audit — subgroup metric computation, bias detection, checklist state."""
     def __init__(self) -> None:
+        """Create the in-memory checklist store."""
         self._checklist_store: dict[str, dict[str, bool]] = {}
 
     def analyze_bias(
@@ -177,6 +179,7 @@ class EthicsService:
         X_train: np.ndarray,
         scaler: Any = None,
     ) -> EthicsResponse:
+        """Main entrypoint — slice predictions by each sensitive attribute and emit metrics + warnings."""
         is_binary = len(classes) == 2
         y_pred = model.predict(X_test)
 
@@ -295,6 +298,7 @@ class EthicsService:
         overall_sensitivity: float,
         is_binary: bool,
     ) -> SubgroupMetrics:
+        """Compute accuracy/sensitivity/specificity/PPV/NPV for a single subgroup slice."""
         avg = "binary" if is_binary else "macro"
         acc = float(accuracy_score(y_true, y_pred))
         sens = float(recall_score(y_true, y_pred, average=avg, zero_division=0))
@@ -340,6 +344,7 @@ class EthicsService:
         )
 
     def _macro_specificity(self, cm: np.ndarray) -> float:
+        """Macro-averaged specificity across the multiclass case."""
         specs = []
         for i in range(len(cm)):
             tp = cm[i, i]
@@ -355,6 +360,7 @@ class EthicsService:
         subgroup_metrics: list[SubgroupMetrics],
         overall_sensitivity: float,
     ) -> list[BiasWarning]:
+        """Compare each subgroup metric to the overall value, emit a `BiasWarning` on large deltas."""
         warnings: list[BiasWarning] = []
         for sm in subgroup_metrics:
             gap = overall_sensitivity - sm.sensitivity
@@ -487,6 +493,7 @@ class EthicsService:
         return representation, warnings
 
     def update_checklist(self, model_id: str, item_id: str, checked: bool) -> dict:
+        """Step-7 endpoint — toggles a single EU AI Act checklist item for the session."""
         if model_id not in self._checklist_store:
             self._checklist_store[model_id] = {}
         self._checklist_store[model_id][item_id] = checked

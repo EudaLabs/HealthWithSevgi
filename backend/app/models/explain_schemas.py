@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class FeatureImportanceItem(BaseModel):
+    """One row of global SHAP importance — feature name + mean |SHAP value|."""
     feature_name: str
     clinical_name: str
     importance: float
@@ -15,6 +16,10 @@ class FeatureImportanceItem(BaseModel):
 
 
 class GlobalExplainabilityResponse(BaseModel):
+    """
+    Payload for `/api/explain/global-importance` — the ranked feature list with the method
+    used (tree or kernel SHAP) and a textual description for the UI.
+    """
     model_id: str
     method: str
     feature_importances: list[FeatureImportanceItem]
@@ -23,6 +28,10 @@ class GlobalExplainabilityResponse(BaseModel):
 
 
 class SHAPWaterfallPoint(BaseModel):
+    """
+    Single bar in the per-patient SHAP waterfall: which feature pushed the probability in
+    which direction and by how much.
+    """
     feature_name: str
     clinical_name: str
     feature_value: float | str
@@ -32,6 +41,10 @@ class SHAPWaterfallPoint(BaseModel):
 
 
 class SinglePatientExplainResponse(BaseModel):
+    """
+    Payload for `/api/explain/single-patient` — base value, final prediction, and the
+    ordered waterfall points.
+    """
     model_id: str
     patient_index: int
     predicted_class: str
@@ -42,6 +55,10 @@ class SinglePatientExplainResponse(BaseModel):
 
 
 class SubgroupMetrics(BaseModel):
+    """
+    Fairness metrics computed for one subgroup of a sensitive attribute (accuracy,
+    sensitivity, specificity, PPV, NPV, etc.).
+    """
     group_name: str
     group_label: str
     sample_size: int
@@ -55,6 +72,10 @@ class SubgroupMetrics(BaseModel):
 
 
 class BiasWarning(BaseModel):
+    """
+    Machine-readable flag emitted when a subgroup metric falls outside the configured
+    tolerance relative to the overall cohort.
+    """
     detected: bool
     message: str
     affected_group: str
@@ -63,6 +84,10 @@ class BiasWarning(BaseModel):
 
 
 class CaseStudy(BaseModel):
+    """
+    One narrative case study from the ethics LLM pass — a real-world regulatory/clinical
+    incident with a short lesson.
+    """
     id: str
     title: str
     specialty: str
@@ -86,6 +111,10 @@ class RepresentationWarning(BaseModel):
 
 
 class EthicsResponse(BaseModel):
+    """
+    Payload for `/api/explain/ethics` — overall metrics, subgroup breakdowns, warnings,
+    LLM narrative, and the EU AI Act checklist state.
+    """
     model_id: str
     subgroup_metrics: list[SubgroupMetrics]
     bias_warnings: list[BiasWarning]
@@ -99,6 +128,7 @@ class EthicsResponse(BaseModel):
 
 
 class WhatIfRequest(BaseModel):
+    """Request body for `/api/explain/what-if` — the patient vector plus the feature/value edits to probe."""
     model_id: str
     patient_index: int
     feature_name: str
@@ -106,6 +136,10 @@ class WhatIfRequest(BaseModel):
 
 
 class WhatIfResponse(BaseModel):
+    """
+    Response for `/api/explain/what-if` — probability delta and the explanatory SHAP
+    waterfall after the edit.
+    """
     feature_name: str
     original_value: float
     new_value: float
@@ -116,12 +150,17 @@ class WhatIfResponse(BaseModel):
 
 
 class ChecklistUpdate(BaseModel):
+    """Toggle payload used to persist a single EU AI Act checklist item for the active session."""
     model_id: str
     item_id: str
     checked: bool
 
 
 class SamplePatient(BaseModel):
+    """
+    A single patient row picked from the trained dataset for use in Step 6 explainability
+    or Step 7 ethics demos.
+    """
     index: int
     risk_level: Literal["low", "medium", "high"]
     probability: float
@@ -129,11 +168,16 @@ class SamplePatient(BaseModel):
 
 
 class SamplePatientsResponse(BaseModel):
+    """Wraps a small list of `SamplePatient` rows used to seed the Step 6 "single patient" picker."""
     model_id: str
     patients: list[SamplePatient]
 
 
 class CertificateRequest(BaseModel):
+    """
+    Request body for `/api/explain/certificate` — the session id plus user-selected
+    checklist items to embed in the EU AI Act PDF.
+    """
     model_id: str
     session_id: str
     checklist_state: dict[str, bool] = Field(default_factory=dict)

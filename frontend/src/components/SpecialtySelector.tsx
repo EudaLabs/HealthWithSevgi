@@ -35,6 +35,12 @@ interface Props {
   onSelect: (s: Specialty) => void
 }
 
+/**
+ * Step-1 landing grid that presents the 20 clinical specialties as
+ * cards. Rendered only when no specialty is selected; picking one
+ * advances the wizard and triggers the Step 1 — Clinical Context
+ * rendering via the parent callback.
+ */
 export default function SpecialtySelector({ specialties, onSelect }: Props) {
   if (specialties.length === 0) {
     return (

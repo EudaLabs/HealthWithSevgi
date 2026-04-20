@@ -1,0 +1,26 @@
+=========== Coverage for /home/batuhan4/HealthWithSevgi/backend/app/ ===========
+----------------------------------- Summary ------------------------------------
+| Name                                 |   Total |   Miss |   Cover |   Cover% |
+|--------------------------------------|---------|--------|---------|----------|
+| __init__.py                          |       1 |      0 |       1 |     100% |
+| main.py                              |       3 |      0 |       3 |     100% |
+| models/__init__.py                   |       1 |      0 |       1 |     100% |
+| models/explain_schemas.py            |      16 |      0 |      16 |     100% |
+| models/ml_schemas.py                 |      21 |      0 |      21 |     100% |
+| models/schemas.py                    |       6 |      0 |       6 |     100% |
+| routers/__init__.py                  |       1 |      0 |       1 |     100% |
+| routers/data_router.py               |       8 |      0 |       8 |     100% |
+| routers/explain_router.py            |      12 |      0 |      12 |     100% |
+| routers/ml_router.py                 |       7 |      0 |       7 |     100% |
+| services/__init__.py                 |       1 |      0 |       1 |     100% |
+| services/certificate_service.py      |      15 |      0 |      15 |     100% |
+| services/data_service.py             |      31 |      0 |      31 |     100% |
+| services/ethics_service.py           |       9 |      0 |       9 |     100% |
+| services/explain_service.py          |      12 |      0 |      12 |     100% |
+| services/insight_service.py          |      19 |      0 |      19 |     100% |
+| services/ml_service.py               |      21 |      0 |      21 |     100% |
+| services/specialty_registry.py       |       3 |      0 |       3 |     100% |
+| utils/__init__.py                    |       1 |      0 |       1 |     100% |
+|--------------------------------------|---------|--------|---------|----------|
+| TOTAL                                |     188 |      0 |     188 |   100.0% |
+--------------- RESULT: PASSED (minimum: 80.0%, actual: 100.0%) ----------------

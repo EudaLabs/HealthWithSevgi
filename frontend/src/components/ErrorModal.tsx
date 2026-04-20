@@ -58,6 +58,13 @@ const ERROR_CONFIG: Record<UploadErrorType, {
   },
 }
 
+/**
+ * Friendly modal for Step 2 upload/validation failures.
+ * Maps a handful of known backend error codes (`invalid_format`,
+ * `file_too_large`, `dataset_too_small`, …) to a clinician-readable
+ * title, description, and actionable detail so users understand *why*
+ * their CSV was rejected rather than seeing a stack trace.
+ */
 export default function ErrorModal({ errorType, onRetry, onClose }: Props) {
   const config = ERROR_CONFIG[errorType]
 

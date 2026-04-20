@@ -358,6 +358,7 @@ class InsightService:
     """Generates clinical insights using MedGemma or Gemini with template fallback."""
 
     def __init__(self) -> None:
+        """Detect the configured provider (Gemini, local Ollama, or template fallback) from env vars."""
         # Vertex AI MedGemma config
         self._vertex_project = os.getenv("GOOGLE_CLOUD_PROJECT", "")
         self._vertex_location = os.getenv("VERTEX_AI_LOCATION", "us-central1")
@@ -371,6 +372,7 @@ class InsightService:
         logger.info("InsightService initialized — provider: %s", self._provider)
 
     def _detect_provider(self) -> str:
+        """Return the provider name based on available API keys / endpoints."""
         if self._medgemma_endpoint and self._vertex_project:
             return "medgemma"
         if self._gemini_api_key:

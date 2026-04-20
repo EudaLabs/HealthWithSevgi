@@ -22,6 +22,7 @@ router = APIRouter(prefix="/api", tags=["explain"])
 
 
 def _get_services(request: Request):
+    """FastAPI dependency — resolves data/ml/explain/ethics/insight/certificate services as a tuple."""
     return (
         request.app.state.ml_service,
         request.app.state.explain_service,
@@ -32,6 +33,7 @@ def _get_services(request: Request):
 
 
 def _get_model_data(ml_service, model_id: str) -> dict:
+    """Helper that pulls the trained model + split data for a session, raising 404 if absent."""
     data = ml_service.get_model(model_id)
     if data is None:
         raise HTTPException(status_code=404, detail=f"Model '{model_id}' not found. Train a model first.")
@@ -40,6 +42,7 @@ def _get_model_data(ml_service, model_id: str) -> dict:
 
 @router.get("/explain/global/{model_id}", response_model=GlobalExplainabilityResponse)
 def global_importance(request: Request, model_id: str) -> GlobalExplainabilityResponse:
+    """Step-6 endpoint — computes global SHAP feature importance for the active model."""
     ml, explain, *_ = _get_services(request)
     data = _get_model_data(ml, model_id)
     try:
@@ -62,6 +65,7 @@ def global_importance(request: Request, model_id: str) -> GlobalExplainabilityRe
 def single_patient_explain(
     request: Request, model_id: str, patient_index: int
 ) -> SinglePatientExplainResponse:
+    """Step-6 endpoint — returns a per-patient SHAP waterfall plus base/final probability."""
     ml, explain, *_ = _get_services(request)
     data = _get_model_data(ml, model_id)
     n_test = len(data["X_test"])
@@ -87,6 +91,7 @@ def single_patient_explain(
 
 @router.post("/explain/what-if", response_model=WhatIfResponse)
 def what_if(request: Request, body: WhatIfRequest) -> WhatIfResponse:
+    """Step-6 endpoint — probes probability changes when specific feature values are altered."""
     ml, explain, *_ = _get_services(request)
     data = _get_model_data(ml, body.model_id)
 
@@ -120,6 +125,7 @@ def what_if(request: Request, body: WhatIfRequest) -> WhatIfResponse:
 
 @router.get("/explain/sample-patients/{model_id}", response_model=SamplePatientsResponse)
 def sample_patients(request: Request, model_id: str) -> SamplePatientsResponse:
+    """Step-6 helper — returns a handful of sample rows from the test split for quick picking."""
     ml, explain, *_ = _get_services(request)
     data = _get_model_data(ml, model_id)
     try:
@@ -135,6 +141,7 @@ def sample_patients(request: Request, model_id: str) -> SamplePatientsResponse:
 
 @router.get("/ethics/{model_id}", response_model=EthicsResponse)
 def get_ethics(request: Request, model_id: str) -> EthicsResponse:
+    """Step-7 endpoint — runs the bias audit and produces fairness deltas + warnings."""
     ml, _, ethics, _, _ = _get_services(request)
     data = _get_model_data(ml, model_id)
     try:
@@ -155,6 +162,7 @@ def get_ethics(request: Request, model_id: str) -> EthicsResponse:
 
 @router.post("/ethics/checklist")
 def update_checklist(request: Request, body: ChecklistUpdate) -> dict:
+    """Step-7 endpoint — toggles a single EU AI Act checklist item for the session."""
     _, _, ethics, _, _ = _get_services(request)
     return ethics.update_checklist(body.model_id, body.item_id, body.checked)
 
@@ -209,6 +217,7 @@ async def get_insights(request: Request, model_id: str) -> dict:
         specialty_info = SPECIALTIES.get(ml_session.get("specialty_id", ""))
 
     def _m(attr: str):
+        """Inner helper used by `get_insights` to memoise the LLM call per task."""
         return getattr(metrics, attr, None) if hasattr(metrics, attr) else metrics.get(attr)
 
     # Confusion matrix
@@ -396,6 +405,7 @@ async def get_insights(request: Request, model_id: str) -> dict:
 
 @router.post("/generate-certificate")
 def generate_certificate(request: Request, body: CertificateRequest) -> StreamingResponse:
+    """Step-7 endpoint — renders the EU AI Act compliance PDF via `CertificateService`."""
     ml, _, ethics, cert_svc, _ = _get_services(request)
     data = _get_model_data(ml, body.model_id)
 

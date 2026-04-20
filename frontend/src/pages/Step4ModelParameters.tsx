@@ -132,6 +132,14 @@ interface Props {
   onNext: () => void
 }
 
+/**
+ * Step 4 — Model & Parameters.
+ * Lets the user pick one of eight classifiers (KNN, SVM, DT, RF, LR, NB,
+ * XGBoost, LightGBM), tune its hyperparameters via tooltipped sliders,
+ * and train against the prepared dataset produced by Step 3. Holds onto
+ * the cross-model comparison list so multiple fits can be stacked before
+ * advancing to Step 5's results view.
+ */
 export default function Step4ModelParameters({
   sessionId,
   trainResponse,

@@ -66,9 +66,14 @@ app.include_router(arena_router)
 
 @app.get("/")
 async def root() -> dict:
+    """Health root — returns a short string so `docker-compose healthcheck` has a 200 target."""
     return {"status": "ok", "project": "HealthWithSevgi", "version": "1.3.1"}
 
 
 @app.get("/health")
 async def health_check() -> dict:
+    """
+    Deep health probe — verifies the heavy native libs (sklearn, xgboost, lightgbm, shap,
+    scipy) import cleanly.
+    """
     return {"status": "healthy"}

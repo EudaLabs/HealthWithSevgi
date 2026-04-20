@@ -60,6 +60,13 @@ const createDefaultState = (): WizardState => ({
   currentStep: 1,
 })
 
+/**
+ * Top-level wizard shell.
+ * Owns the single `WizardState` object that every step reads and writes,
+ * loads the specialties list via React Query, and decides which step page
+ * to mount (Steps 2–4 and 5–7 are lazy-loaded behind `React.Suspense` so
+ * the recharts bundle never reaches the landing-page initial payload).
+ */
 export default function App() {
   const [state, setState] = useState<WizardState>(createDefaultState)
   const [glossaryOpen, setGlossaryOpen] = useState(false)

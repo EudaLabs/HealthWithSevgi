@@ -13,6 +13,13 @@ interface InfoTipProps {
 
 const POPOVER_WIDTH = 300
 
+/**
+ * Tiny "(i)" affordance that reveals a clinical/ML glossary entry in a
+ * portal-rendered popover. Looks up `term` in `GLOSSARY`; if the term is
+ * missing it simply renders `children` untouched so consumers can wrap
+ * labels safely. The popover flips above/below the trigger based on
+ * viewport room and closes on outside click or Escape.
+ */
 export default function InfoTip({ term, children }: InfoTipProps) {
   const entry = GLOSSARY[term]
   const [open, setOpen] = useState(false)

@@ -37,6 +37,14 @@ interface Props {
   arenaActive?: boolean
 }
 
+/**
+ * Top app bar.
+ * Shows the brand mark and — once the user is past Step 1 — a searchable
+ * specialty dropdown that lets them jump between the 20 medical domains
+ * without leaving the wizard. Also hosts the Glossary toggle and the
+ * Arena entry point. Purely presentational: all state changes are
+ * dispatched up via the `on*` callbacks.
+ */
 export default function NavBar({ specialty, specialties, onSpecialtyChange, onReset, onGlossary, glossaryOpen, onGlossaryClose, onArena, arenaActive }: Props) {
   const [search, setSearch] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)

@@ -18,11 +18,13 @@ router = APIRouter(prefix="/api", tags=["ml"])
 
 
 def _get_ml_service(request: Request):
+    """FastAPI dependency — resolves the shared `MLService` off `app.state`."""
     return request.app.state.ml_service
 
 
 @router.post("/train", response_model=TrainResponse)
 def train_model(request: Request, body: TrainRequest) -> TrainResponse:
+    """Step-4 endpoint — trains the chosen classifier on the prepared session data and returns metrics."""
     ml = _get_ml_service(request)
     session = ml.get_session(body.session_id)
     if session is None:
@@ -47,6 +49,7 @@ def train_model(request: Request, body: TrainRequest) -> TrainResponse:
 
 @router.post("/compare/{model_id}", response_model=CompareResponse)
 def add_to_comparison(request: Request, model_id: str) -> CompareResponse:
+    """Step-4 endpoint — adds the latest trained model to the cross-model comparison list."""
     ml = _get_ml_service(request)
     model_data = ml.get_model(model_id)
     if model_data is None:
@@ -60,18 +63,21 @@ def add_to_comparison(request: Request, model_id: str) -> CompareResponse:
 
 @router.get("/compare/{session_id}", response_model=CompareResponse)
 def get_comparison(request: Request, session_id: str) -> CompareResponse:
+    """Step-4 endpoint — returns the current comparison list for the session."""
     ml = _get_ml_service(request)
     return ml.get_comparison(session_id)
 
 
 @router.delete("/compare/{session_id}", status_code=204, response_model=None)
 def clear_comparison(request: Request, session_id: str):
+    """Step-4 endpoint — empties the comparison list for the session."""
     _get_ml_service(request).clear_comparison(session_id)
     return Response(status_code=204)
 
 
 @router.get("/models/{model_id}")
 def get_model_info(request: Request, model_id: str) -> dict:
+    """Step-4 endpoint — returns stored metrics for a specific model id."""
     ml = _get_ml_service(request)
     data = ml.get_model(model_id)
     if data is None:

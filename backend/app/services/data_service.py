@@ -36,6 +36,10 @@ class DatasetUnavailableError(Exception):
     """Raised when a real dataset cannot be loaded and no fallback is allowed."""
 
     def __init__(self, name: str, reason: str) -> None:
+        """
+        Load and return the bundled dataset for the `_init__` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         self.dataset_name = name
         self.reason = reason
         super().__init__(
@@ -45,7 +49,15 @@ class DatasetUnavailableError(Exception):
 
 
 class DataService:
+    """
+    Owns CSV ingestion, column exploration, and per-specialty preparation
+    (split/normalise/impute/SMOTE).
+    """
     def __init__(self) -> None:
+        """
+        Load and return the bundled dataset for the `_init__` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         self._session_store: dict[str, dict[str, Any]] = {}
 
     # ------------------------------------------------------------------
@@ -92,6 +104,7 @@ class DataService:
     def explore_dataframe(
         self, df: pd.DataFrame, target_col: str
     ) -> DataExplorationResponse:
+        """Build per-column statistics for the Step-2 exploration panel."""
         columns: list[ColumnStat] = []
         for col in df.columns:
             series = df[col]
@@ -136,6 +149,10 @@ class DataService:
         settings: PrepSettings,
         session_id: str | None = None,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, PrepResponse, list[str]]:
+        """
+        Step-3 preparation endpoint — splits, normalises, imputes missing values,
+        optionally applies SMOTE.
+        """
         if session_id is None:
             session_id = str(uuid.uuid4())
 
@@ -370,12 +387,14 @@ class DataService:
         return X_train, X_test, y_train, y_test, response, feature_names
 
     def get_session(self, session_id: str) -> dict[str, Any] | None:
+        """Return the prepared session bundle by id; `None` when the session is unknown."""
         return self._session_store.get(session_id)
 
     # ------------------------------------------------------------------
     # Built-in example datasets
     # ------------------------------------------------------------------
     def get_example_dataset(self, specialty_id: str) -> pd.DataFrame:
+        """Return the bundled example dataframe for a specialty (cached after first load)."""
         generators: dict[str, Any] = {
             "cardiology_hf": self._heart_failure,
             "radiology_pneumonia": self._pneumonia,
@@ -408,6 +427,10 @@ class DataService:
     # ------ Dataset generators ------
 
     def _heart_failure(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `heart_failure` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         df = self._fetch_cached(
             "cardiology_hf",
             "https://archive.ics.uci.edu/ml/machine-learning-databases/00519/heart_failure_clinical_records_dataset.csv",
@@ -417,6 +440,10 @@ class DataService:
         return df
 
     def _breast_cancer(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `breast_cancer` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         from sklearn.datasets import load_breast_cancer
         data = load_breast_cancer(as_frame=True)
         df = data.frame.copy()
@@ -436,6 +463,10 @@ class DataService:
         return df[available]
 
     def _diabetes(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `diabetes` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         pima_cols = [
             "pregnancies", "glucose", "blood_pressure", "skin_thickness",
             "insulin", "bmi", "diabetes_pedigree_function", "age", "Outcome",
@@ -450,6 +481,10 @@ class DataService:
         return df
 
     def _ckd(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `ckd` specialty. Used internally by
+        `DataService._load_specialty_dataset`.
+        """
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         csv_cache = _CACHE_DIR / "nephrology_ckd.csv"
 
@@ -484,6 +519,10 @@ class DataService:
         return df
 
     def _parkinsons(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `parkinsons` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         df = self._fetch_cached(
             "neurology_parkinsons",
             "https://archive.ics.uci.edu/ml/machine-learning-databases/parkinsons/parkinsons.data",
@@ -512,6 +551,10 @@ class DataService:
         return df
 
     def _liver(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `liver` specialty. Used internally by
+        `DataService._load_specialty_dataset`.
+        """
         ilpd_cols = [
             "age", "gender", "total_bilirubin", "direct_bilirubin",
             "alkaline_phosphotase", "alamine_aminotransferase",
@@ -533,6 +576,10 @@ class DataService:
         return df
 
     def _stroke(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `stroke` specialty. Used internally by
+        `DataService._load_specialty_dataset`.
+        """
         try:
             df = self._fetch_cached(
                 "cardiology_stroke",
@@ -580,6 +627,10 @@ class DataService:
         return df
 
     def _mental_health(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `mental_health` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         for candidate in ("depression_data.csv", "mental_health_depression.csv"):
             csv_cache = _CACHE_DIR / candidate
             if csv_cache.exists():
@@ -654,6 +705,10 @@ class DataService:
         )
 
     def _copd(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `copd` specialty. Used internally by
+        `DataService._load_specialty_dataset`.
+        """
         csv_cache = _CACHE_DIR / "pulmonology_copd.csv"
         if not csv_cache.exists():
             raise DatasetUnavailableError(
@@ -702,6 +757,10 @@ class DataService:
         return df
 
     def _anaemia(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `anaemia` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         try:
             df = self._fetch_cached(
                 "haematology_anaemia",
@@ -735,6 +794,10 @@ class DataService:
         return df
 
     def _dermatology(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `dermatology` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         csv_cache = _CACHE_DIR / "dermatology.csv"
         df = None
         if csv_cache.exists():
@@ -768,6 +831,10 @@ class DataService:
         return df
 
     def _ophthalmology(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `ophthalmology` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         arff_cache = _CACHE_DIR / "ophthalmology.arff"
         if not arff_cache.exists():
@@ -820,6 +887,10 @@ class DataService:
         return df
 
     def _orthopaedics(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `orthopaedics` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         arff_cache = _CACHE_DIR / "orthopaedics.arff"
 
@@ -860,6 +931,10 @@ class DataService:
         return df
 
     def _sepsis(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `sepsis` specialty. Used internally by
+        `DataService._load_specialty_dataset`.
+        """
         csv_cache = _CACHE_DIR / "icu_sepsis.csv"
         if not csv_cache.exists():
             raise DatasetUnavailableError(
@@ -898,6 +973,10 @@ class DataService:
         return df
 
     def _fetal_health(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `fetal_health` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         csv_cache = _CACHE_DIR / "obstetrics_fetal.csv"
 
@@ -931,6 +1010,10 @@ class DataService:
         return df
 
     def _arrhythmia(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `arrhythmia` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         all_cols = [f"feature_{i}" for i in range(279)] + ["arrhythmia_class"]
         df = self._fetch_cached(
             "cardiology_arrhythmia",
@@ -962,6 +1045,10 @@ class DataService:
         return df
 
     def _cervical(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `cervical` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         df = self._fetch_cached(
             "oncology_cervical",
             "https://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv",
@@ -1024,6 +1111,10 @@ class DataService:
         return df
 
     def _thyroid(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `thyroid` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         col_names = ["class_raw", "T3_resin_uptake", "total_serum_thyroxine", "T3", "TSH", "max_abs_diff_TSH"]
         df = self._fetch_cached(
             "thyroid",
@@ -1041,6 +1132,10 @@ class DataService:
         return df
 
     def _readmission(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `readmission` specialty. Used
+        internally by `DataService._load_specialty_dataset`.
+        """
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         csv_cache = _CACHE_DIR / "pharmacy_readmission.csv"
         if not csv_cache.exists():
@@ -1094,6 +1189,11 @@ class DataService:
                         # 9 clinical groups gives the model learnable signal.
                         if "diag_1" in raw.columns:
                             def _icd9_category(code: str) -> int:
+                                """
+                                Load and return the bundled dataset for the
+                                `icd9_category` specialty. Used internally by
+                                `DataService._load_specialty_dataset`.
+                                """
                                 c = str(code).strip().upper().replace(".", "")
                                 if c.startswith("V") or c.startswith("E"):
                                     return 0
@@ -1139,6 +1239,10 @@ class DataService:
         return df
 
     def _pneumonia(self) -> pd.DataFrame:
+        """
+        Load and return the bundled dataset for the `pneumonia` specialty. Used internally
+        by `DataService._load_specialty_dataset`.
+        """
         df = self._fetch_cached(
             "radiology_pneumonia",
             "https://raw.githubusercontent.com/gregwchase/nih-chest-xray/master/data/Data_Entry_2017.csv",

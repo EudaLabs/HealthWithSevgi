@@ -87,7 +87,9 @@ _PARAM_GRIDS: dict = {
 
 
 class MLService:
+    """Owns model construction, training, evaluation, and the in-memory cross-model comparison list."""
     def __init__(self) -> None:
+        """Initialise session + model + comparison caches."""
         self._lock = threading.Lock()
         self._session_store: OrderedDict[str, dict[str, Any]] = OrderedDict()
         self._model_store: OrderedDict[str, Any] = OrderedDict()
@@ -97,6 +99,7 @@ class MLService:
     # Session management (called by data service / router)
     # ------------------------------------------------------------------
     def store_session_data(self, session_id: str, data: dict[str, Any]) -> None:
+        """Persist the prepared train/test split for later training and evaluation calls."""
         with self._lock:
             self._session_store[session_id] = data
             self._session_store.move_to_end(session_id)
@@ -105,6 +108,7 @@ class MLService:
         logger.info("ML session stored: %s", session_id)
 
     def get_session(self, session_id: str) -> dict[str, Any] | None:
+        """Retrieve stored session data by id; returns `None` if unknown."""
         with self._lock:
             data = self._session_store.get(session_id)
             if data is not None:
@@ -112,6 +116,7 @@ class MLService:
             return data
 
     def get_model(self, model_id: str) -> Any | None:
+        """Retrieve a trained model by id; returns `None` if unknown."""
         with self._lock:
             data = self._model_store.get(model_id)
             if data is not None:
@@ -122,6 +127,7 @@ class MLService:
     # Model construction
     # ------------------------------------------------------------------
     def build_model(self, model_type: ModelType, params: dict[str, Any]) -> Any:
+        """Construct a scikit/XGB/LGBM estimator instance from a `TrainRequest`."""
         # Runtime param validation via typed schemas
         schema = PARAM_SCHEMAS.get(model_type.value)
         if schema:
@@ -228,6 +234,7 @@ class MLService:
         tune: bool = False,
         use_feature_selection: bool = False,
     ) -> TrainResponse:
+        """Fit the model, compute metrics + ROC/PR/confusion matrix, and return a `TrainResponse`."""
         with self._lock:
             session = self._session_store.get(session_id)
             if session is not None:
@@ -576,6 +583,7 @@ class MLService:
         )
 
     def _predict_proba(self, model: Any, X: np.ndarray) -> np.ndarray:
+        """Safe wrapper around the model's predict_proba that handles multiclass + binary output."""
         if hasattr(model, "predict_proba"):
             return model.predict_proba(X)
         if hasattr(model, "decision_function"):
@@ -596,6 +604,7 @@ class MLService:
         classes: list[str],
         is_binary: bool,
     ) -> MetricsResponse:
+        """Compute accuracy, precision, recall, F1, balanced accuracy, AUC from y_true + y_pred."""
         avg = "binary" if is_binary else "macro"
 
         accuracy = float(accuracy_score(y_true, y_pred))
@@ -638,6 +647,7 @@ class MLService:
         )
 
     def _macro_specificity(self, cm: np.ndarray) -> float:
+        """Macro-averaged specificity for multiclass evaluation."""
         specs = []
         for i in range(len(cm)):
             tp = cm[i, i]
@@ -655,6 +665,7 @@ class MLService:
         classes: list[str],
         is_binary: bool,
     ) -> float:
+        """Compute ROC AUC robustly across binary and multiclass, skipping if undefined."""
         try:
             if is_binary:
                 return float(roc_auc_score(y_true, y_prob[:, 1]))
@@ -698,6 +709,7 @@ class MLService:
         classes: list[str],
         is_binary: bool,
     ) -> ConfusionMatrixData:
+        """Turn a sklearn confusion matrix into the DTO expected by the frontend."""
         matrix = cm.tolist()
         if is_binary and cm.shape == (2, 2):
             return ConfusionMatrixData(
@@ -713,6 +725,7 @@ class MLService:
         y_prob: np.ndarray,
         is_binary: bool,
     ) -> list[ROCPoint]:
+        """Build the list of ROC (FPR, TPR, threshold) points used by the Step-5 chart."""
         try:
             if is_binary:
                 fpr, tpr, thresholds = roc_curve(y_true, y_prob[:, 1])
@@ -750,6 +763,7 @@ class MLService:
         y_prob: np.ndarray,
         is_binary: bool,
     ) -> list[dict[str, float]]:
+        """Build the list of Precision-Recall points used alongside the ROC curve."""
         try:
             if is_binary:
                 prec, rec, _ = precision_recall_curve(y_true, y_prob[:, 1])
@@ -779,6 +793,7 @@ class MLService:
     # Model comparison
     # ------------------------------------------------------------------
     def add_to_comparison(self, session_id: str, model_id: str) -> CompareResponse:
+        """Step-4 endpoint — adds the latest trained model to the cross-model comparison list."""
         model_data = self._model_store.get(model_id)
         if model_data is None:
             raise KeyError(f"Model not found: {model_id}")
@@ -820,6 +835,7 @@ class MLService:
         return CompareResponse(entries=entries, best_model_id=best)
 
     def get_comparison(self, session_id: str) -> CompareResponse:
+        """Step-4 endpoint — returns the current comparison list for the session."""
         with self._lock:
             entries = list(self._compare_store.get(session_id, []))
         entries = sorted(entries, key=lambda e: e.metrics.auc_roc, reverse=True)
@@ -827,6 +843,7 @@ class MLService:
         return CompareResponse(entries=entries, best_model_id=best)
 
     def clear_comparison(self, session_id: str) -> None:
+        """Step-4 endpoint — empties the comparison list for the session."""
         with self._lock:
             self._compare_store.pop(session_id, None)
 

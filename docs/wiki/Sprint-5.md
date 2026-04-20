@@ -13,7 +13,7 @@
 | 4 | Accessibility Fix Log | [[Accessibility Log]] | DONE |
 | 5 | Brand Identity (logo, favicon, navbar mark) | [Navbar PNG](Sprint5_Logo_Navbar.png) · [Logo PNG](https://raw.githubusercontent.com/EudaLabs/HealthWithSevgi/main/frontend/public/logo.png) · [Favicon](https://raw.githubusercontent.com/EudaLabs/HealthWithSevgi/main/frontend/public/favicon.ico) | DONE |
 | 6 | LLM-Powered Clinical Insights (Step 7) | Gemma 4 integration | DONE |
-| 7 | JSDoc / docstring coverage ≥ 80% | Code + coverage report | **NOT MET** — backend `interrogate` reports 25.9 %; carried to Sprint 6 backlog |
+| 7 | JSDoc / docstring coverage ≥ 80% | Code + coverage report | **DONE** — frontend [JSDoc 100 %](coverage/frontend-jsdoc-coverage.txt), backend [interrogate 100 %](coverage/backend-docstring-coverage.txt) |
 | 8 | MIT License + metadata | `LICENSE` + `package.json` + `pyproject.toml` | DONE |
 | 9 | Sprint 5 Backlog (Jira US-501..507) | Jira board + screenshot | IN PROGRESS |
 | 10 | Bug Fix Log (Sprint 4 retro → Jira) | Jira | IN PROGRESS |
@@ -44,7 +44,7 @@
 | Usability Task Completion | ≥ 5 / 7 tasks independently | TBD — see [User Testing Report](Sprint5_User_Testing_Report.pdf) |
 | SUS Score | ≥ 68 | TBD — see User Testing Report |
 | End-to-End Regression | 0 crashes across 3 CSVs | TBD — see [E2E Regression](Sprint5_E2E_Regression.pdf) |
-| Code Documentation (JSDoc + docstring) | ≥ 80 % | TBD — `interrogate` + JSDoc report pending |
+| Code Documentation (JSDoc + docstring) | ≥ 80 % | **Frontend 100 %, Backend 100 %** — PASS ([frontend](coverage/frontend-jsdoc-coverage.txt) · [backend](coverage/backend-docstring-coverage.txt) · ![badge](coverage/backend-docstring-badge.svg)) |
 | Full Domain Coverage | 20 / 20 specialties Step 1–7 | TBD — see [Full Domain Coverage](Sprint5_Full_Domain_Coverage.pdf) |
 
 ![Sprint 5 Lighthouse Report](Sprint5_Lighthouse_Report.png)

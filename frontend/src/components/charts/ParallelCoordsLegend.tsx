@@ -4,6 +4,7 @@ import React, { useMemo } from 'react'
 /*  Color & label maps for the eight supported model types             */
 /* ------------------------------------------------------------------ */
 
+/** Per-model hex colour shared with the parallel-coordinates strokes. */
 const MODEL_COLORS: Record<string, string> = {
   knn: '#36b5d8',
   svm: '#e8843c',
@@ -15,6 +16,7 @@ const MODEL_COLORS: Record<string, string> = {
   lightgbm: '#26a69a',
 }
 
+/** Short display labels for the eight supported `ModelType` values. */
 const MODEL_LABELS: Record<string, string> = {
   knn: 'KNN',
   svm: 'SVM',

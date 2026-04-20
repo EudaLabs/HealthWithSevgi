@@ -25,14 +25,20 @@ _MAX_UPLOAD_BYTES = 50 * 1024 * 1024  # 50 MB
 
 
 def _get_data_service(request: Request):
+    """FastAPI dependency — resolves the shared `DataService` off `app.state`."""
     return request.app.state.data_service
 
 
 def _get_ml_service(request: Request):
+    """FastAPI dependency — resolves the shared `MLService` off `app.state`."""
     return request.app.state.ml_service
 
 
 def _load_df(file: UploadFile | None, specialty_id: str, data_service) -> pd.DataFrame:
+    """
+    Helper that loads a pandas DataFrame either from an uploaded CSV or from the
+    specialty's bundled dataset.
+    """
     if file is not None and file.filename:
         # Bug #6: Validate file extension
         if not file.filename.lower().endswith(".csv"):
@@ -81,11 +87,13 @@ def _load_df(file: UploadFile | None, specialty_id: str, data_service) -> pd.Dat
 
 @router.get("/specialties", response_model=list[SpecialtyInfo])
 def get_specialties() -> list[SpecialtyInfo]:
+    """List endpoint — returns the 20-entry specialty registry used by the Step 1 picker."""
     return list_specialties()
 
 
 @router.get("/specialties/{specialty_id}", response_model=SpecialtyInfo)
 def get_specialty_by_id(specialty_id: str) -> SpecialtyInfo:
+    """Retrieve a single specialty by id; 404 if unknown."""
     spec = get_specialty(specialty_id)
     if spec is None:
         raise HTTPException(status_code=404, detail=f"Specialty '{specialty_id}' not found")
@@ -103,6 +111,7 @@ def explore_data(
     target_col: str = Form(...),
     file: UploadFile | None = File(None),
 ) -> DataExplorationResponse:
+    """Step-2 exploration endpoint — returns per-column stats for the active dataset."""
     ds = _get_data_service(request)
     df = _load_df(file, specialty_id, ds)
 
@@ -137,6 +146,7 @@ def prepare_data(
     session_id: str = Form(None),
     file: UploadFile | None = File(None),
 ) -> PrepResponse:
+    """Step-3 preparation endpoint — splits, normalises, imputes missing values, optionally applies SMOTE."""
     ds = _get_data_service(request)
     ml_service = _get_ml_service(request)
     df = _load_df(file, specialty_id, ds)

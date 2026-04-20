@@ -21,6 +21,14 @@ interface Props {
   onStepClick: (step: number) => void
 }
 
+/**
+ * Seven-step progress rail rendered under the top app bar.
+ * Each pill reflects one of three states — locked / current / completed
+ * — derived from `stepsCompleted` + `currentStep`. Completed steps are
+ * clickable so the user can jump back; locked steps are visually dimmed
+ * but WCAG-AA compliant (see the Sprint 5 Accessibility Log for the
+ * contrast rationale).
+ */
 export default function WizardProgress({
   currentStep,
   stepsCompleted,

@@ -1,0 +1,1 @@
+"""HealthWithSevgi FastAPI backend package."""
