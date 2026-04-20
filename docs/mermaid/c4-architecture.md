@@ -115,11 +115,11 @@ C4Container
 
 | Container | Technology | Responsibility | Port |
 |-----------|------------|----------------|------|
-| **React SPA** | React 18 + Vite + Tailwind CSS + React Router v6 | Client-side UI — 8 step pages (Step 0-7), stepper navigation, 20-domain pill bar, interactive sliders, charts, and data tables | `localhost:5173` |
+| **React SPA** | React 18 + Vite + TypeScript + plain CSS (CSS variables) + Axios + TanStack React Query | Client-side UI — 7 step pages (Step 1–7), wizard progress tracker, 20-domain pill bar, interactive sliders, Recharts/Plotly charts, and data tables | `localhost:5173` |
 | **FastAPI Backend** | FastAPI 0.110+ + Uvicorn 0.29+ (Python 3.10+) | REST API — data upload and validation, preprocessing configuration, model training triggers, results serving, and PDF certificate generation | `localhost:8001` |
 | **ML Engine** | scikit-learn 1.4+ + XGBoost + LightGBM + SHAP 0.45+ + imbalanced-learn 0.12+ | Core ML — trains 8 classifiers (KNN, SVM, Decision Tree, Random Forest, Logistic Regression, Naive Bayes, XGBoost, LightGBM); computes 6 metric cards; generates SHAP explanations; runs bias audits | In-process with Backend |
 | **Clinical Datasets** | 20 CSV files (sourced from UCI, Kaggle, PhysioNet) | Pre-loaded clinical domain datasets for user exploration and model training | `backend/datasets/` |
-| **Session Storage** | Browser localStorage | Client-side persistence of user progress, selected domain, and trained model metadata between page reloads | Browser |
+| **Session Storage** | Backend in-memory LRU caches (no database, no browser localStorage) | Server-side session state — prepared datasets, trained models, SHAP artefacts. Evicted on process restart or LRU overflow; nothing persists across page reloads unless re-uploaded. | In-process with Backend |
 
 ### Communication Paths
 
