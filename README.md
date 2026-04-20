@@ -315,15 +315,23 @@ docker build -t healthwithsevgi .
 docker run -p 7860:7860 healthwithsevgi
 ```
 
-### Docker Compose (local development)
+### Docker Compose (one-command start)
 
 ```bash
 git clone https://github.com/EudaLabs/HealthWithSevgi.git
 cd HealthWithSevgi
-docker-compose up --build
+docker compose up -d
 ```
 
-This starts both the backend API and frontend dev server with hot-reload.
+`docker-compose.yml` pulls the pre-built `ghcr.io/eudalabs/healthwithsevgi:latest` image when available and falls back to a local multi-stage build (Node → Vite → Python). Either way, the full stack — React SPA **and** FastAPI — is served from a single container on **http://localhost:7860**.
+
+**Measured startup (pre-built image, warm Docker daemon):** ~**8 seconds** from `docker compose up -d` to HTTP 200 on `/api/specialties` — well inside the Sprint 5 30-second target (see `docs/reports/Sprint5_Docker_Running.png`).
+
+**First-time local build:** ~3–6 minutes (installs pnpm + pip dependencies). Force a rebuild with `docker compose up --build`.
+
+Container name is `healthwithsevgi`; the compose file also wires a healthcheck that probes `/api/specialties` every 10s.
+
+To stop: `docker compose down`.
 
 ---
 

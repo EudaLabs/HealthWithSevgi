@@ -1,7 +1,20 @@
 services:
   app:
-    build: .
+    # Pulls pre-built image when available; falls back to a local build from
+    # the repo root Dockerfile (see README.md § Docker Compose).
+    image: ghcr.io/eudalabs/healthwithsevgi:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: healthwithsevgi
     ports:
       - "7860:7860"
     environment:
       - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:7860/api/specialties', timeout=2).status==200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
