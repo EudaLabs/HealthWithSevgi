@@ -234,7 +234,7 @@ export default function App() {
         trainDone={!!state.trainResponse}
         onStepClick={goToStep}
       />
-      <div className="main-content">
+      <main className="main-content">
         <React.Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}><div className="skeleton" style={{ width: 200, height: 24, margin: '0 auto' }} /><p className="text-muted text-sm" style={{ marginTop: '0.5rem' }}>Loading...</p></div>}>
           {showArena ? (
             <ArenaPage
@@ -245,10 +245,10 @@ export default function App() {
             renderStep()
           )}
         </React.Suspense>
-        <div style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', padding: '1rem 0 0.5rem' }}>
+        <div style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-secondary)', padding: '1rem 0 0.5rem' }}>
           Patient data is processed locally within this session. No patient data is stored or transmitted.
         </div>
-      </div>
+      </main>
       {!showArena && <BottomNav
         currentStep={state.currentStep}
         canAdvance={
