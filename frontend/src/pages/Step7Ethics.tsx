@@ -175,7 +175,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
               <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Generating AI clinical assessment...</span>
             </div>
           )}
-          {insights?.ethics_insight?.text && !insightsLoading && (
+          {!insightsLoading && insights?.ethics_insight?.text && (
             <div className="card ai-insight-card" style={{ borderLeft: '4px solid var(--primary)', padding: 0, overflow: 'hidden' }}>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '0.5rem',
@@ -196,6 +196,14 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
               <div className="ai-insight-content" style={{ padding: '1rem 1.25rem' }}>
                 <Markdown>{insights.ethics_insight.text}</Markdown>
               </div>
+            </div>
+          )}
+          {!insightsLoading && insights && !insights?.ethics_insight?.text && (
+            <div className="alert alert-warning">
+              <span>⚠️</span>
+              <span>
+                <strong>AI clinical assessment unavailable.</strong> The language-model provider did not return a response this time — this is usually transient. Reload the page to retry. The fairness table, checklist, and certificate below still work.
+              </span>
             </div>
           )}
 

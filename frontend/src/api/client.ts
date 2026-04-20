@@ -5,8 +5,10 @@ import axios from 'axios'
  *
  * - `baseURL: '/api'` is proxied to the FastAPI server by Vite in dev and served
  *   directly from the same origin by `main_hf.py` in the HuggingFace build.
- * - `timeout: 120s` is generous on purpose: SHAP explainability and certificate
- *   generation on large datasets can cross 60s.
+ * - `timeout: 450s` is generous on purpose: Step-7 AI insights trigger three
+ *   parallel Gemma-4 reasoning calls that can each need up to 200s plus one
+ *   retry, and SHAP/certificate generation on large datasets can still cross
+ *   60s.
  *
  * The response interceptor normalises FastAPI validation errors (where
  * `response.data.detail` is an array of `{msg}` objects) into a single-string
@@ -15,7 +17,7 @@ import axios from 'axios'
  */
 export const api = axios.create({
   baseURL: '/api',
-  timeout: 120_000,
+  timeout: 450_000,
 })
 
 api.interceptors.response.use(

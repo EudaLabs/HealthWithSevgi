@@ -4,17 +4,31 @@ Provider chain: MedGemma (Vertex AI) → Gemini (Google AI) → static template 
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
+import random
 from typing import Any
 
 import httpx
 
 logger = logging.getLogger(__name__)
 
-# Timeout per LLM call (seconds)
-_LLM_TIMEOUT = 45.0
+# Timeout per LLM call (seconds). Gemma 4 is a reasoning model that emits
+# chain-of-thought tokens before the answer, so single calls can legitimately
+# take 60–90s on the ethics prompt. 200s leaves a very generous ceiling for
+# the long-tail cases and rare upstream slowness.
+_LLM_TIMEOUT = 200.0
+
+# Retry transient Gemini failures (timeouts, 429, 5xx). One retry is enough
+# in practice; keeping the count at 1 bounds the worst-case endpoint time
+# within the frontend axios budget (450s).
+_MAX_RETRIES = 1
+_RETRY_BASE_DELAY = 1.5
+
+# HTTP status codes worth retrying (rate limit + server errors).
+_RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 
 
 def _build_column_stats_block(context: dict) -> str:
@@ -454,7 +468,7 @@ class InsightService:
                 text = await self._call_medgemma(prompt, system)
                 return {"source": "medgemma", "text": text}
             except Exception as exc:
-                logger.warning("MedGemma failed (%s), falling back to Gemini: %s", task, exc)
+                logger.warning("MedGemma failed (%s), falling back to Gemini: %r", task, exc)
 
         # Try Gemini API
         if self._gemini_api_key:
@@ -462,7 +476,7 @@ class InsightService:
                 text = await self._call_gemini(prompt, system)
                 return {"source": "gemini", "text": text}
             except Exception as exc:
-                logger.warning("Gemini failed (%s), falling back to template: %s", task, exc)
+                logger.warning("Gemini failed (%s), falling back to template: %r", task, exc)
 
         # Template fallback
         return {"source": "template", "text": ""}
@@ -511,7 +525,41 @@ class InsightService:
             raise RuntimeError(f"Empty MedGemma response: {data}")
 
     async def _call_gemini(self, prompt: str, system: str = "") -> str:
-        """Call Gemini via Google AI Studio REST API."""
+        """Call Gemini via Google AI Studio REST API with retry on transient errors."""
+        last_exc: Exception | None = None
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                return await self._call_gemini_once(prompt, system)
+            except httpx.HTTPStatusError as exc:
+                status = exc.response.status_code
+                if status in _RETRY_STATUS_CODES and attempt < _MAX_RETRIES:
+                    delay = _RETRY_BASE_DELAY * (2 ** attempt) + random.uniform(0, 0.5)
+                    logger.warning(
+                        "Gemini HTTP %d on attempt %d/%d, retrying in %.1fs",
+                        status, attempt + 1, _MAX_RETRIES + 1, delay,
+                    )
+                    last_exc = exc
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+            except (httpx.TimeoutException, httpx.TransportError, RuntimeError) as exc:
+                if attempt < _MAX_RETRIES:
+                    delay = _RETRY_BASE_DELAY * (2 ** attempt) + random.uniform(0, 0.5)
+                    logger.warning(
+                        "Gemini transient failure on attempt %d/%d (%r), retrying in %.1fs",
+                        attempt + 1, _MAX_RETRIES + 1, exc, delay,
+                    )
+                    last_exc = exc
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+        # Unreachable — loop either returns or re-raises. Keep type-checker happy.
+        if last_exc:
+            raise last_exc
+        raise RuntimeError("Gemini retry loop exhausted without result")
+
+    async def _call_gemini_once(self, prompt: str, system: str = "") -> str:
+        """Single attempt against the Gemini / Gemma REST endpoint."""
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/"
             f"models/{self._gemini_model}:generateContent"
@@ -549,4 +597,9 @@ class InsightService:
                     logger.warning("Gemini output was truncated (MAX_TOKENS)")
                 if text:
                     return text
-            raise RuntimeError("Empty Gemini response")
+            # Response came back but had no usable content — treat as transient
+            # so the retry loop can take another swing.
+            block_reason = data.get("promptFeedback", {}).get("blockReason")
+            if block_reason:
+                raise RuntimeError(f"Gemini blocked response: {block_reason}")
+            raise RuntimeError(f"Empty Gemini response (candidates={len(candidates)})")
