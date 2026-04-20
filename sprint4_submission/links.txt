@@ -1,0 +1,24 @@
+﻿Jira Product Backlog
+https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
+
+
+GitHub Repository
+https://github.com/EudaLabs/HealthWithSevgi
+
+
+GitHub Wiki — Home Page
+https://github.com/EudaLabs/HealthWithSevgi/wiki
+
+
+Sprint 1 Backlog
+https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?jql=Sprint%20%3D%2068
+
+Sprint 2 Backlog
+https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
+
+
+Figma Wireframes — All 7 Steps
+https://www.figma.com/design/1K1Dw8PC6P98NZAa30DzII/430-HealthWithSevgi?node-id=0-1&t=A5k3xtuCwuaFsHMB-1
+
+Live Demo
+https://0xbatuhan4-healthwithsevgi.hf.space/
