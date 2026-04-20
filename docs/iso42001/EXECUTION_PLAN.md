@@ -38,6 +38,8 @@ Extract for each of the 20 specialties:
 
 **Output format:** A 20-row table ready for Section 3.1.
 
+> **UPDATE (April 2026):** A comprehensive dataset licensing audit has been completed and documented in `DATA_LICENSES.md` and `ATTRIBUTION.md`. These files contain per-dataset license types, DOIs, citations, modification records, redistribution rights, and EU AI Act Article 10/11/52 compliance tables. Section 3.1 should cross-reference these documents. Key finding: 18 of 20 datasets are bundled in Docker; 2 (Stroke, Anaemia) are NOT bundled due to unverified licenses.
+
 The 20 specialties are:
 1. Cardiology — Heart Failure (UCI)
 2. Cardiology — Stroke Prediction (Kaggle)
@@ -51,14 +53,14 @@ The 20 specialties are:
 10. Endocrinology — Thyroid Disease (UCI)
 11. Hepatology — Liver Disease (UCI/Indian Liver Patient)
 12. Mental Health — Depression (Kaggle)
-13. Pulmonology — Lung Cancer (Kaggle)
+13. Pulmonology — COPD (Kaggle)
 14. Haematology (Kaggle)
-15. Dermatology (UCI)
-16. Ophthalmology — Diabetic Retinopathy (Kaggle)
+15. Dermatology (Harvard Dataverse)
+16. Ophthalmology — Diabetic Retinopathy (UCI)
 17. Orthopaedics (Kaggle/UCI)
 18. ICU — Sepsis Prediction (PhysioNet/Kaggle)
-19. Obstetrics — Maternal Health (Kaggle)
-20. Pharmacy — Drug Classification (Kaggle)
+19. Obstetrics — Fetal Health / CTG (UCI)
+20. Pharmacy — Hospital Readmission (UCI)
 
 ### Task 0.2: Extract ML Model Configuration
 
@@ -235,7 +237,7 @@ Need at least **6 stakeholders** with needs↔response matching.
 | Students / Development Team | Developer | Clear requirements; learn responsible AI; feasible workload | User Guide as spec; ISO deliverables as structured learning; sprint gates as checkpoints | Medium |
 | Instructor (Dr. Sevgi Koyuncu Tunç) | Governance / Evaluator | Curriculum alignment; quality deliverables; ethical AI education demonstrated | Sprint gates as management review; ISO rubric compliance; PDCA cycle documented | High |
 | Regulators (EU AI Act authorities) | External Oversight | Transparency; human oversight; bias documentation; compliance evidence | Step 7 EU AI Act checklist (8 items); all ISO deliverables; SHAP explainability; clinical disclaimers | High |
-| Dataset Providers (UCI, Kaggle, PhysioNet) | Supplier | Proper attribution; ethical use within license terms; no misrepresentation of data | Provenance documentation in Section 3.1; educational-use scope statement; license compliance in Section 3.4 | Low |
+| Dataset Providers (UCI, Kaggle, PhysioNet) | Supplier | Proper attribution; ethical use within license terms; no misrepresentation of data | Provenance documentation in Section 3.1; `DATA_LICENSES.md` (per-dataset license audit); `ATTRIBUTION.md` (CC BY attributions); educational-use scope statement; license compliance in Section 3.4 | Low |
 | Future Deployers (hypothetical hospitals) | Potential User | Production readiness evidence; risk documentation; monitoring plans | Theoretical monitoring plan (Ch. 5.3); risk register (Ch. 4); impact assessment (Ch. 4.2) — though not in first submission | Medium |
 | General Public | Societal | Trust in healthcare AI; transparency about AI capabilities and limitations | Open educational tool; bias case studies; responsible AI principles embedded in tool design | Low |
 

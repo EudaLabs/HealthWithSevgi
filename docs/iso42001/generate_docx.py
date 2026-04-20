@@ -146,7 +146,9 @@ def main():
         "participants and instructors\n"
         "• Lifecycle: Design through educational deployment on HuggingFace Spaces\n"
         "• Data: 20 published, de-identified clinical datasets (UCI, Kaggle, PhysioNet, "
-        "Harvard Dataverse) + user-uploaded CSV files\n"
+        "Harvard Dataverse) — 18 bundled in Docker, 2 auto-downloaded at runtime due to "
+        "unverified redistribution rights. Full licensing audit in DATA_LICENSES.md and "
+        "ATTRIBUTION.md. + user-uploaded CSV files\n"
         "• Explainability: SHAP-based global feature importance and single-patient waterfall "
         "with 251 clinical name mappings\n"
         "• Ethics: Subgroup fairness audit (gender, age bands), 10% sensitivity gap threshold, "
@@ -267,8 +269,8 @@ def main():
          "High"),
         ("Dataset Providers\n(UCI, Kaggle, etc.)", "Supplier",
          "Proper attribution; ethical use; license compliance",
-         "Provenance documentation in Section 3.1; educational-use scope; license compliance "
-         "in Section 3.4",
+         "Provenance in Section 3.1; DATA_LICENSES.md (per-dataset license categories, DOIs, "
+         "redistribution rights); ATTRIBUTION.md (CC BY/CC BY-SA attributions); Section 3.4",
          "Low"),
         ("General Public", "Societal",
          "Trust in healthcare AI; transparency about capabilities and limitations",
@@ -393,26 +395,26 @@ def main():
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     t = tables[15]
     datasets = [
-        ("1","Cardiology — Heart Failure","Heart Failure Clinical Records (Kaggle)","299","12","DEATH_EVENT (binary)","Small sample; ~32% death class imbalance; single-centre (Pakistan); limited demographics"),
-        ("2","Cardiology — Stroke","Stroke Prediction Dataset (Kaggle)","5,110","10","stroke (binary)","Severe imbalance (<5% positive); self-reported data; socioeconomic proxies"),
-        ("3","Cardiology — Arrhythmia","UCI Arrhythmia Dataset (UCI)","452","33","arrhythmia (binary)","High dimensionality; significant missing values; 1980s–90s data; binarised from 16 classes"),
-        ("4","Radiology","NIH Chest X-Ray Metadata (Kaggle)","100,000+","4","Finding_Label (binary)","Metadata only (no images); NLP-extracted labels with noise; institutional bias"),
-        ("5","Nephrology — CKD","UCI CKD Dataset (UCI)","400","15","classification (binary)","Significant missing values; single-centre (India); small sample for 15 features"),
-        ("6","Oncology — Breast","Breast Cancer Wisconsin (UCI)","569","14","diagnosis (binary)","FNA-derived features; ~37% malignant; single institution; lacks demographics"),
-        ("7","Oncology — Cervical","Cervical Cancer Risk Factors (UCI)","858","22","Biopsy (binary)","Extensive missing values; <10% positive; self-reported behavioural data; single country"),
-        ("8","Neurology — Parkinson's","UCI Parkinson's Dataset (UCI)","195","17","status (binary)","Very small (n=195); ~75% PD positive; voice-only features; single session"),
-        ("9","Endocrinology — Diabetes","Pima Indians Diabetes (Kaggle)","768","8","Outcome (binary)","Only Pima Indian women ≥21; zero values = missing; severely limits generalisability"),
-        ("10","Endocrinology — Thyroid","UCI New Thyroid Dataset (UCI)","215","5","class (multiclass)","Very small (n=215); only 5 features; 1980s data; reference ranges may differ"),
-        ("11","Hepatology — Liver","Indian Liver Patient (UCI)","583","10","Dataset (binary)","Single country (India); 75% male; ~72% positive; no aetiology info"),
-        ("12","Mental Health — Depression","Depression Dataset (Kaggle)","~2,000","14","severity_class (binary)","Self-reported; oversimplifies severity; no DSM-5 criteria; weak provenance — used as pedagogical example"),
-        ("13","Pulmonology — COPD","COPD EHR Dataset (PhysioNet)","~1,000","11","exacerbation (binary)","Credentialed access required; documentation bias; spirometry effort-dependent"),
-        ("14","Haematology — Anaemia","Anaemia Detection Dataset (Kaggle)","~1,421","5","anemia_type (binary)","Only 5 features; no iron/ferritin/B12; binary — no subtype distinction"),
-        ("15","Dermatology","HAM10000 Metadata (Harvard Dataverse)","10,015","3","dx_type (binary)","Metadata only; 3 features; ~10% melanoma; predominantly light-skinned (Vienna, Queensland)"),
-        ("16","Ophthalmology — DR","Diabetic Retinopathy Debrecen (UCI)","1,151","19","severity_grade (binary)","Automated image features; single institution (Hungary); binarised from multi-grade"),
-        ("17","Orthopaedics — Spine","Vertebral Column Dataset (UCI)","310","6","class (binary)","Only 6 features; small (n=310); no age/gender; examiner-dependent measurements"),
-        ("18","ICU / Sepsis","PhysioNet Sepsis Challenge 2019","~40,000","16","SepsisLabel (binary)","~10% positive; missing values clinically meaningful; credentialed access required"),
-        ("19","Obstetrics — Fetal","Cardiotocography Dataset (UCI)","2,126","12","fetal_health (multiclass)","~8% pathological; inter-observer variability; software-derived features"),
-        ("20","Pharmacy — Readmission","Diabetes 130-US Hospitals (UCI)","100,000+","19","readmitted (multiclass)","1999–2008 data; US-specific; encounter-level; outdated treatment protocols"),
+        ("1","Cardiology — Heart Failure","Heart Failure Clinical Records (Kaggle, CC BY 4.0)","299","12","DEATH_EVENT (binary)","Small sample; ~32% death class imbalance; single-centre (Pakistan); limited demographics. Bundled."),
+        ("2","Cardiology — Stroke","Stroke Prediction Dataset (Kaggle, No license)","5,110","10","stroke (binary)","Severe imbalance (<5% positive); self-reported data; socioeconomic proxies. NOT bundled — auto-downloaded at runtime."),
+        ("3","Cardiology — Arrhythmia","UCI Arrhythmia Dataset (UCI, CC BY 4.0)","452","33","arrhythmia (binary)","High dimensionality; significant missing values; 1980s–90s data; binarised from 16 classes. Bundled."),
+        ("4","Radiology","NIH Chest X-Ray Metadata (Kaggle, CC0 1.0)","100,000+","4","Finding_Label (binary)","Metadata only (no images); NLP-extracted labels with noise; institutional bias. Bundled."),
+        ("5","Nephrology — CKD","UCI CKD Dataset (UCI, CC BY 4.0)","400","15","classification (binary)","Significant missing values; single-centre (India); small sample for 15 features. Bundled."),
+        ("6","Oncology — Breast","Breast Cancer Wisconsin (UCI, CC BY 4.0)","569","14","diagnosis (binary)","FNA-derived features; ~37% malignant; single institution; lacks demographics. Bundled."),
+        ("7","Oncology — Cervical","Cervical Cancer Risk Factors (UCI, CC BY 4.0)","858","22","Biopsy (binary)","Extensive missing values; <10% positive; self-reported behavioural data; single country. Bundled."),
+        ("8","Neurology — Parkinson's","UCI Parkinson's Dataset (UCI, CC BY 4.0)","195","17","status (binary)","Very small (n=195); ~75% PD positive; voice-only features; single session. Bundled."),
+        ("9","Endocrinology — Diabetes","Pima Indians Diabetes (Kaggle, CC0/CC BY 4.0)","768","8","Outcome (binary)","Only Pima Indian women ≥21; zero values = missing; severely limits generalisability. Bundled."),
+        ("10","Endocrinology — Thyroid","UCI New Thyroid Dataset (UCI, CC BY 4.0)","215","5","class (multiclass)","Very small (n=215); only 5 features; 1980s data; reference ranges may differ. Bundled."),
+        ("11","Hepatology — Liver","Indian Liver Patient (UCI, CC BY 4.0)","583","10","Dataset (binary)","Single country (India); 75% male; ~72% positive; no aetiology info. Bundled."),
+        ("12","Mental Health — Depression","Depression Dataset (Kaggle, CC BY-SA 4.0)","~2,000","14","severity_class (binary)","Self-reported; oversimplifies severity; no DSM-5 criteria; weak provenance — pedagogical example. ShareAlike applies. Bundled."),
+        ("13","Pulmonology — COPD","COPD Student Dataset (Kaggle, CC0 1.0)","101","11","exacerbation (binary)","Very small sample (n=101); compiled from UCL Datasets Library; spirometry effort-dependent. Bundled."),
+        ("14","Haematology — Anaemia","Anaemia Detection Dataset (Kaggle, Unknown)","~400","5","anemia_type (multiclass)","Only 5 features (Hb, MCV, MCH, MCHC, gender); no iron/ferritin/B12; multiclass (iron deficiency, megaloblastic, normocytic, normal). NOT bundled — license unverified; auto-downloaded at runtime."),
+        ("15","Dermatology","HAM10000 Metadata (Harvard Dataverse, CC BY-NC 4.0)","10,015","3","dx_type (binary)","Metadata only; 3 features; ~10% melanoma; predominantly light-skinned (Vienna, Queensland). Non-commercial use only. Bundled."),
+        ("16","Ophthalmology — DR","Diabetic Retinopathy Debrecen (UCI, CC BY 4.0)","1,151","19","severity_grade (binary)","Automated image features; single institution (Hungary); binarised from multi-grade. Bundled."),
+        ("17","Orthopaedics — Spine","Vertebral Column Dataset (UCI, CC BY 4.0)","310","6","class (binary)","Only 6 features; small (n=310); no age/gender; examiner-dependent measurements. Bundled."),
+        ("18","ICU / Sepsis","PhysioNet Sepsis Challenge 2019 (CC BY 4.0)","~40,000","16","SepsisLabel (binary)","~10% positive; missing values clinically meaningful; credentialed access. Bundled."),
+        ("19","Obstetrics — Fetal","Cardiotocography Dataset (UCI, CC BY 4.0)","2,126","12","fetal_health (multiclass)","~8% pathological; inter-observer variability; software-derived features. Bundled."),
+        ("20","Pharmacy — Readmission","Diabetes 130-US Hospitals (UCI, CC BY 4.0)","100,000+","19","readmitted (multiclass)","1999–2008 data; US-specific; encounter-level; outdated treatment protocols. Bundled."),
     ]
 
     # Fill existing rows first (row 0 = header, rows 1-3 = template data rows)
@@ -500,8 +502,14 @@ def main():
         ),
         (
             "Provenance\nTracking",
-            "• Built-in datasets: Source URL, description, and license in specialty registry. "
-            "Step 2 displays dataset attribution.\n"
+            "• Built-in datasets: Source URL, description, license type, and DOI in specialty "
+            "registry. Step 2 displays dataset attribution.\n"
+            "• Licensing documentation: DATA_LICENSES.md provides full per-dataset inventory "
+            "with license categories, DOIs, citations, modification records, redistribution "
+            "rights, and EU AI Act Art. 10/11/52 compliance tables (ISO/IEC 25012 compliant). "
+            "ATTRIBUTION.md lists required CC BY/CC BY-SA attributions.\n"
+            "• Docker bundling: 18/20 datasets bundled based on verified redistribution rights. "
+            "2 datasets (Stroke, Anaemia) auto-downloaded at runtime — licenses unverified.\n"
             "• User uploads: filename, row/column counts, types, class distribution captured "
             "per session. No persistent lineage (educational scope).\n"
             "• Clinical deployment would need: Apache Atlas / OpenLineage, immutable provenance "
@@ -531,16 +539,16 @@ def main():
         ("scikit-learn","ML Library","≥1.4.0","BSD-3-Clause","No critical CVEs; NumFOCUS-sponsored; 60k+ stars","L","TensorFlow, PyTorch","Pin version; check PyPI releases each sprint"),
         ("XGBoost","ML Library","≥2.0.0","Apache 2.0","DMLC foundation; regular patches; enterprise adoption","L","LightGBM, CatBoost","Pin version; monitor GitHub advisories"),
         ("LightGBM","ML Library","≥4.3.0","MIT","Microsoft-maintained; requires libgomp1; no known CVEs","L","XGBoost, CatBoost","Pin version; monitor MSRC"),
-        ("SHAP","Explainability","≥0.45.0","MIT","Academic origin (Lundberg); 18k+ citations; transitive deps","L","LIME, ELI5","Pin version; monitor API changes"),
+        ("SHAP","Explainability","≥0.45.0","MIT","Academic origin (Lundberg); 18k+ citations; transitive dep chain (NumPy/SciPy) increases vulnerability surface; not enterprise-backed","M","LIME, ELI5","Pin version; monitor API changes; scan transitive deps with pip-audit"),
         ("pandas","Data Processing","≥2.2.0","BSD-3-Clause","NumFOCUS; enterprise-grade; no critical vulns; 40k+ stars","L","Polars, Modin","Pin version; ecosystem stable"),
-        ("imbalanced-learn","ML (SMOTE)","≥0.12.0","MIT","scikit-learn-contrib; well-tested SMOTE; quarterly releases","L","Custom SMOTE, ADASYN","Pin; follows sklearn cycle"),
+        ("imbalanced-learn","ML (SMOTE)","≥0.12.0","MIT","scikit-learn-contrib; quarterly releases = slower patches; directly affects training output via synthetic data","M","Custom SMOTE, ADASYN","Pin exact version; verify SMOTE output consistency across upgrades"),
         ("FastAPI","Web Framework","≥0.110.0","MIT","Active maintenance; Starlette/Pydantic; production-proven","L","Flask, Django REST","Pin version; monitor advisories"),
         ("ReportLab","PDF Generation","≥4.1.0","BSD","Enterprise PDF (20+ years); occasional CVE patches","L","WeasyPrint, FPDF2","Pin; scan with pip-audit"),
         ("React","Frontend","^18.3.0","MIT","Meta-maintained; dedicated security team; 220k+ stars","L","Vue, Svelte, Angular","Pin major; monitor security blog"),
         ("Vite","Build Tool","^5.3.0","MIT","Evan You / team; fast HMR; dev-only (not in runtime)","L","Webpack, Turbopack","Pin; monitor GitHub advisories"),
         ("Recharts","Charting","^2.12.0","MIT","React-specific on D3; ROC, PR, SHAP charts; 23k+ stars","L","@nivo, Plotly, Chart.js","Pin; monitor npm advisories"),
         ("Axios","HTTP Client","^1.7.0","MIT","Frontend API client; 120s timeout; /api baseURL; 100k+ stars","L","fetch API, ky","Pin; monitor npm advisories"),
-        ("python:3.12-slim","Docker Base","3.12","PSF","Official image; regular security rebuilds; slim variant","L","python:3.12-alpine","Rebuild on advisories; scan with Trivy"),
+        ("python:3.12-slim","Docker Base","3.12","PSF","Official image; regular rebuilds; slim still ships ~80MB system pkgs (glibc, openssl) whose CVEs propagate","M","python:3.12-alpine","Rebuild on advisories; scan with Trivy/Docker Scout; monitor Debian tracker"),
         ("UCI ML Repository","Data Source","N/A","CC BY 4.0","Peer-reviewed; UC Irvine since 1987; benchmark standard","M","Kaggle, PhysioNet","Check for corrections/retractions"),
         ("Kaggle","Data Source","N/A","Various","Community-sourced; quality varies; cross-reference papers","M","UCI, govt data portals","Verify license per dataset"),
         ("PhysioNet","Data Source","N/A","PhysioNet License","Credentialed access; HIPAA de-identified; peer-reviewed","L","MIMIC alternatives","Monitor for corrections"),
