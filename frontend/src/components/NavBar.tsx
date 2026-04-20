@@ -93,9 +93,15 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
       <nav className="navbar">
         <div className="navbar-inner">
           <div className="navbar-brand">
-            <div className="navbar-logo">H</div>
+            <img
+              src="/logo.png"
+              alt="HealthWithSevgi logo"
+              className="navbar-logo"
+              width={42}
+              height={42}
+            />
             <div>
-              <div className="navbar-brand-title">HEALTH-AI · ML Learning Tool</div>
+              <div className="navbar-brand-title">HealthWithSevgi · ML Learning Tool</div>
               <div className="navbar-brand-sub">For Healthcare Professionals</div>
             </div>
           </div>
