@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker" />
   <img src="https://img.shields.io/badge/Python_3.12-3776AB?logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/SHAP-blueviolet" alt="SHAP" />
-  <img src="https://img.shields.io/badge/License-Academic-lightgrey" alt="License" />
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="License: MIT" />
 </p>
 
 # HealthWithSevgi
@@ -538,4 +538,6 @@ The production deployment runs on HuggingFace Spaces as a Docker container. The 
 
 ## License
 
-This project is developed as part of the **SENG 430 Software Quality Assurance** course at Cankaya University. All rights reserved.
+Released under the [**MIT License**](LICENSE) — you are free to use, copy, modify, and distribute this software with attribution.
+
+Developed as part of the **SENG 430 Software Quality Assurance** course at Cankaya University by the EudaLabs team.

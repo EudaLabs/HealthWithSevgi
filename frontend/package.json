@@ -2,6 +2,7 @@
   "name": "health-with-sevgi",
   "version": "1.3.1",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
