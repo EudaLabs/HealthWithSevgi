@@ -97,8 +97,8 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
               src="/logo.png"
               alt="HealthWithSevgi logo"
               className="navbar-logo"
-              width={42}
-              height={42}
+              width={44}
+              height={44}
             />
             <div>
               <div className="navbar-brand-title">HealthWithSevgi · ML Learning Tool</div>
