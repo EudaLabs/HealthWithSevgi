@@ -141,7 +141,7 @@ export default function Step1ClinicalContext({ specialty, onNext }: Props) {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{step.title}</div>
-                    <div style={{ fontSize: '0.75rem', opacity: isActive ? 0.85 : 0.65 }}>{step.desc}</div>
+                    <div style={{ fontSize: '0.75rem', opacity: isActive ? 1 : 0.75 }}>{step.desc}</div>
                   </div>
                   <Icon size={16} style={{ opacity: 0.6, flexShrink: 0 }} />
                 </div>

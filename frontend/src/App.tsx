@@ -4,13 +4,13 @@ import { fetchSpecialties } from './api/specialties'
 import NavBar from './components/NavBar'
 import WizardProgress from './components/WizardProgress'
 import Step1ClinicalContext from './pages/Step1ClinicalContext'
-import Step2DataExploration from './pages/Step2DataExploration'
-import Step3DataPreparation from './pages/Step3DataPreparation'
-import Step4ModelParameters from './pages/Step4ModelParameters'
+const Step2DataExploration = React.lazy(() => import('./pages/Step2DataExploration'))
+const Step3DataPreparation = React.lazy(() => import('./pages/Step3DataPreparation'))
+const Step4ModelParameters = React.lazy(() => import('./pages/Step4ModelParameters'))
 const Step5Results = React.lazy(() => import('./pages/Step5Results'))
 const ArenaPage = React.lazy(() => import('../../local/model-arena/frontend/pages/ArenaPage'))
 const Step6Explainability = React.lazy(() => import('./pages/Step6Explainability'))
-import Step7Ethics from './pages/Step7Ethics'
+const Step7Ethics = React.lazy(() => import('./pages/Step7Ethics'))
 import type { WizardState, Specialty, CompareEntry } from './types'
 
 const STEP_NAMES = [
@@ -122,7 +122,7 @@ export default function App() {
   const renderStep = () => {
     if (specialtiesLoading || !state.specialty) {
       return (
-        <div style={{ padding: '2rem' }}>
+        <div style={{ padding: '2rem', minHeight: '60vh' }}>
           <div style={{ height: '2rem', width: '40%', marginBottom: '1rem', borderRadius: '0.5rem', background: 'var(--bg-secondary)', animation: 'pulse 1.5s ease-in-out infinite' }} />
           <div style={{ height: '1rem', width: '60%', marginBottom: '0.5rem', borderRadius: '0.5rem', background: 'var(--bg-secondary)', animation: 'pulse 1.5s ease-in-out infinite' }} />
           <div style={{ height: '1rem', width: '50%', borderRadius: '0.5rem', background: 'var(--bg-secondary)', animation: 'pulse 1.5s ease-in-out infinite' }} />

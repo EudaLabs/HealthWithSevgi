@@ -9,11 +9,11 @@
 |---|-------------|--------|--------|
 | 1 | Working App — Polished v1.5.x | GitHub + Live Demo | DONE |
 | 2 | Docker Quick Start (`docker compose up` < 30 s) | `docker-compose.yml` + README | DONE |
-| 3 | Lighthouse Audit (Perf ≥ 80, A11y ≥ 85) | [PNG](Sprint5_Lighthouse_Report.png) + JSON | DONE |
+| 3 | Lighthouse Audit (Perf ≥ 80, A11y ≥ 85) | [PNG](Sprint5_Lighthouse_Report.png) · [HTML](Sprint5_Lighthouse.report.html) · [JSON](Sprint5_Lighthouse.report.json) | DONE |
 | 4 | Accessibility Fix Log | [[Accessibility Log]] | DONE |
-| 5 | Brand Identity (logo, favicon, navbar mark) | PNG + SVG | DONE |
+| 5 | Brand Identity (logo, favicon, navbar mark) | [Navbar PNG](Sprint5_Logo_Navbar.png) · [Logo PNG](https://raw.githubusercontent.com/EudaLabs/HealthWithSevgi/main/frontend/public/logo.png) · [Favicon](https://raw.githubusercontent.com/EudaLabs/HealthWithSevgi/main/frontend/public/favicon.ico) | DONE |
 | 6 | LLM-Powered Clinical Insights (Step 7) | Gemma 4 integration | DONE |
-| 7 | JSDoc / docstring coverage ≥ 80% | Code + coverage report | DONE |
+| 7 | JSDoc / docstring coverage ≥ 80% | Code + coverage report | **NOT MET** — backend `interrogate` reports 25.9 %; carried to Sprint 6 backlog |
 | 8 | MIT License + metadata | `LICENSE` + `package.json` + `pyproject.toml` | DONE |
 | 9 | Sprint 5 Backlog (Jira US-501..507) | Jira board + screenshot | IN PROGRESS |
 | 10 | Bug Fix Log (Sprint 4 retro → Jira) | Jira | IN PROGRESS |
@@ -36,10 +36,10 @@
 
 | Metric | Target | Result |
 |--------|--------|--------|
-| Lighthouse Performance | ≥ 80 | **93** — PASS |
+| Lighthouse Performance | ≥ 80 | **91** — PASS (re-audit 21 Apr; was 93 on 20 Apr baseline — see `Sprint5_Lighthouse.report.baseline.json`) |
 | Lighthouse Accessibility | ≥ 85 | **100** — PASS |
-| Lighthouse Best Practices | — | 96 |
-| Lighthouse SEO | — | 91 |
+| Lighthouse Best Practices | — | **100** (was 96 baseline) |
+| Lighthouse SEO | — | **100** (was 91 baseline) |
 | Docker Startup Time | ≤ 30 s (warm cache) | Healthcheck passes within 20 s — PASS |
 | Usability Task Completion | ≥ 5 / 7 tasks independently | TBD — see [User Testing Report](Sprint5_User_Testing_Report.pdf) |
 | SUS Score | ≥ 68 | TBD — see User Testing Report |
@@ -60,8 +60,10 @@
 
 ### Lighthouse Performance & Accessibility
 - Audited the production build (`pnpm build` + `pnpm preview` on port 4173).
-- Scores — Performance **93**, Accessibility **100**, Best Practices 96, SEO 91 (Chrome 147 headless, Lighthouse 13.1.0).
+- Scores (re-audit 21 Apr 2026): Performance **91**, Accessibility **100**, Best Practices **100**, SEO **100** (Chrome 131 headless, Lighthouse latest).
 - Accessibility score raised from **91 → 100** by resolving 5 `color-contrast` violations and 1 `landmark-one-main` violation. Full breakdown with before/after CSS in [[Accessibility Log]].
+- Performance re-audit pass added **+4 BP** and **+9 SEO** via: valid `robots.txt`, Vite `sourcemap: true`, lazy-loading Steps 2/3/4/7 (recharts no longer eagerly preloaded — 70 KiB less landing JS), swapping navbar logo to `/logo-192.png` with `fetchPriority="high"`, and a `preview.proxy` config so `/api/*` resolves during audit.
+- Baseline report (Sprint 5 closing, pre-re-audit): [HTML](Sprint5_Lighthouse.report.baseline.html) · [JSON](Sprint5_Lighthouse.report.baseline.json).
 
 ### Brand Identity
 - Added `HealthWithSevgi` logo as favicon and navbar mark (alpha-centroid centering so the `S` sits optically middle).

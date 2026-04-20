@@ -195,8 +195,8 @@ input, select, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
@@ -207,7 +207,7 @@ input, select, textarea { font-family: inherit; }
   white-space: nowrap;
 }
 .navbar-dropdown-trigger:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.35);
 }
 .navbar-dropdown-label {
   max-width: 180px;

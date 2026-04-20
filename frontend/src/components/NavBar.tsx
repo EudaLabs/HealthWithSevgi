@@ -94,11 +94,14 @@ export default function NavBar({ specialty, specialties, onSpecialtyChange, onRe
         <div className="navbar-inner">
           <div className="navbar-brand">
             <img
-              src="/logo.png"
+              src="/logo-192.png"
               alt="HealthWithSevgi logo"
               className="navbar-logo"
               width={44}
               height={44}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
             />
             <div>
               <div className="navbar-brand-title">HealthWithSevgi · ML Learning Tool</div>

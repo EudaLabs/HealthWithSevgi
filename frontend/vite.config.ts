@@ -27,7 +27,22 @@ export default defineConfig({
       allow: ['.', '../local/model-arena'],
     },
   },
+  preview: {
+    port: 4173,
+    proxy: {
+      '/api': 'http://localhost:8001'
+    },
+  },
   build: {
+    sourcemap: true,
+    modulePreload: {
+      resolveDependencies: (_filename, deps, { hostType }) => {
+        if (hostType === 'html') {
+          return deps.filter((dep) => !dep.includes('vendor-charts'))
+        }
+        return deps
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {

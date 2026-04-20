@@ -74,3 +74,7 @@ backend/data_cache/haematology_anaemia.csv
 *.Zone.Identifier
 *:Zone.Identifier
 docs/media/HEALTH_AI_Sprint2_Detailed_QA_Report*
+
+# ─── Local state ───────────────────────────────────
+.claude/
+hf-space/static/
