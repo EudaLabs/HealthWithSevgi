@@ -28,6 +28,13 @@ interface Props {
 const CLASS_BAR_COLOR = '#c89a2d'
 const MAX_FILE_SIZE = 50 * 1024 * 1024
 
+/**
+ * Step 2 — Data Exploration + Column Mapper.
+ * Accepts a CSV upload (or uses the bundled sample), shows per-column
+ * summaries from `/api/explore`, and lets the user pick the target column
+ * plus map raw headers to clinical display names. Blocks Step 3 until the
+ * green "Target confirmed" banner appears.
+ */
 export default function Step2DataExploration({
   specialty,
   uploadedFile,

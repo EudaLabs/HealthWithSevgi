@@ -8,6 +8,7 @@ import ConfusionMatrixChart from '../components/charts/ConfusionMatrixChart'
 import ROCCurveChart from '../components/charts/ROCCurveChart'
 import PRCurveChart from '../components/charts/PRCurveChart'
 import KNNScatterCanvas from '../components/charts/KNNScatterCanvas'
+/** Model comparison scatter/bar viz — lazy-loaded so Step 4 opens fast. */
 const ModelComparisonViz = React.lazy(() => import('../components/charts/ModelComparisonViz'))
 
 const MODEL_CONFIGS = [

@@ -38,6 +38,12 @@ const CANVAS_W = 720
 const CANVAS_H = 500
 const PAD = { top: 44, right: 24, bottom: 60, left: 56 }
 
+/**
+ * KNN 2-D decision-boundary scatter (Step 5, KNN-only).
+ * Canvas-based for speed on large meshes. Shows the PCA-projected test set
+ * as coloured dots over the decision-region heatmap, plus hover popovers
+ * that highlight the k-nearest-neighbours of the hovered point.
+ */
 const KNNScatterCanvas: React.FC<KNNScatterCanvasProps> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)

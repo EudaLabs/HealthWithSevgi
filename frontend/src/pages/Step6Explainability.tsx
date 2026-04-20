@@ -13,6 +13,12 @@ interface Props {
   onNext: () => void
 }
 
+/**
+ * Step 6 — Explainability.
+ * SHAP global feature importance chart, per-patient waterfall for a
+ * selectable test-set patient, clinical sense-check banner, and the
+ * What-If simulator that shifts a single feature and re-runs the model.
+ */
 export default function Step6Explainability({ trainResponse, onNext }: Props) {
   const [global, setGlobal] = useState<GlobalExplainabilityResponse | null>(null)
   const [globalLoading, setGlobalLoading] = useState(true)

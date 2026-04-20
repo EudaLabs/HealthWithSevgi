@@ -16,6 +16,12 @@ interface ModelComparisonVizProps {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Side-by-side trained-model viz shown on Step 4.
+ * Given the comparison set entries (one per model the user has trained),
+ * renders a grouped bar + parallel-coordinates view of key metrics so the
+ * user can see at a glance which classifier is ahead.
+ */
 const ModelComparisonViz: React.FC<ModelComparisonVizProps> = ({ entries }) => {
   /* ---- state ---------------------------------------------------- */
   const [hoveredId, setHoveredId] = useState<string | null>(null)

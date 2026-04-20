@@ -16,6 +16,11 @@ interface Props {
   auc: number;
 }
 
+/**
+ * ROC curve (Step 5).
+ * Plots TPR vs FPR with the y=x diagonal as the no-skill baseline, and
+ * labels the AUC in the corner. Only rendered for binary targets.
+ */
 const ROCCurveChart: React.FC<Props> = ({ points, auc }) => {
   const chartData = points.map((p) => ({
     fpr: Number(p.fpr.toFixed(4)),

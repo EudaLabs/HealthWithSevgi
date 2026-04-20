@@ -31,6 +31,13 @@ interface Props {
   onNext: () => void
 }
 
+/**
+ * Step 5 — Results.
+ * Renders the trained model's metrics (accuracy, precision, recall,
+ * F1, sensitivity, specificity), ROC/PR curves, confusion matrix, and
+ * the KNN 2-D decision boundary when applicable. Feeds `onNext` into
+ * Step 6 once the user has reviewed the numbers.
+ */
 export default function Step5Results({ trainResponse, onNext }: Props) {
   const { metrics } = trainResponse
   const cm = metrics.confusion_matrix

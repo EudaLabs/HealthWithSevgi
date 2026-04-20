@@ -34,6 +34,12 @@ interface Props {
   stepsCompleted: Set<number>
 }
 
+/**
+ * Step 7 — Ethics & Bias (final step).
+ * Subgroup fairness table, bias auto-detection banner, EU AI Act checklist,
+ * training-data representation chart with >15pp warnings, case-study cards,
+ * and certificate download. Completing this step ends the wizard.
+ */
 export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }: Props) {
   const [ethics, setEthics] = useState<EthicsResponse | null>(null)
   const [loading, setLoading] = useState(false)

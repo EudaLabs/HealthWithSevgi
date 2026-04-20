@@ -20,6 +20,12 @@ function cellColor(value: number, max: number, isDiagonal: boolean): string {
   return `rgba(220,53,69,${0.06 + intensity * 0.25})`;
 }
 
+/**
+ * Confusion matrix viz used by Step 5.
+ * Renders a 2x2 grid for binary targets (with labelled TP/TN/FP/FN quadrants)
+ * or an NxN heat-grid for multiclass. Takes the backend's `confusion_matrix`
+ * `{labels, matrix}` shape as-is.
+ */
 const ConfusionMatrixChart: React.FC<Props> = ({ data }) => {
   const { matrix, labels } = data;
   const n = matrix.length;

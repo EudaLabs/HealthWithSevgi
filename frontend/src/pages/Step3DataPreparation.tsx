@@ -19,6 +19,13 @@ interface Props {
   onNext: () => void
 }
 
+/**
+ * Step 3 — Data Preparation.
+ * Collects preprocessing choices (train/test split, missing-value strategy,
+ * normalization, SMOTE, outlier handling), calls `/api/prepare`, and
+ * surfaces the `session_id` every downstream step needs. Green success
+ * banner unlocks Step 4.
+ */
 export default function Step3DataPreparation({
   specialty,
   targetColumn,

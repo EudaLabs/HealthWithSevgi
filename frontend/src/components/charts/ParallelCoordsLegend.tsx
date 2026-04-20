@@ -43,6 +43,12 @@ interface ParallelCoordsLegendProps {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Colour legend for the Parallel Coordinates chart.
+ * Renders one swatch + label per model so the user can map coloured lines
+ * on the chart back to classifier names. Clicking a swatch pins/unpins a
+ * line; the other controls reset brushes and clear pinned lines.
+ */
 const ParallelCoordsLegend: React.FC<ParallelCoordsLegendProps> = ({
   entries,
   pinnedIds,

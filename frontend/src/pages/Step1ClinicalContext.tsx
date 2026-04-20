@@ -18,6 +18,12 @@ interface Props {
   onNext: () => void
 }
 
+/**
+ * Step 1 — Clinical Context.
+ * Landing step that previews the chosen specialty and shows a 7-step roadmap
+ * so the user understands what the wizard will ask of them. Pure presentation:
+ * `specialty` is fetched upstream and `onNext` unlocks Step 2.
+ */
 export default function Step1ClinicalContext({ specialty, onNext }: Props) {
   return (
     <div className="step-page">

@@ -31,6 +31,11 @@ function formatPct(value: number): string {
   return (value * 100).toFixed(1) + '%';
 }
 
+/**
+ * Hover tooltip for a single polyline in the Parallel Coordinates chart.
+ * Shows the classifier label plus every metric's value on that line so the
+ * user can pick exact numbers without leaving the chart.
+ */
 const ParallelCoordsTooltip: React.FC<ParallelCoordsTooltipProps> = ({
   entry,
   x,

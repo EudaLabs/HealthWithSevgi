@@ -13,6 +13,12 @@ interface Props {
   points: { precision: number; recall: number }[];
 }
 
+/**
+ * Precision–Recall curve (Step 5).
+ * Useful companion to the ROC curve for imbalanced datasets where ROC can
+ * look falsely optimistic. Points are `{recall, precision}` pairs from the
+ * training response; the x-axis is recall, the y-axis is precision.
+ */
 const PRCurveChart: React.FC<Props> = ({ points }) => {
   const chartData = points.map((p) => ({
     recall: Number(p.recall.toFixed(4)),
