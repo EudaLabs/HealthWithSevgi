@@ -47,7 +47,13 @@
 | Code Documentation (JSDoc + docstring) | ≥ 80 % | **Frontend 100 %, Backend 100 %** — PASS ([frontend](coverage/frontend-jsdoc-coverage.txt) · [backend](coverage/backend-docstring-coverage.txt) · ![badge](coverage/backend-docstring-badge.svg)) |
 | Full Domain Coverage | 20 / 20 specialties Step 1–7 | TBD — see [Full Domain Coverage](Sprint5_Full_Domain_Coverage.pdf) |
 
-![Sprint 5 Lighthouse Report](Sprint5_Lighthouse_Report.png)
+**Re-audit (21 Apr 2026) — Perf 91 · A11y 100 · BP 100 · SEO 100**
+
+![Sprint 5 Lighthouse Report — re-audit](Sprint5_Lighthouse_Report.png)
+
+**Baseline (20 Apr 2026, pre-re-audit) — Perf 93 · A11y 100 · BP 96 · SEO 91**
+
+![Sprint 5 Lighthouse Report — baseline](Sprint5_Lighthouse_Report.baseline.png)
 
 ## Polish Work Completed
 
@@ -144,7 +150,12 @@ Full session results, participant quotes, and SUS questionnaire responses land i
 
 | Report | Date | Format |
 |--------|------|--------|
-| [Sprint 5 Lighthouse Report (PNG)](Sprint5_Lighthouse_Report.png) | 20.04.2026 | PNG + JSON + HTML |
+| [Sprint 5 Lighthouse — re-audit (PNG)](Sprint5_Lighthouse_Report.png) | 21.04.2026 | PNG (91 / 100 / 100 / 100) |
+| [Sprint 5 Lighthouse — baseline (PNG)](Sprint5_Lighthouse_Report.baseline.png) | 20.04.2026 | PNG (93 / 100 / 96 / 91) |
+| Sprint 5 Lighthouse — re-audit (21 Apr, Perf 91 / A11y 100 / BP 100 / SEO 100) | 21.04.2026 | [HTML](Sprint5_Lighthouse.report.html) · [JSON](Sprint5_Lighthouse.report.json) |
+| Sprint 5 Lighthouse — baseline snapshot (20 Apr, Perf 93 / A11y 100 / BP 96 / SEO 91) | 20.04.2026 | [HTML](Sprint5_Lighthouse.report.baseline.html) · [JSON](Sprint5_Lighthouse.report.baseline.json) |
+| [Backend docstring coverage — `interrogate` 100 %](Sprint5_Backend_Docstring_Coverage.txt) | 21.04.2026 | TXT + [badge](Sprint5_Backend_Docstring_Badge.svg) |
+| [Frontend JSDoc coverage — 100 %](Sprint5_Frontend_JSDoc_Coverage.txt) | 21.04.2026 | TXT |
 | [Docker running screenshot](Sprint5_Docker_Running.png) | 20.04.2026 | PNG |
 | [Logo + Navbar screenshot](Sprint5_Logo_Navbar.png) | 20.04.2026 | PNG |
 | [Sprint 5 User Testing Report](Sprint5_User_Testing_Report.pdf) | TBD | PDF — pending QA session |
@@ -162,8 +173,9 @@ Full session results, participant quotes, and SUS questionnaire responses land i
 | v1.5.8 | 20.04.2026 | Gemma 4 default provider + MIT License + brand identity |
 | v1.5.9 | 20.04.2026 | Step 7 insights reliability — 200 s timeout, retries, empty-response fallback |
 | v1.5.10 | 20.04.2026 | Step 7 badge label fix (Gemini 2.5 Flash → Gemma 4) |
+| v1.5.11 | 21.04.2026 | Lighthouse re-audit sweep (Perf 91 / A11y 100 / BP 100 / SEO 100) + JSDoc+docstring coverage 100 % both ends |
 
-All three releases also shipped to Hugging Face Space and GHCR via the `Release — Deploy & Docker` workflow (~2 min each).
+All four releases also shipped to Hugging Face Space and GHCR via the `Release — Deploy & Docker` workflow (~2 min each).
 
 ## Key Technical Decisions
 
@@ -178,7 +190,7 @@ All three releases also shipped to Hugging Face Space and GHCR via the `Release 
 
 ### Keep
 - Lighthouse scores cleared every target — Performance **93** (target ≥ 80), Accessibility **100** (target ≥ 85).
-- v1.5.8 → v1.5.10 deployed cleanly on release day — every release ran the full `Release — Deploy & Docker` pipeline (build → Docker → HF Space → GHCR) within ~2 min.
+- v1.5.8 → v1.5.11 deployed cleanly across release days — every release ran the full `Release — Deploy & Docker` pipeline (build → Docker → HF Space → GHCR) within ~2 min.
 - Step 7 reliability issue was caught, diagnosed (45 s timeout was masking `ReadTimeout('')`), fixed, verified (5 × 3 = 15/15 successful Gemini calls), and shipped in the same day.
 - Accessibility work produced a proper before/after log with file:line CSS diffs — reusable as a pattern for future audits.
 
