@@ -351,7 +351,7 @@ class InsightService:
 
         # Gemini API config
         self._gemini_api_key = os.getenv("GEMINI_API_KEY", "")
-        self._gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self._gemini_model = os.getenv("GEMINI_MODEL", "gemma-4-26b-a4b-it")
 
         self._provider = self._detect_provider()
         logger.info("InsightService initialized — provider: %s", self._provider)
@@ -536,10 +536,14 @@ class InsightService:
             if candidates:
                 finish_reason = candidates[0].get("finishReason", "UNKNOWN")
                 parts = candidates[0].get("content", {}).get("parts", [])
-                text = parts[0].get("text", "") if parts else ""
+                # Gemma 4 (and any reasoning model) returns a separate part with
+                # thought=True containing chain-of-thought; skip those and take
+                # only the final-answer parts.
+                answer_parts = [p for p in parts if not p.get("thought", False)]
+                text = "".join(p.get("text", "") for p in answer_parts)
                 logger.info(
-                    "Gemini response: %d chars, finishReason=%s",
-                    len(text), finish_reason,
+                    "Gemini response: %d chars, finishReason=%s, parts=%d (%d answer)",
+                    len(text), finish_reason, len(parts), len(answer_parts),
                 )
                 if finish_reason == "MAX_TOKENS":
                     logger.warning("Gemini output was truncated (MAX_TOKENS)")
