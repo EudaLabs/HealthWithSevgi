@@ -304,9 +304,9 @@ export default function Step4ModelParameters({
           <>
             <SliderParam label="Number of Trees" min={10} max={500} step={10}
               value={params.n_estimators as number} onChange={v => handleParamChange('n_estimators', v)} />
-            <SliderParam label="Maximum Depth" min={1} max={20} step={1}
+            <SliderParam label="Maximum Depth" min={1} max={15} step={1}
               value={params.max_depth as number} onChange={v => handleParamChange('max_depth', v)} />
-            <SliderParam label="Learning Rate" min={0.01} max={1} step={0.01} decimals={2}
+            <SliderParam label="Learning Rate" min={0.01} max={0.5} step={0.01} decimals={2}
               value={params.learning_rate as number} onChange={v => handleParamChange('learning_rate', v)} />
           </>
         )
@@ -315,9 +315,9 @@ export default function Step4ModelParameters({
           <>
             <SliderParam label="Number of Trees" min={10} max={500} step={10}
               value={params.n_estimators as number} onChange={v => handleParamChange('n_estimators', v)} />
-            <SliderParam label="Maximum Depth (-1 = no limit)" min={-1} max={20} step={1}
+            <SliderParam label="Maximum Depth (-1 = no limit)" min={-1} max={15} step={1}
               value={params.max_depth as number} onChange={v => handleParamChange('max_depth', v)} />
-            <SliderParam label="Learning Rate" min={0.01} max={1} step={0.01} decimals={2}
+            <SliderParam label="Learning Rate" min={0.01} max={0.5} step={0.01} decimals={2}
               value={params.learning_rate as number} onChange={v => handleParamChange('learning_rate', v)} />
           </>
         )

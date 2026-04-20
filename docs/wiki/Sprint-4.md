@@ -187,6 +187,27 @@ The clinical justification table for all 20 specialties is documented separately
 - **Certificate payload** — PDF output includes the active domain, selected model, six core metrics, bias findings, and checklist completion state
 - **LLM-powered insights** — MedGemma and Gemini integration for domain-specific clinical interpretations of model results
 
+## Retrospective
+
+### Keep
+- 26 / 26 stories delivered; 117 SP cleared; all 84 QA test cases PASSed on the final run.
+- Full Step 6 (Explainability) + Step 7 (Ethics & Bias) + downloadable PDF certificate shipped, with a live HuggingFace Spaces demo.
+- Certificate generation measured at 0.69 s — well under the 10 s target.
+- Clinical-language audit passed end-to-end: no raw database column names visible in the UI across all 20 specialties.
+- Bias detection banner behaved correctly on both positive (Cardiology 25.2 pp gap) and negative (Neurology within threshold) cases — evidence the >10 pp rule generalises.
+
+### Improve
+- Same pattern as Sprint 3: QA stories (US-042 to US-047) and ISO 42001 documentation were added **mid-sprint**. This is now a repeating process issue, not a one-off.
+- No formal submission-stabilisation buffer was planned — late feature work (US-032 InsightService, US-033 AI assessment UI) landed within 48 h of the deadline.
+- Explainability "What-If" and LLM insights are unit-tested but have no dedicated regression test across all 20 specialties — coverage still depends on manual multi-domain runs.
+- Meeting Notes page only contains Week 1; Sprint 4 stand-ups are unrecorded.
+
+### Try
+- Freeze new stories ≥ 48 h before the sprint deadline; anything later goes to the next sprint unless the PO formally approves it.
+- At sprint planning, pair every dev story with its QA test-case story (continue the Sprint 3 action — it wasn't applied consistently here).
+- Add an automated smoke test that iterates all 20 specialties through `/prepare` → `/train` → `/explain/global` → `/ethics` so multi-domain coverage is checked every PR.
+- Ship a short Sprint 4 → Sprint 5 handoff note, and update [[Meeting Notes]] weekly for the remaining sprints.
+
 ## Deadline
 
 Wednesday, April 15, 2026 — 13:00
