@@ -366,7 +366,7 @@ class InsightService:
 
         # Gemini API config
         self._gemini_api_key = os.getenv("GEMINI_API_KEY", "")
-        self._gemini_model = os.getenv("GEMINI_MODEL", "gemma-4-26b-a4b-it")
+        self._gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
         self._provider = self._detect_provider()
         logger.info("InsightService initialized — provider: %s", self._provider)

@@ -190,7 +190,7 @@ export default function Step7Ethics({ trainResponse, specialty, stepsCompleted }
                   fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)',
                   background: 'var(--surface)', padding: '0.1rem 0.4rem', borderRadius: 4, marginLeft: 'auto',
                 }}>
-                  {insights.ethics_insight.source === 'medgemma' ? 'MedGemma' : 'Gemma 4'}
+                  {insights.ethics_insight.source === 'medgemma' ? 'MedGemma' : 'Gemini 2.5 Flash'}
                 </span>
               </div>
               <div className="ai-insight-content" style={{ padding: '1rem 1.25rem' }}>
