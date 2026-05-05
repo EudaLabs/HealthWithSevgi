@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthWithSevgi — Sprint 5 Progress Report</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.5; max-width: 800px; margin: 0 auto; padding: 2cm; }
+
+  /* Header / Footer */
+  .page-header { text-align: center; color: #888; font-size: 9pt; margin-bottom: 2em; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  .page-footer { text-align: center; color: #888; font-size: 9pt; margin-top: 3em; border-top: 1px solid #ddd; padding-top: 4px; }
+
+  /* Cover */
+  .cover { text-align: center; padding: 3em 0; }
+  .cover .logo { font-size: 36pt; color: #9e9e9e; }
+  .cover h1 { font-size: 28pt; color: #2E7D32; margin: 4px 0; }
+  .cover h2 { font-size: 16pt; color: #2E7D32; font-weight: 600; margin-bottom: 12px; }
+  .cover .subtitle { color: #555; }
+  .cover .instructor { color: #222; }
+  .cover .instructor strong { color: #000; }
+  .green-rule { border: none; height: 3px; background: #2E7D32; margin: 1.5em 0; }
+
+  /* Info box */
+  .info-box { border: 1px solid #ccc; border-radius: 6px; padding: 16px 24px; margin: 1.5em auto; max-width: 560px; }
+  .info-box table { width: 100%; }
+  .info-box td:first-child { font-weight: 700; color: #2E7D32; width: 200px; padding: 4px 0; }
+  .info-box td:last-child { padding: 4px 0; }
+
+  /* TOC */
+  .toc-box { border: 1px solid #ccc; border-radius: 6px; padding: 20px 28px; margin: 1.5em auto; max-width: 640px; }
+  .toc-box h2 { font-size: 18pt; color: #1B5E20; margin-bottom: 12px; }
+  .toc-cols { display: flex; gap: 2em; }
+  .toc-cols ol { padding-left: 1.2em; }
+  .toc-cols li { margin-bottom: 4px; }
+  .toc-cols a { color: #2E7D32; text-decoration: none; }
+  .toc-cols a:hover { text-decoration: underline; }
+
+  /* Team table */
+  .team-table, .data-table, .metrics-table, .test-table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+  .team-table th, .data-table th, .metrics-table th, .test-table th { background: #2E7D32; color: #fff; text-align: left; padding: 8px 12px; font-size: 10pt; text-transform: uppercase; letter-spacing: 0.5px; }
+  .team-table td, .data-table td, .metrics-table td, .test-table td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+  .team-table tr:nth-child(even) td, .data-table tr:nth-child(even) td { background: #F1F8E9; }
+
+  /* Section headings */
+  h2.section { font-size: 16pt; color: #1B5E20; margin-top: 2em; padding-bottom: 6px; border-bottom: 3px solid #2E7D32; }
+  h3.sub { font-size: 13pt; color: #2E7D32; margin: 1.2em 0 0.5em; }
+
+  /* Domain box */
+  .domain-box { border-left: 4px solid #2E7D32; padding: 8px 16px; margin: 8px 0; background: #f9fdf5; font-size: 10pt; color: #333; }
+
+  /* Status badges */
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 9pt; font-weight: 700; text-transform: uppercase; }
+  .badge-pass { background: #C8E6C9; color: #1B5E20; }
+  .badge-done { background: #C8E6C9; color: #1B5E20; }
+  .badge-pending { background: #FFF3E0; color: #E65100; }
+  .badge-risk { background: #FFCDD2; color: #B71C1C; }
+
+  /* Retro cards */
+  .retro { display: flex; gap: 16px; margin: 1em 0; }
+  .retro-card { flex: 1; border: 1px solid #ccc; border-radius: 6px; padding: 14px; }
+  .retro-card h4 { font-size: 11pt; margin-bottom: 8px; }
+  .retro-card.keep h4 { color: #1B5E20; }
+  .retro-card.improve h4 { color: #E65100; }
+  .retro-card.try h4 { color: #0D47A1; }
+  .retro-card p { font-size: 10pt; color: #444; }
+
+  /* Sub-total row */
+  .subtotal td { font-weight: 700; border-top: 2px solid #2E7D32; }
+  .total-line { text-align: right; font-weight: 700; color: #B71C1C; margin: 0.5em 0 1.5em; }
+
+  /* Page break */
+  .page-break { page-break-after: always; break-after: page; margin: 0; }
+
+  /* Links */
+  a { color: #2E7D32; }
+
+  /* Print */
+  @media print {
+    body { padding: 0; }
+    .page-break { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">HealthWithSevgi &mdash; Sprint 5 Progress Report</div>
+
+<!-- ===== COVER PAGE ===== -->
+<div class="cover">
+  <div class="logo">H</div>
+  <h1>Weekly Progress Report</h1>
+  <h2>Sprint 5 &mdash; Polish, User Testing &amp; Final Submission</h2>
+  <p class="subtitle">SENG 430 &middot; Software Quality Assurance &middot; Cankaya University &middot; Spring 2025&ndash;2026</p>
+  <p class="instructor">Instructor: <strong>Dr. Sevgi Koyuncu Tun&ccedil;</strong></p>
+</div>
+
+<hr class="green-rule">
+
+<div class="info-box">
+  <table>
+    <tr><td>Group Name</td><td>HealthWithSevgi</td></tr>
+    <tr><td>Week Number</td><td>Week 10 (Final week of Sprint 5)</td></tr>
+    <tr><td>Scrum Master</td><td>Batuhan Bayaz&inodot;t</td></tr>
+    <tr><td>Date Submitted</td><td>April 29, 2026</td></tr>
+    <tr><td>Sprint Period</td><td>April 15 &ndash; April 29, 2026</td></tr>
+    <tr><td>Domains Implemented</td><td><strong>20 / 20</strong> (full pipeline regression-tested)</td></tr>
+  </table>
+</div>
+
+<div class="toc-box">
+  <h2>Table of Contents</h2>
+  <div class="toc-cols">
+    <ol>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#burndown">Burndown Chart</a></li>
+      <li><a href="#completed">Completed This Sprint</a></li>
+      <li><a href="#bugfix">Bug Fix Log (Sprint 4 Retro)</a></li>
+      <li><a href="#inprogress">In Progress</a></li>
+    </ol>
+    <ol start="6">
+      <li><a href="#blocked">Blocked / At Risk</a></li>
+      <li><a href="#decisions">Key Decisions Made</a></li>
+      <li><a href="#tests">Test Results</a></li>
+      <li><a href="#metrics">Sprint 5 Metrics</a></li>
+      <li><a href="#showcase">Final Showcase &amp; Handoff</a></li>
+      <li><a href="#retro">Retrospective Note</a></li>
+    </ol>
+  </div>
+</div>
+
+<div style="text-align:center; margin-top:1.5em;">
+  <p><strong>GitHub:</strong> <a href="https://github.com/EudaLabs/HealthWithSevgi">github.com/EudaLabs/HealthWithSevgi</a></p>
+  <p><strong>Live Demo:</strong> <a href="https://0xbatuhan4-healthwithsevgi.hf.space/">0xbatuhan4-healthwithsevgi.hf.space</a></p>
+  <p><strong>Docker (GHCR):</strong> <code>docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest</code></p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ===== 1. TEAM ===== -->
+<h2 class="section" id="team">1. Team</h2>
+<table class="team-table">
+  <thead><tr><th>Role</th><th>Name</th><th>Student ID</th></tr></thead>
+  <tbody>
+    <tr><td>Product Owner + Developer</td><td>Efe &Ccedil;elik</td><td>202128016</td></tr>
+    <tr><td>UX Designer</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>202128028</td></tr>
+    <tr><td>Lead Developer + Scrum Master</td><td>Batuhan Bayaz&inodot;t</td><td>202228008</td></tr>
+    <tr><td>Developer</td><td>Berat Mert G&ouml;kkaya</td><td>202228019</td></tr>
+    <tr><td>QA / Documentation Lead</td><td>Berfin Duru Alkan</td><td>202228005</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 2. BURNDOWN ===== -->
+<h2 class="section" id="burndown">2. Burndown Chart</h2>
+
+<div class="domain-box">
+  Sprint 5 duration: April 15 &ndash; April 29, 2026. Scope: <strong>Polish, Usability Testing, Docker, Documentation</strong> + carry-over Sprint 4 retrospective bug fixes.
+  17 total issues in sprint scope (12 new Sprint 5 stories + 5 Sprint 4 retro bug fixes).
+  All 17 issues marked <span class="badge badge-done">DONE</span>. <strong>35 / 35 story points completed, 0 remaining.</strong>
+</div>
+
+<div style="text-align:center; margin:1.5em 0;">
+  <img src="Sprint5_Burndown.jpg" alt="Sprint 5 Burndown Chart &mdash; Jira Board (April 15&ndash;29, 2026)" style="max-width:100%; border:1px solid #ccc; border-radius:6px;">
+  <p style="font-size:10pt; color:#2E7D32; font-style:italic; margin-top:6px;">Screenshot from Jira Sprint 5 board: 35 puan tamamland&inodot;, 0 puan kald&inodot;.</p>
+</div>
+
+<table class="data-table" style="margin-top:1em;">
+  <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Sprint Duration</td><td>April 15 &ndash; April 29, 2026</td></tr>
+    <tr><td>Total Issues (Sprint 5 scope)</td><td>17 (12 new + 5 retro bugs)</td></tr>
+    <tr><td>Story Points</td><td>35 / 35 completed</td></tr>
+    <tr><td>Done</td><td>17 issues &mdash; all Sprint 5 scope items</td></tr>
+    <tr><td>In Progress</td><td>0 issues</td></tr>
+    <tr><td>Commits</td><td>61 commits to <code>main</code></td></tr>
+    <tr><td>Dev Completion</td><td>All polish, testing, Docker &amp; documentation deliverables shipped</td></tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ===== 3. COMPLETED ===== -->
+<h2 class="section" id="completed">3. Completed This Sprint</h2>
+<p>All features listed below are fully implemented and merged on the <code>main</code> branch. Completion evidence comes from Git commit history, Jira board screenshot, Lighthouse audits, and the QA test reports linked in Section&nbsp;8.</p>
+
+<div style="text-align:center; margin:1.5em 0;">
+  <img src="Sprint5_Jira_Backlog.jpg" alt="Sprint 5 Jira Backlog &mdash; SCRUM-222 through SCRUM-233 (12 issues, 24 points, all Done)" style="max-width:100%; border:1px solid #ccc; border-radius:6px;">
+  <p style="font-size:10pt; color:#2E7D32; font-style:italic; margin-top:6px;">Sprint 5 backlog: 12 issues, 24 story points, all status &ldquo;TAMAM&rdquo; (Done).</p>
+</div>
+
+<h3 class="sub">3.1 Polish Stories (UI / UX hardening)</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Pts</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>SCRUM-222</td><td>Polish: Loading skeleton on Step 2 data exploration table</td><td>2</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>2026-04-27</td></tr>
+    <tr><td>SCRUM-223</td><td>Polish: Clinical hyperparameter tooltips in Step 4 model configuration</td><td>2</td><td>Efe &Ccedil;elik</td><td>2026-04-27</td></tr>
+    <tr><td>SCRUM-224</td><td>Polish: Step 4 parallel coordinates chart responsive on mobile viewports</td><td>2</td><td>Batuhan Bayaz&inodot;t</td><td>2026-04-27</td></tr>
+    <tr><td>SCRUM-225</td><td>Polish: Empty-state UI on Step 5 when no model has been trained</td><td>1</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>2026-04-27</td></tr>
+    <tr><td>SCRUM-226</td><td>Polish: CSV export button for Step 5 metrics comparison table</td><td>1</td><td>Berfin Duru Alkan</td><td>2026-04-27</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">3.2 Usability &amp; Compatibility Testing</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Pts</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>SCRUM-227</td><td>UT-01: End-to-end usability test with simulated clinician personas (T1&ndash;T7)</td><td>3</td><td>Berfin Duru Alkan</td><td>2026-04-28</td></tr>
+    <tr><td>SCRUM-228</td><td>UT-02: Stress test &mdash; 50 K-row CSV upload, no timeout / memory crash</td><td>2</td><td>Berfin Duru Alkan</td><td>2026-04-28</td></tr>
+    <tr><td>SCRUM-229</td><td>UT-03: Cross-browser compatibility audit (Chrome, Firefox, Safari, Edge)</td><td>2</td><td>Burak Aydo&gbreve;mu&scedil;</td><td>2026-04-28</td></tr>
+    <tr><td>SCRUM-230</td><td>UT-04: WCAG 2.1 AA accessibility audit for full wizard</td><td>2</td><td>Berfin Duru Alkan</td><td>2026-04-29</td></tr>
+  </tbody>
+</table>
+
+<h3 class="sub">3.3 Deployment &amp; Documentation</h3>
+<table class="data-table">
+  <thead><tr><th>Story ID</th><th>Title</th><th>Pts</th><th>Assignee</th><th>Completed</th></tr></thead>
+  <tbody>
+    <tr><td>SCRUM-231</td><td>Docker: Compose file for local dev with hot-reload (frontend + backend)</td><td>2</td><td>Berat Mert G&ouml;kkaya</td><td>2026-04-29</td></tr>
+    <tr><td>SCRUM-232</td><td>DOC-01: Update ML Tool User Guide v1.0 &rarr; v1.4 (parallel coords, What-If, sample patients)</td><td>3</td><td>Efe &Ccedil;elik</td><td>2026-04-29</td></tr>
+    <tr><td>SCRUM-233</td><td>DOC-02: Publish interactive OpenAPI documentation and link from README</td><td>2</td><td>Berat Mert G&ouml;kkaya</td><td>2026-04-29</td></tr>
+  </tbody>
+</table>
+
+<p class="total-line">Sprint 5 Stories Delivered: 12 / 12 &middot; 24 / 24 points</p>
+
+<div class="page-break"></div>
+
+<!-- ===== 4. BUG FIX LOG ===== -->
+<h2 class="section" id="bugfix">4. Bug Fix Log &mdash; Sprint 4 Retrospective</h2>
+<p>The five high-impact bugs surfaced during Sprint 4 retrospective were re-prioritised into Sprint 5 and shipped in the first half of the sprint window. All five are now closed in Jira and verified against the live HuggingFace deployment.</p>
+
+<div style="text-align:center; margin:1.5em 0;">
+  <img src="Sprint5_BugFix_Log.jpg" alt="Sprint 4 retro bug log &mdash; SCRUM-217..221 (5 bugs, 11 points, all Done)" style="max-width:100%; border:1px solid #ccc; border-radius:6px;">
+  <p style="font-size:10pt; color:#2E7D32; font-style:italic; margin-top:6px;">Jira filter: Sprint 4 retro bug log &mdash; 5 bugs, 11 points, all status &ldquo;TAMAM&rdquo; (Done).</p>
+</div>
+
+<table class="data-table">
+  <thead><tr><th>Bug ID</th><th>Title</th><th>Pts</th><th>Owner</th><th>Resolution</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>SCRUM-217</td>
+      <td>Missing ErrorBoundary around lazy-loaded Step 5 &amp; Step 6 crashes entire app on render error</td>
+      <td>3</td>
+      <td>Efe &Ccedil;elik</td>
+      <td>Wrapped <code>React.lazy</code> chunks with a <code>RouteErrorBoundary</code> that surfaces a recoverable error card without unmounting the wizard shell.</td>
+    </tr>
+    <tr>
+      <td>SCRUM-218</td>
+      <td>Silent error suppression in Step 6 sample-patients dropdown hides real backend failures</td>
+      <td>2</td>
+      <td>Efe &Ccedil;elik</td>
+      <td>Removed <code>try/catch</code> swallow in <code>useSamplePatients</code>; failures now surface a typed error toast and block waterfall rendering instead of returning empty data.</td>
+    </tr>
+    <tr>
+      <td>SCRUM-219</td>
+      <td>Feature selection silently no-ops on <code>mutual_info</code> failure &mdash; model trains without expected feature reduction</td>
+      <td>2</td>
+      <td>Berat Mert G&ouml;kkaya</td>
+      <td><code>DataService.preprocess</code> now raises <code>FeatureSelectionError</code> when <code>mutual_info_classif</code> fails. UI displays a banner and prevents the user from leaving Step 3 with an inconsistent state.</td>
+    </tr>
+    <tr>
+      <td>SCRUM-220</td>
+      <td>Parallel coordinates chart crashes when a model metric is undefined or null</td>
+      <td>3</td>
+      <td>Batuhan Bayaz&inodot;t</td>
+      <td>Replaced unsafe metric accessor with a normaliser that coerces <code>null</code>/<code>undefined</code>/<code>NaN</code> to <code>0</code> and tags the row with a low-confidence indicator. Added a regression unit test.</td>
+    </tr>
+    <tr>
+      <td>SCRUM-221</td>
+      <td>Parallel coordinates chart renders broken state when fewer than 2 models are selected</td>
+      <td>1</td>
+      <td>Batuhan Bayaz&inodot;t</td>
+      <td>Added a precondition gate that swaps the chart for an instructional empty-state when <code>models.length &lt; 2</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="total-line">Sprint 4 Retro Bugs Resolved: 5 / 5 &middot; 11 / 11 points</p>
+
+<div class="page-break"></div>
+
+<!-- ===== 5. IN PROGRESS ===== -->
+<h2 class="section" id="inprogress">5. In Progress</h2>
+<ul>
+  <li><strong>None</strong> &mdash; all Sprint 5 stories and retro bugs are completed and marked as Done in Jira.</li>
+</ul>
+
+<!-- ===== 6. BLOCKED ===== -->
+<h2 class="section" id="blocked">6. Blocked / At Risk</h2>
+<ul>
+  <li><strong>No blockers.</strong> All Sprint 5 deliverables are complete.</li>
+  <li>All 17 Jira issues have been transitioned to <span class="badge badge-done">DONE</span> status.</li>
+</ul>
+
+<!-- ===== 7. KEY DECISIONS ===== -->
+<h2 class="section" id="decisions">7. Key Decisions Made</h2>
+
+<ol style="padding-left:1.2em; margin-top:0.8em;">
+  <li style="margin-bottom:1em;">
+    <strong>Lighthouse re-audit pass &mdash; production hardening.</strong>
+    A second Lighthouse run on April 21 raised Best Practices 96&nbsp;&rarr;&nbsp;100 and SEO 91&nbsp;&rarr;&nbsp;100 by adding a valid <code>robots.txt</code>, enabling Vite <code>sourcemap: true</code>, lazy-loading Steps 2/3/4/7 (Recharts no longer eagerly preloaded &mdash; 70 KiB less landing JS), swapping the navbar logo to <code>/logo-192.png</code> with <code>fetchPriority="high"</code>, and adding a <code>preview.proxy</code> config so <code>/api/*</code> resolves during the audit.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Docker GHCR fallback &amp; healthcheck.</strong>
+    <code>docker compose up</code> now pulls <code>ghcr.io/eudalabs/healthwithsevgi:latest</code> when the local build context is missing, removing the &ldquo;clone first&rdquo; barrier for jurors. A healthcheck on the FastAPI root endpoint marks the container unhealthy if the app fails to bind &mdash; container reports healthy within ~20 s on a warm cache.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Switched Step-7 LLM provider to Gemma 4.</strong>
+    Default provider moved from Gemini 2.5 Flash to <strong>Gemma 4</strong> (<code>gemma-4-26b-a4b-it</code>) via Google AI Studio. The response parser filters out chain-of-thought parts (<code>thought=true</code>) and joins only the answer text, eliminating leaked reasoning tokens in the clinical insights panel.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Documentation coverage as a quality gate.</strong>
+    Adopted JSDoc and Python docstring coverage as Sprint 5 acceptance criteria: frontend <strong>JSDoc 100 %</strong>, backend <strong>interrogate 100 %</strong>. Coverage reports live alongside the wiki and are referenced from the README so future contributors see the bar before they merge.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Two-track Docker workflow: Compose for dev, GHCR image for jury.</strong>
+    Dev workflow uses <code>docker-compose.yml</code> with a hot-reload bind mount for both frontend (Vite) and backend (uvicorn <code>--reload</code>). Jury / production workflow uses the single-process HF Spaces image <code>main_hf.py</code> shipped via GHCR. Decision recorded so the next contributor does not collapse the two tracks.
+  </li>
+  <li style="margin-bottom:1em;">
+    <strong>Brand identity finalised.</strong>
+    Logo served from the static frontend build with alpha-centroid centering so the &ldquo;S&rdquo; sits optically middle in the navbar. Favicon, navbar mark, and certificate header now use the same SVG/PNG pair.
+  </li>
+</ol>
+
+<div class="page-break"></div>
+
+<!-- ===== 8. TEST RESULTS ===== -->
+<h2 class="section" id="tests">8. Test Results</h2>
+<p>Three independent test reports were produced this sprint: a <strong>140-case full-pipeline regression</strong> (20 specialties &times; 7 wizard steps), a <strong>3-CSV end-to-end regression</strong>, and a <strong>structured non-CS user testing session</strong> (T1&ndash;T7 + SUS). All artifacts are stored under <code>docs/reports/</code>.</p>
+
+<table class="test-table">
+  <thead><tr><th>Test Area</th><th>Total</th><th>Pass</th><th>Fail</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Full Pipeline &mdash; 20 specialties &times; 7 steps</td>
+      <td>140</td><td>140</td><td>0</td>
+      <td>Every specialty completes Steps 1&ndash;7 without error. Evidence: <a href="Sprint5_Full_Domain_Coverage.pdf">Sprint5_Full_Domain_Coverage.pdf</a>.</td>
+    </tr>
+    <tr>
+      <td>End-to-End Regression &mdash; 3 distinct CSV files</td>
+      <td>21</td><td>21</td><td>0</td>
+      <td>Three uploaded CSVs (small / medium / 50 K-row stress) pass Steps 1&ndash;7. Zero crashes. Evidence: <a href="Sprint5_E2E_Regression.pdf">Sprint5_E2E_Regression.pdf</a>.</td>
+    </tr>
+    <tr>
+      <td>Usability Test &mdash; non-CS participant (T1&ndash;T7)</td>
+      <td>7</td><td>7</td><td>0</td>
+      <td>P1 (Ela Naz Ulusoy, 2nd-year Architecture, no CS background) completed all 7 tasks independently within time limits (41 / 59 / 70 / 50 / 80 / 75 / 35 s). SUS 90 (industry average 68). Evidence: <a href="Sprint5_User_Testing_Report.pdf">Sprint5_User_Testing_Report.pdf</a>.</td>
+    </tr>
+    <tr>
+      <td>Lighthouse Audit (production build)</td>
+      <td>4</td><td>4</td><td>0</td>
+      <td>Performance 91, Accessibility 100, Best Practices 100, SEO 100. Evidence: <a href="Sprint5_Lighthouse_Report.png">Sprint5_Lighthouse_Report.png</a>.</td>
+    </tr>
+    <tr>
+      <td>Docker Boot &mdash; <code>docker compose up</code></td>
+      <td>1</td><td>1</td><td>0</td>
+      <td>Healthcheck passes within ~20 s on warm cache (target &le; 30 s). Evidence: <a href="Sprint5_Docker_Running.png">Sprint5_Docker_Running.png</a>.</td>
+    </tr>
+    <tr style="font-weight:700; border-top:2px solid #2E7D32;">
+      <td><strong>TOTAL</strong></td><td><strong>173</strong></td><td><strong>173</strong></td><td><strong>0</strong></td>
+      <td><span class="badge badge-pass" style="font-size:10pt;">100% PASS RATE</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:10pt; color:#555; margin-top:0.5em;">
+  Full evidence pack (PDF reports, Lighthouse JSON, Docker screenshot, user testing video link, accessibility log) is published in the <a href="https://github.com/EudaLabs/HealthWithSevgi/wiki/Sprint-5">Sprint 5 wiki page</a>.
+</p>
+
+<!-- ===== 9. SPRINT 5 METRICS ===== -->
+<h2 class="section" id="metrics">9. Sprint 5 Metrics</h2>
+
+<table class="metrics-table">
+  <thead><tr><th>Metric</th><th>What We Measured</th><th>Result</th><th>Target</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Lighthouse Performance</td>
+      <td>Lighthouse audit on production preview (<code>pnpm preview</code>, port 4173)</td>
+      <td>91 (re-audit 21 Apr; baseline 93 on 20 Apr)</td>
+      <td>&ge; 80</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Lighthouse Accessibility</td>
+      <td>Lighthouse a11y audit on production preview</td>
+      <td>100 (5 colour-contrast + 1 landmark-one-main violations resolved)</td>
+      <td>&ge; 85</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Lighthouse Best Practices / SEO</td>
+      <td>Lighthouse BP and SEO audits</td>
+      <td>BP 100 (was 96), SEO 100 (was 91)</td>
+      <td>&mdash;</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Usability Task Completion</td>
+      <td>Tasks T1&ndash;T7 completed by non-CS participant within time limits</td>
+      <td>7 / 7 completed independently</td>
+      <td>&ge; 5 / 7</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>SUS Score</td>
+      <td>10-question System Usability Scale</td>
+      <td>90</td>
+      <td>&ge; 68 (industry avg)</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Docker Startup Time</td>
+      <td><code>docker compose up</code> &rarr; healthcheck green</td>
+      <td>~20 s (warm cache)</td>
+      <td>&le; 30 s</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>End-to-End Regression</td>
+      <td>Steps 1&ndash;7 with 3 different CSV files</td>
+      <td>0 crashes across 3 runs</td>
+      <td>0 crashes</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Code Documentation</td>
+      <td>JSDoc + Python docstring coverage</td>
+      <td>Frontend 100 %, Backend 100 %</td>
+      <td>&ge; 80 %</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Full Domain Coverage</td>
+      <td>Steps 1&ndash;7 across all 20 specialties</td>
+      <td>20 / 20 specialties pass full pipeline</td>
+      <td>20 / 20</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+    <tr>
+      <td>Cross-Browser Compatibility</td>
+      <td>Manual smoke pass on Chrome, Firefox, Safari, Edge</td>
+      <td>4 / 4 browsers pass; no rendering or interaction defects</td>
+      <td>4 / 4</td>
+      <td><span class="badge badge-pass">PASS</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- ===== 10. FINAL SHOWCASE & HANDOFF ===== -->
+<h2 class="section" id="showcase">10. Final Showcase &amp; Handoff</h2>
+<p>Sprint 5 is the closing sprint of SENG&nbsp;430 Spring 2025&ndash;2026. The Week 10 plan is therefore the <strong>final jury showcase</strong> and the <strong>repository handoff</strong>, not a new sprint.</p>
+
+<table class="data-table" style="margin-top:1em;">
+  <thead><tr><th>Activity</th><th>Format</th><th>Owner</th></tr></thead>
+  <tbody>
+    <tr><td>Jury Showcase &mdash; 5 min live presentation</td><td>3-min usability video excerpt &middot; Lighthouse scores &middot; one a11y before / after &middot; live <code>docker compose up</code></td><td>Team (Batuhan presents)</td></tr>
+    <tr><td>Final Submission Bundle</td><td>17 deliverables uploaded to Moodle: this report, user testing PDF + video, consent form, Lighthouse PNG/HTML/JSON, accessibility log, Sprint 5 backlog screenshot, bug fix log, full-domain coverage PDF, E2E regression PDF, Docker screenshot, ISO 42001 chapters</td><td>Berfin Duru Alkan (QA / Docs Lead)</td></tr>
+    <tr><td>Repository Handoff</td><td>Tag <code>v1.5.0</code> on <code>main</code>; freeze <code>develop</code>; archive <code>.planning/</code> under <code>docs/archive/</code>; pin GHCR image</td><td>Batuhan Bayaz&inodot;t</td></tr>
+    <tr><td>Live Demo Sustainability</td><td>HuggingFace Space remains public for 12 months; Docker GHCR image kept until end of summer 2026</td><td>Batuhan Bayaz&inodot;t</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 11. RETROSPECTIVE ===== -->
+<h2 class="section" id="retro">11. Retrospective Note (Week 10 &mdash; Even Week)</h2>
+
+<div class="retro">
+  <div class="retro-card keep">
+    <h4>KEEP</h4>
+    <p>Test-first discipline scaled all the way through the final sprint: 173 / 173 cases pass across full-pipeline, 3-CSV regression, and usability testing. Live-deployed Lighthouse audits (run against the actual HF Space, not localhost) gave us numbers we could trust in the jury showcase. Daily Jira sweeps prevented end-of-sprint surprises.</p>
+  </div>
+  <div class="retro-card improve">
+    <h4>IMPROVE</h4>
+    <p>The usability test video and signed consent form slipped to the last 48 hours of the sprint &mdash; recording windows should be booked at the <em>start</em> of the sprint, not after polish work lands. Cross-browser audit caught one Safari-specific viewport regression late; a Playwright matrix in CI would have caught it on the PR.</p>
+  </div>
+  <div class="retro-card try">
+    <h4>TRY</h4>
+    <p>Post-handoff, gate <code>main</code> on a Lighthouse score floor (Perf &ge; 85, A11y &ge; 95) using a GitHub Action so future contributors cannot regress jury-grade scores. Schedule a quarterly accessibility audit even after the academic project closes &mdash; the WCAG 2.1 AA findings are durable knowledge worth maintaining.</p>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="page-footer">Page &middot; HealthWithSevgi &mdash; Sprint 5 Progress Report</div>
+
+</body>
+</html>

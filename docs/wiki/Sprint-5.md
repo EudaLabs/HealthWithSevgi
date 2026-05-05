@@ -13,17 +13,18 @@
 | 4 | Accessibility Fix Log | [[Accessibility Log]] | DONE |
 | 5 | Brand Identity (logo, favicon, navbar mark) | [Navbar PNG](Sprint5_Logo_Navbar.png) · [Logo PNG](https://raw.githubusercontent.com/EudaLabs/HealthWithSevgi/main/frontend/public/logo.png) · [Favicon](https://raw.githubusercontent.com/EudaLabs/HealthWithSevgi/main/frontend/public/favicon.ico) | DONE |
 | 6 | LLM-Powered Clinical Insights (Step 7) | Gemma 4 integration | DONE |
-| 7 | JSDoc / docstring coverage ≥ 80% | Code + coverage report | **DONE** — frontend [JSDoc 100 %](coverage/frontend-jsdoc-coverage.txt), backend [interrogate 100 %](coverage/backend-docstring-coverage.txt) |
+| 7 | JSDoc / docstring coverage ≥ 80% | Code + coverage report | **DONE** — frontend [JSDoc 100 %](Sprint5_Frontend_JSDoc_Coverage.txt), backend [interrogate 100 %](Sprint5_Backend_Docstring_Coverage.txt) |
 | 8 | MIT License + metadata | `LICENSE` + `package.json` + `pyproject.toml` | DONE |
-| 9 | Sprint 5 Backlog (Jira US-501..507) | Jira board + screenshot | IN PROGRESS |
-| 10 | Bug Fix Log (Sprint 4 retro → Jira) | Jira | IN PROGRESS |
-| 11 | User Testing (non-CS participant, 7 tasks, SUS) | [PDF](Sprint5_User_Testing_Report.pdf) | PENDING (QA) |
-| 12 | Signed Consent Forms | [PDF](Sprint5_Consent_Form.pdf) | PENDING (QA) |
-| 13 | Usability Test Video (≤ 5 min) | [MP4](Sprint5_Usability_Video.mp4) | PENDING (QA) |
-| 14 | Full Domain Coverage (20 specialties E2E) | [PDF](Sprint5_Full_Domain_Coverage.pdf) | PENDING (QA) |
-| 15 | E2E Regression (3 CSVs, 0 crashes) | [PDF](Sprint5_E2E_Regression.pdf) | PENDING (QA) |
-| 16 | Week 9 Progress Report | [PDF](Sprint5_Weekly_Progress_Report.pdf) | PENDING (BE) |
-| 17 | Final Jury Slide Deck | [PDF](Sprint5_Showcase.pdf) | PENDING (FE) |
+| 9 | Sprint 5 Backlog (Jira SCRUM-222..233) | Jira board + [screenshot](Sprint5_Jira_Backlog.jpg) | **DONE** — 12 / 12 stories closed (24 pts) |
+| 10 | Bug Fix Log (Sprint 4 retro → Jira) | Jira filter + [screenshot](Sprint5_BugFix_Log.jpg) | **DONE** — 5 / 5 bugs closed (SCRUM-217..221, 11 pts) |
+| 11 | User Testing (non-CS participant, 7 tasks, SUS) | [PDF](Sprint5_User_Testing_Report.pdf) | **DONE** — P1 (Ela Naz Ulusoy, Architecture, no CS): 7 / 7 PASS, SUS 90 |
+| 12 | Signed Consent Forms | [PDF](Sprint5_Consent_Form.pdf) | **DONE** — signed by participant P1 on 27.04.2026 |
+| 13 | Usability Test Video (≤ 5 min) | [Google Drive video](https://drive.google.com/file/d/1VjD9xwUgDmsVOWn-OX9clYOTsL9FxwGz/view?usp=drive_link) | **DONE** — recorded by QA on UserBrain |
+| 14 | Full Domain Coverage (20 specialties E2E) | [PDF](Sprint5_Full_Domain_Coverage.pdf) | **DONE** — 140 / 140 cases pass (20 specialties × 7 steps) |
+| 15 | E2E Regression (3 CSVs, 0 crashes) | [PDF](Sprint5_E2E_Regression.pdf) | **DONE** — 21 / 21 cases pass, 0 crashes |
+| 16 | Week 9 Progress Report | [HTML](Sprint5_Weekly_Progress_Report.html) | **DONE** — 17 issues / 35 pts; burndown 0 remaining |
+
+> The 10-min jury slide deck is tracked under **Final Submission**, not Sprint 5 — see [[Final Submission]] row #12.
 
 ## Live Demo
 
@@ -31,6 +32,21 @@
 - **Hugging Face Space:** https://huggingface.co/spaces/0xBatuhan4/HealthWithSevgi
 - **Docker (GHCR):** `docker run -p 7860:7860 ghcr.io/eudalabs/healthwithsevgi:latest`
 - **Docker Compose:** `docker compose up` → http://localhost:7860
+
+## Project Surfaces
+
+| Surface | Link |
+|---------|------|
+| GitHub Repository | https://github.com/EudaLabs/HealthWithSevgi |
+| GitHub Wiki — Home | https://github.com/EudaLabs/HealthWithSevgi/wiki |
+| Docker Image — GitHub Packages (GHCR) | https://github.com/EudaLabs/HealthWithSevgi/pkgs/container/healthwithsevgi |
+| Figma Wireframes — All 7 Steps | https://www.figma.com/design/1K1Dw8PC6P98NZAa30DzII/430-HealthWithSevgi?node-id=0-1&t=A5k3xtuCwuaFsHMB-1 |
+| Jira — Product Backlog (all sprints) | https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog |
+| Jira — Sprint 1 Backlog | https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?jql=Sprint%20%3D%2068 |
+| Jira — Sprint 2 Backlog | https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?jql=Sprint%20%3D%2069 |
+| Jira — Sprint 3 Backlog | https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?jql=Sprint%20%3D%2070 |
+| Jira — Sprint 4 Backlog | https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?jql=Sprint%20%3D%2071 |
+| Jira — Sprint 5 Backlog | https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?jql=Sprint%20%3D%2072 |
 
 ## Sprint 5 Metrics
 
@@ -41,11 +57,12 @@
 | Lighthouse Best Practices | — | **100** (was 96 baseline) |
 | Lighthouse SEO | — | **100** (was 91 baseline) |
 | Docker Startup Time | ≤ 30 s (warm cache) | Healthcheck passes within 20 s — PASS |
-| Usability Task Completion | ≥ 5 / 7 tasks independently | TBD — see [User Testing Report](Sprint5_User_Testing_Report.pdf) |
-| SUS Score | ≥ 68 | TBD — see User Testing Report |
-| End-to-End Regression | 0 crashes across 3 CSVs | TBD — see [E2E Regression](Sprint5_E2E_Regression.pdf) |
-| Code Documentation (JSDoc + docstring) | ≥ 80 % | **Frontend 100 %, Backend 100 %** — PASS ([frontend](coverage/frontend-jsdoc-coverage.txt) · [backend](coverage/backend-docstring-coverage.txt) · ![badge](coverage/backend-docstring-badge.svg)) |
-| Full Domain Coverage | 20 / 20 specialties Step 1–7 | TBD — see [Full Domain Coverage](Sprint5_Full_Domain_Coverage.pdf) |
+| Usability Task Completion | ≥ 5 / 7 tasks independently | **7 / 7** — PASS (T1 41 s · T2 59 s · T3 70 s · T4 50 s · T5 80 s · T6 75 s · T7 35 s; no assistance) — see [User Testing Report](Sprint5_User_Testing_Report.pdf) |
+| SUS Score | ≥ 68 | **90** — PASS (10 SUS questions: 10/9/9/9/10/9/9/9/10/6) — see User Testing Report |
+| End-to-End Regression | 0 crashes across 3 CSVs | **0 crashes / 21 cases** — PASS — see [E2E Regression](Sprint5_E2E_Regression.pdf) |
+| Code Documentation (JSDoc + docstring) | ≥ 80 % | **Frontend 100 %, Backend 100 %** — PASS ([frontend](Sprint5_Frontend_JSDoc_Coverage.txt) · [backend](Sprint5_Backend_Docstring_Coverage.txt) · ![badge](Sprint5_Backend_Docstring_Badge.svg)) |
+| Full Domain Coverage | 20 / 20 specialties Step 1–7 | **20 / 20** — PASS (140 cases, 0 failures) — see [Full Domain Coverage](Sprint5_Full_Domain_Coverage.pdf) |
+| Cross-Browser Compatibility | Chrome / Firefox / Safari / Edge | **4 / 4** — PASS — see [UT-03 audit (SCRUM-229)](https://berfindurualkan.atlassian.net/browse/SCRUM-229) |
 
 **Re-audit (21 Apr 2026) — Perf 91 · A11y 100 · BP 100 · SEO 100**
 
@@ -61,8 +78,6 @@
 - Added **healthcheck** to `docker-compose.yml` so the container is reported unhealthy if the FastAPI root returns non-2xx.
 - Added **GHCR image fallback** — `docker compose up` pulls `ghcr.io/eudalabs/healthwithsevgi:latest` when the local build context is missing.
 - Quick-start docs added to README (`docker compose up` → app on port 7860).
-
-![Docker compose up running](Sprint5_Docker_Running.png)
 
 ### Lighthouse Performance & Accessibility
 - Audited the production build (`pnpm build` + `pnpm preview` on port 4173).
@@ -118,17 +133,45 @@ Full before/after CSS and file:line references: [[Accessibility Log]].
 
 ## Sprint 5 Jira Stories
 
-| Story ID | Jira Key | Title | Assignee | Status |
-|----------|----------|-------|----------|--------|
-| US-501 | SCRUM-TBD | User Testing — 7-task protocol + SUS | Berfin Duru Alkan | IN PROGRESS |
-| US-502 | SCRUM-TBD | Lighthouse Performance ≥ 80 | Batuhan / Burak | DONE |
-| US-503 | SCRUM-TBD | Lighthouse Accessibility ≥ 85 | Batuhan / Burak | DONE (score 100) |
-| US-504 | SCRUM-TBD | Docker compose startup ≤ 30 s | Batuhan / Burak | DONE |
-| US-505 | SCRUM-TBD | Code documentation coverage ≥ 80 % | Efe + Berat (BE) / Batuhan + Burak (FE) | IN PROGRESS |
-| US-506 | SCRUM-TBD | Full domain coverage — 20 specialties | Berfin | PENDING |
-| US-507 | SCRUM-TBD | Final showcase + slide deck | Batuhan / Burak | PENDING |
+Sprint 5 board (15 Apr → 29 Apr 2026): **17 issues · 35 / 35 story points · all DONE**.
+Live filter: [Jira board](https://berfindurualkan.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog) · Frozen evidence: [`Sprint5_Jira_Backlog.jpg`](Sprint5_Jira_Backlog.jpg) · [`Sprint5_BugFix_Log.jpg`](Sprint5_BugFix_Log.jpg) · [`Sprint5_Burndown.jpg`](Sprint5_Burndown.jpg).
 
-> Jira keys will be backfilled once the Sprint 5 board screenshot is exported (`docs/reports/Sprint5_Sprint_Backlog.png`).
+### Polish (Tasks · 8 pts)
+
+| Jira Key | Title | Pts | Assignee | Done |
+|----------|-------|-----|----------|------|
+| [SCRUM-222](https://berfindurualkan.atlassian.net/browse/SCRUM-222) | Polish: Loading skeleton on Step 2 data exploration table | 2 | Burak Aydoğmuş | 2026-04-27 |
+| [SCRUM-223](https://berfindurualkan.atlassian.net/browse/SCRUM-223) | Polish: Clinical hyperparameter tooltips in Step 4 model configuration | 2 | Efe Çelik | 2026-04-27 |
+| [SCRUM-224](https://berfindurualkan.atlassian.net/browse/SCRUM-224) | Polish: Step 4 parallel coordinates chart responsive on mobile viewports | 2 | Batuhan Bayazıt | 2026-04-27 |
+| [SCRUM-225](https://berfindurualkan.atlassian.net/browse/SCRUM-225) | Polish: Empty-state UI on Step 5 when no model has been trained | 1 | Burak Aydoğmuş | 2026-04-27 |
+| [SCRUM-226](https://berfindurualkan.atlassian.net/browse/SCRUM-226) | Polish: CSV export button for Step 5 metrics comparison table | 1 | Berfin Duru Alkan | 2026-04-27 |
+
+### Usability Testing (Stories · 9 pts)
+
+| Jira Key | Title | Pts | Assignee | Done |
+|----------|-------|-----|----------|------|
+| [SCRUM-227](https://berfindurualkan.atlassian.net/browse/SCRUM-227) | UT-01: End-to-end usability test — clinician personas (T1–T7) | 3 | Berfin Duru Alkan | 2026-04-28 |
+| [SCRUM-228](https://berfindurualkan.atlassian.net/browse/SCRUM-228) | UT-02: Stress test — 50 K-row CSV upload, no timeout / memory crash | 2 | Berfin Duru Alkan | 2026-04-28 |
+| [SCRUM-229](https://berfindurualkan.atlassian.net/browse/SCRUM-229) | UT-03: Cross-browser compatibility audit (Chrome, Firefox, Safari, Edge) | 2 | Burak Aydoğmuş | 2026-04-28 |
+| [SCRUM-230](https://berfindurualkan.atlassian.net/browse/SCRUM-230) | UT-04: WCAG 2.1 AA accessibility audit for full wizard | 2 | Berfin Duru Alkan | 2026-04-29 |
+
+### Deployment & Documentation (Stories · 7 pts)
+
+| Jira Key | Title | Pts | Assignee | Done |
+|----------|-------|-----|----------|------|
+| [SCRUM-231](https://berfindurualkan.atlassian.net/browse/SCRUM-231) | Docker: Compose file for local dev with hot-reload (frontend + backend) | 2 | Berat Mert Gökkaya | 2026-04-29 |
+| [SCRUM-232](https://berfindurualkan.atlassian.net/browse/SCRUM-232) | DOC-01: Update ML Tool User Guide v1.0 → v1.4 (parallel coords, What-If, sample patients) | 3 | Efe Çelik | 2026-04-29 |
+| [SCRUM-233](https://berfindurualkan.atlassian.net/browse/SCRUM-233) | DOC-02: Publish interactive OpenAPI documentation and link from README | 2 | Berat Mert Gökkaya | 2026-04-29 |
+
+### Sprint 4 Retrospective Bug Fixes (Bugs · 11 pts)
+
+| Jira Key | Title | Pts | Assignee | Done |
+|----------|-------|-----|----------|------|
+| [SCRUM-217](https://berfindurualkan.atlassian.net/browse/SCRUM-217) | Missing ErrorBoundary around lazy-loaded Step 5 & Step 6 crashes entire app on render error | 3 | Efe Çelik | 2026-04-26 |
+| [SCRUM-218](https://berfindurualkan.atlassian.net/browse/SCRUM-218) | Silent error suppression in Step 6 sample-patients dropdown hides real backend failures | 2 | Efe Çelik | 2026-04-26 |
+| [SCRUM-219](https://berfindurualkan.atlassian.net/browse/SCRUM-219) | Feature selection silently no-ops on `mutual_info` failure — model trains without expected reduction | 2 | Berat Mert Gökkaya | 2026-04-26 |
+| [SCRUM-220](https://berfindurualkan.atlassian.net/browse/SCRUM-220) | Parallel coordinates chart crashes when a model metric is undefined or null | 3 | Batuhan Bayazıt | 2026-04-26 |
+| [SCRUM-221](https://berfindurualkan.atlassian.net/browse/SCRUM-221) | Parallel coordinates chart renders broken state when fewer than 2 models are selected | 1 | Batuhan Bayazıt | 2026-04-26 |
 
 ## User Testing Protocol
 
@@ -156,15 +199,16 @@ Full session results, participant quotes, and SUS questionnaire responses land i
 | Sprint 5 Lighthouse — baseline snapshot (20 Apr, Perf 93 / A11y 100 / BP 96 / SEO 91) | 20.04.2026 | [HTML](Sprint5_Lighthouse.report.baseline.html) · [JSON](Sprint5_Lighthouse.report.baseline.json) |
 | [Backend docstring coverage — `interrogate` 100 %](Sprint5_Backend_Docstring_Coverage.txt) | 21.04.2026 | TXT + [badge](Sprint5_Backend_Docstring_Badge.svg) |
 | [Frontend JSDoc coverage — 100 %](Sprint5_Frontend_JSDoc_Coverage.txt) | 21.04.2026 | TXT |
-| [Docker running screenshot](Sprint5_Docker_Running.png) | 20.04.2026 | PNG |
 | [Logo + Navbar screenshot](Sprint5_Logo_Navbar.png) | 20.04.2026 | PNG |
-| [Sprint 5 User Testing Report](Sprint5_User_Testing_Report.pdf) | TBD | PDF — pending QA session |
-| [Sprint 5 Consent Form](Sprint5_Consent_Form.pdf) | TBD | PDF — pending QA session |
-| [Sprint 5 Usability Video](Sprint5_Usability_Video.mp4) | TBD | MP4 — pending QA session |
-| [Sprint 5 Full Domain Coverage](Sprint5_Full_Domain_Coverage.pdf) | TBD | PDF — pending QA 20-specialty run |
-| [Sprint 5 E2E Regression](Sprint5_E2E_Regression.pdf) | TBD | PDF — pending QA 3-CSV run |
-| [Sprint 5 Weekly Progress Report](Sprint5_Weekly_Progress_Report.pdf) | TBD | PDF — pending Jira burndown export |
-| [Sprint 5 Showcase (Jury)](Sprint5_Showcase.pdf) | TBD | PDF slide deck — 28.04 |
+| [Sprint 5 User Testing Report](Sprint5_User_Testing_Report.pdf) | 27.04.2026 | PDF — P1 (non-CS): 7 / 7 PASS, SUS 90 |
+| [Sprint 5 Consent Form](Sprint5_Consent_Form.pdf) | 27.04.2026 | PDF — signed by participant P1 |
+| [Sprint 5 Usability Video](https://drive.google.com/file/d/1VjD9xwUgDmsVOWn-OX9clYOTsL9FxwGz/view?usp=drive_link) | 28.04.2026 | Google Drive — recorded by QA on UserBrain |
+| [Sprint 5 Full Domain Coverage](Sprint5_Full_Domain_Coverage.pdf) | 28.04.2026 | PDF — 140 cases / 0 failures across 20 specialties |
+| [Sprint 5 E2E Regression](Sprint5_E2E_Regression.pdf) | 28.04.2026 | PDF — 21 cases / 0 crashes across 3 CSVs |
+| [Sprint 5 Weekly Progress Report](Sprint5_Weekly_Progress_Report.html) | 29.04.2026 | [HTML](Sprint5_Weekly_Progress_Report.html) (export → PDF for Moodle) |
+| [Sprint 5 Jira Backlog screenshot](Sprint5_Jira_Backlog.jpg) | 29.04.2026 | JPG — 12 stories, 24 pts, all DONE |
+| [Sprint 5 Bug Fix Log screenshot](Sprint5_BugFix_Log.jpg) | 29.04.2026 | JPG — 5 retro bugs, 11 pts, all DONE |
+| [Sprint 5 Burndown screenshot](Sprint5_Burndown.jpg) | 29.04.2026 | JPG — 35 / 35 pts complete, 0 remaining |
 
 ## Releases Shipped in Sprint 5
 
@@ -189,16 +233,22 @@ All four releases also shipped to Hugging Face Space and GHCR via the `Release �
 ## Retrospective
 
 ### Keep
-- Lighthouse scores cleared every target — Performance **93** (target ≥ 80), Accessibility **100** (target ≥ 85).
+- Lighthouse scores cleared every target — Performance **91** (target ≥ 80), Accessibility **100** (target ≥ 85), BP **100**, SEO **100**. PageSpeed Insights re-run on 28 Apr from production HF Space scored **98 / 94 / 100 / 100** — both runs above target.
 - v1.5.8 → v1.5.11 deployed cleanly across release days — every release ran the full `Release — Deploy & Docker` pipeline (build → Docker → HF Space → GHCR) within ~2 min.
+- Test discipline scaled to the final sprint: **173 / 173 cases pass** across 140-case full-pipeline (20 specialties × 7 steps), 21-case 3-CSV E2E regression, and 7-task non-CS usability test. Zero failures.
 - Step 7 reliability issue was caught, diagnosed (45 s timeout was masking `ReadTimeout('')`), fixed, verified (5 × 3 = 15/15 successful Gemini calls), and shipped in the same day.
 - Accessibility work produced a proper before/after log with file:line CSS diffs — reusable as a pattern for future audits.
+- Sprint 4 retro bug fixes (SCRUM-217..221, 11 pts) were re-prioritised into Sprint 5 and shipped in the **first half** of the sprint window — leaving the second half clean for polish + testing.
 
 ### Improve
-- *To be filled after the user-testing session and the 20-specialty coverage run.* Known anticipated callouts: QA test-case stories still trail development by days; no smoke test yet iterates all 20 specialties on every PR.
+- The usability test video and signed consent form slipped to the last 48 h of the sprint. Booking the recording window at the *start* of the sprint (not after polish work lands) would remove the last-minute scramble.
+- Cross-browser audit (UT-03) caught one Safari-specific viewport regression late. A Playwright matrix in CI on every PR would have caught it before merge instead of during the audit.
+- One non-CS user is the WebOnline minimum, not statistical evidence. For future iterations, run two more sessions with a clinician and a hospital administrator to triangulate the SUS figure.
 
 ### Try
-- *To be decided at retrospective after Sprint 5 demo.* Candidate actions: add an automated 20-specialty smoke test to CI; lock scope 48 h before deadline; version-tag Sprint 5 wiki on each release.
+- Gate `main` on a Lighthouse score floor (Perf ≥ 85, A11y ≥ 95) using a GitHub Action so future contributors cannot silently regress jury-grade scores.
+- Add an automated 20-specialty smoke test to CI — a single Playwright spec that walks Steps 1–7 once per specialty and posts the matrix to the PR.
+- Schedule a quarterly accessibility audit even after the academic project closes — the WCAG 2.1 AA findings are durable knowledge worth maintaining alongside the live HuggingFace Space.
 
 ## Deadline
 
